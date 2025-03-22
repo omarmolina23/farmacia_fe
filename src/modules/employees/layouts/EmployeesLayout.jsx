@@ -1,10 +1,10 @@
-import AdminSideBar from "../components/AdminSidebar";
+import EmployeesSideBar from "../components/EmployeesSidebar"; 
 
-const AdminLayout = ({ children }) => {
+const EmployeesLayout = ({ children }) => {
     return (
         <>
             <div className="flex flex-row h-screen overflow-hidden">
-                <AdminSideBar/>
+                <EmployeesSideBar/>
                 <div className="flex-1 overflow-auto"> 
                     {children}
                 </div>
@@ -14,4 +14,4 @@ const AdminLayout = ({ children }) => {
     );
 };
 
-export default AdminLayout;
+export default EmployeesLayout;

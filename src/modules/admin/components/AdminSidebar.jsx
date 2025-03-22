@@ -6,7 +6,7 @@ import { FaUserAlt, FaUsers } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { useState } from "react";
 
-export default function SidebarTemplate() {
+export default function AdminSideBar() {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
 
     return (
