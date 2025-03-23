@@ -22,10 +22,7 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (token, user) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-
+  const login = async (user) => {
     setUser(user);
   };
 

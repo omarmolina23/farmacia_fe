@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useAuth } from "../../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { signOut as signOutService } from "../../../services/UserService";
+import { toast } from "react-toastify";
 
 export default function AdminSideBar() {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
@@ -17,8 +18,10 @@ export default function AdminSideBar() {
     const navigate = useNavigate();
 
     const handleSignOut = async () => {
-        await signOutService();  
+        const response = await signOutService();  
         signOut();  
+
+        toast.success("Sesión cerrada exitosamente");
         navigate("/");
     }
 

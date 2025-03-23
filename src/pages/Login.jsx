@@ -32,15 +32,13 @@ const Login = () => {
       return;
     }
 
-
     try {
       const response = await loginService(user.email, user.password);
 
-      console.log("response", response);
-      login(response.token, {
+      login({
         name: response.name,
         isAdmin: response.isAdmin,
-        status: response.status
+        status: response.status,
       });
 
       toast.success("Inicio de sesión exitoso");
@@ -104,7 +102,10 @@ const Login = () => {
               onChange={handleChange}
             />
 
-            <label className="w-full text-lg md:text-xl text-left mt-4" htmlFor="password">
+            <label
+              className="w-full text-lg md:text-xl text-left mt-4"
+              htmlFor="password"
+            >
               Contraseña
             </label>
 
