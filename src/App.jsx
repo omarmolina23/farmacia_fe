@@ -17,10 +17,12 @@ function App() {
 
             <Route element={<AdminRoute />}>
               <Route path="/inicio/*" element={<AdminHome />} />
+
             </Route>
-            
+
             <Route path="/employees-inicio/" element={<EmployeesHome />} />
           </Route>
+
         </Routes>
       </Router>
     </AuthProvider>

@@ -3,9 +3,9 @@ import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { login as loginService } from "../services/UserService";
 import { toast } from "react-toastify";
-import { Eye, EyeOff } from "lucide-react";
 import TextField from "../components/TextField";
 import PasswordField from "../components/PasswordFiled";
+import Button from "../components/Button";
 
 const Login = () => {
     const [user, setUser] = useState({
@@ -34,7 +34,6 @@ const Login = () => {
             return;
         }
 
-
         try {
             const response = await loginService(user.email, user.password);
 
@@ -42,7 +41,7 @@ const Login = () => {
             login(response.token, {
                 name: response.name,
                 isAdmin: response.isAdmin,
-                status: response.status
+                status: response.status,
             });
 
             toast.success("Inicio de sesión exitoso");
@@ -102,26 +101,24 @@ const Login = () => {
                             id="email"
                             name="email"
                             placeholder="Introduzca su correo aquí"
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                        />
 
-                        <label className="w-full text-lg md:text-xl text-left mt-4" htmlFor="password">
+                        <label
+                            className="w-full text-lg md:text-xl text-left mt-4"
+                            htmlFor="password"
+                        >
                             Contraseña
                         </label>
 
-                        <PasswordField onChange={handleChange}/>
+                        <PasswordField onChange={handleChange} />
 
                         <p className="w-full text-sm text-gray-500 cursor-pointer mt-4 text-left">
                             ¿Has olvidado tu contraseña?
                         </p>
 
                         <hr className="border-[#1e1e1e63] w-full mt-6 mb-6" />
-
-                        <button
-                            type="submit"
-                            className="bg-[#D0F25E] py-2 px-10 rounded-lg text-lg hover:bg-[#97b33c] shadow cursor-pointer"
-                        >
-                            Iniciar Sesión
-                        </button>
+                        <Button type="submit" title="Iniciar Sesión" />
                     </form>
                 </div>
             </div>
