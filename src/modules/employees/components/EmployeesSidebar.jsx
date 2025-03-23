@@ -37,7 +37,7 @@ export default function EmployeesSideBar() {
                     <h5 className="font-semibold">Empleado</h5>
                     <button
                         name="cerrarSesion"
-                        className="flex flex-row items-center text-black hover:text-[#8DB600] transition-colors duration-300"
+                        className="flex flex-row items-center text-black hover:text-[#8B83BA] transition-colors duration-300"
                         onClick={() => { }}
                     >
                         <FiLogOut className="text-2xl" />
