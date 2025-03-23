@@ -5,9 +5,22 @@ import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 import { FaUserAlt, FaUsers } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { useState } from "react";
+import { useAuth } from "../../../context/authContext";
+import { useNavigate } from "react-router-dom";
+import { signOut as signOutService } from "../../../services/UserService";
 
 export default function AdminSideBar() {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
+
+    const { signOut } = useAuth();
+
+    const navigate = useNavigate();
+
+    const handleSignOut = async () => {
+        await signOutService();  
+        signOut();  
+        navigate("/");
+    }
 
     return (
         <div className="flex flex-col bg-[#D9D9D9] w-[16rem] h-screen">
@@ -83,8 +96,8 @@ export default function AdminSideBar() {
                     <h5 className="font-semibold">Administrador</h5>
                     <button
                         name="cerrarSesion"
-                        className="flex flex-row items-center text-black hover:text-[#8DB600] transition-colors duration-300"
-                        onClick={() => { }}
+                        className="flex flex-row items-center text-black hover:text-[#8DB600] transition-colors duration-300 cursor-pointer"
+                        onClick={handleSignOut}
                     >
                         <FiLogOut className="text-2xl" />
                     </button>

@@ -15,10 +15,13 @@
     "@fontsource/nanum-pen-script": "^5.2.5",
     "@headlessui/react": "^2.2.0",
     "@tailwindcss/vite": "^4.0.14",
+    "axios": "^1.8.4",
+    "lucide-react": "^0.483.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
+    "react-toastify": "^11.0.5",
     "tailwindcss": "^4.0.14"
   },
   "devDependencies": {
