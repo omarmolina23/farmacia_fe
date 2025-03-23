@@ -1,11 +1,11 @@
 import React from "react";
 
-const Button = ({ type, title, onClick }) => {
+const Button = ({ type, title, onClick, color }) => {
   return (
     <button
       type={type}
-      className="bg-[#D0F25E] py-2 px-10 rounded-lg text-lg hover:bg-[#97b33c] shadow cursor-pointer"
       onClick={onClick}
+      className={`${color} py-2 px-10 rounded-lg text-lg hover:bg-[#DADDD1] shadow cursor-pointer`}
     >
       {title}
     </button>

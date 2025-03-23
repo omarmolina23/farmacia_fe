@@ -1,14 +1,12 @@
 import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout";
-
+import Button from "../../components/Button";
 export default function SupplierRegister() {
     return (
-        <AdminLayout>
-            <SupplierLayout> 
-            <div className="flex flex-col h-full items-center justify-center">
-                <h1 className="text-4xl font-bold">Home Administrador</h1>
-            </div>
+        <SupplierLayout title="Proveedores"> 
+            <div className="flex flex-row gap-4">
+            <Button color="bg-[#8B83BA]" type="submit" title="Registrar" />
+            <Button color="bg-[#8B83BA]" type="submit" title="Cancelar" />
+            </div> 
         </SupplierLayout>
-        </AdminLayout>
-        
     );
 }

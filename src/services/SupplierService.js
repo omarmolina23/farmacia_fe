@@ -5,7 +5,7 @@ export const createSupplier = async (SupplierData) => {
         const response = await axios.post("/supplier", SupplierData);
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message  "Error creating Supplier");
+        throw new Error(error.response?.data?.message || "Error creating Supplier");
     }
 };
 
@@ -14,7 +14,7 @@ export const getSuppliers = async () => {
         const response = await axios.get("/supplier");
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message  "Error fetching Suppliers");
+        throw new Error(error.response?.data?.message || "Error fetching Suppliers");
     }
 };
 
@@ -23,7 +23,7 @@ export const getSupplierById = async (id) => {
         const response = await axios.get(/supplier/${id});
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message  "Error fetching Supplier");
+        throw new Error(error.response?.data?.message || "Error fetching Supplier");
     }
 };
 
@@ -32,7 +32,7 @@ export const updateSupplier = async (id, SupplierData) => {
         const response = await axios.patch(/supplier/${id}, SupplierData);
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message  "Error updating Supplier");
+        throw new Error(error.response?.data?.message || "Error updating Supplier");
     }
 };
 
