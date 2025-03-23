@@ -13,8 +13,6 @@ const Login = () => {
         password: "",
     });
 
-    const [showPassword, setShowPassword] = useState(false);
-
     const { login } = useAuth();
 
     const navigate = useNavigate();
@@ -54,10 +52,6 @@ const Login = () => {
         } catch (error) {
             toast.error(error.message);
         }
-    };
-
-    const toggleShowPassword = () => {
-        setShowPassword((prev) => !prev);
     };
 
     return (

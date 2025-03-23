@@ -23,7 +23,7 @@ function App() {
             
             <Route path="/employees-inicio/" element={<EmployeesHome />} />
           </Route>
-          <Route path="/supplier-inicio/" element={<SupplierRegister />} />
+          <Route path="/supplier-register/" element={<SupplierRegister />} />
         </Routes>
       </Router>
     </AuthProvider>
