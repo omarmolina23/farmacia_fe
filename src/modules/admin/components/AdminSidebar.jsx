@@ -6,7 +6,7 @@ import { FaUserAlt, FaUsers } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { useState } from "react";
 
-export default function SidebarTemplate() {
+export default function AdminSideBar() {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
 
     return (
@@ -19,7 +19,7 @@ export default function SidebarTemplate() {
             <div className="flex-1 overflow-y-auto">
                 <ul className="list-none py-[1rem] px-[2rem]">
                     <li className="mb-[10px] p-2 rounded-md hover:bg-[#8DB600] transition-colors duration-300">
-                        <Link className="flex flex-row items-center" to="/Inicio">
+                        <Link className="flex flex-row items-center" to="/inicio">
                             <FiHome className="mr-4 text-xl" /> Inicio
                         </Link>
                     </li>
