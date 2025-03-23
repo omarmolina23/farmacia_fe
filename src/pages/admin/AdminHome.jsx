@@ -1,6 +1,6 @@
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import PageHeader from "../../components/PageHeader";
-import SearchBarCategory from "../../modules/admin/category/components/SearchBarCategory";
+
 export default function AdminHome() {
     return (
         <AdminLayout>

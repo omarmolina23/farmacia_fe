@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import Login from "./pages/login";
 import AdminHome from "./pages/admin/AdminHome";
+import SupplierRegister from "./pages/supplier/SupplierRegister";
 import EmployeesHome from "./pages/employees/EmployeesHome";
 import "./App.css";
 import { AdminRoute } from "./modules/routing/AdminRoute";
@@ -19,10 +20,10 @@ function App() {
               <Route path="/inicio/*" element={<AdminHome />} />
 
             </Route>
-
+            
             <Route path="/employees-inicio/" element={<EmployeesHome />} />
           </Route>
-
+          <Route path="/supplier-inicio/" element={<SupplierRegister />} />
         </Routes>
       </Router>
     </AuthProvider>
