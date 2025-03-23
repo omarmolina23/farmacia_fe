@@ -1,10 +1,12 @@
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
-
+import PageHeader from "../../components/PageHeader";
+import SearchBarCategory from "../../modules/admin/category/components/SearchBarCategory";
 export default function AdminHome() {
     return (
         <AdminLayout>
-            <div className="flex flex-col h-full items-center justify-center">
-                <h1 className="text-4xl font-bold">Home Administrador</h1>
+            <PageHeader title="Categorias" />
+            <div className="w-full p-4 flex justify-between items-center">
+                <SearchBarCategory />
             </div>
         </AdminLayout>
     );
