@@ -1,18 +1,29 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/authContext";
+import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import Login from "./pages/login";
 import AdminHome from "./pages/admin/AdminHome";
 import EmployeesHome from "./pages/employees/EmployeesHome";
 import "./App.css";
+import { AdminRoute } from "./modules/routing/AdminRoute";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/inicio/*" element={<AdminHome />} />
-        <Route path="/employees-inicio/" element={<EmployeesHome />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
+
+            <Route element={<AdminRoute />}>
+              <Route path="/inicio/*" element={<AdminHome />} />
+            </Route>
+            
+            <Route path="/employees-inicio/" element={<EmployeesHome />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
