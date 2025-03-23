@@ -16,11 +16,12 @@ function App() {
           <Route element={<ProtectedRoute />}>
 
             <Route element={<AdminRoute />}>
+              <Route path="/inicio/*" element={<AdminHome />} />
+
             </Route>
-            
+
             <Route path="/employees-inicio/" element={<EmployeesHome />} />
           </Route>
-          <Route path="/inicio/*" element={<AdminHome />} />
 
         </Routes>
       </Router>

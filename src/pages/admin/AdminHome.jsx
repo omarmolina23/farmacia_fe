@@ -6,7 +6,6 @@ export default function AdminHome() {
         <AdminLayout>
             <PageHeader title="Categorias" />
             <div className="w-full p-4 flex justify-between items-center">
-                <SearchBarCategory />
             </div>
         </AdminLayout>
     );
