@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
+import { forgotPassword as forgotPasswordService } from "../../services/UserService";
+import { toast } from "react-toastify";
 import TextField from "../../components/TextField";
 import Button from "../../components/Button";
 import ModalSendReset from "../../components/ModalSendReset";
@@ -11,8 +13,23 @@ const ModalResetPassword = ({ onClose }) => {
         setEmail(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if(!email) {
+            toast.error("Por favor, ingresa un correo electrónico.", { position: "top-center"});
+            return;
+        }
+
+        try {
+            const response = await forgotPasswordService(email);
+            console.log("response", response);
+
+            toast.success("Correo enviado exitosamente", { position: "top-center"});
+        } catch (error) {
+            toast.error(error.message, { position: "top-center"});
+        }
+
         console.log("Recuperar contraseña para:", email);
     };
 

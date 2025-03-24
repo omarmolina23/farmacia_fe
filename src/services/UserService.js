@@ -20,6 +20,34 @@ export const signOut = () => {
     localStorage.removeItem('user');
 }
 
+export const setPassword = async (token, password) => {
+    try {
+        const response = await axios.post(`/auth/set-password?token=${token}`, { password },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        console.log(response)
+        return response.data;
+    }
+    catch (error) {
+        throw new Error(error.response.data.message);
+    }
+}
+
+export const forgotPassword = async (email) => {
+    try {
+        const response = await axios.post('/auth/forgot-password', { email });
+        return response.data;
+    }
+    catch (error) {
+        throw new Error(error.response.data.message);
+    }
+}
+
 export const refreshToken = async () => {
     try {
         const response = await axios.post('/auth/refresh-token');
