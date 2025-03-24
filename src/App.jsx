@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import Login from "./pages/login/Login";
@@ -14,7 +14,6 @@ import { AdminRoute } from "./modules/routing/AdminRoute";
 function App() {
   return (
     <AuthProvider>
-      <Router>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route element={<ProtectedRoute />}>
@@ -31,7 +30,6 @@ function App() {
           <Route path="/supplier-update/" element={<SupplierUpdate />} />
           <Route path="/reset-password/" element={<ResetPassword />} />
         </Routes>
-      </Router>
     </AuthProvider>
   );
 }
