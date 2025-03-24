@@ -75,10 +75,12 @@ const SuppliersList = () => {
                     {suppliers.map((supplier, index) => (
                         <SupplierTable
                             key={index}
+                            id={supplier.id}
                             index={index}
                             name={supplier.name}
                             phone={supplier.phone}
                             email={supplier.email}
+                            status={supplier.status}
                         />
                     ))}
                 </tbody>

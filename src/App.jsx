@@ -6,6 +6,7 @@ import ResetPassword from "./pages/login/ResetPassword";
 import AdminHome from "./pages/admin/AdminHome";
 import SupplierRegister from "./pages/supplier/SupplierRegister";
 import SupplierList from "./pages/supplier/SupplierList";
+import SupplierUpdate from "./pages/supplier/SupplierUpdate";
 import EmployeesHome from "./pages/employees/EmployeesHome";
 import "./App.css";
 import { AdminRoute } from "./modules/routing/AdminRoute";
@@ -27,6 +28,7 @@ function App() {
           </Route>
           <Route path="/supplier-register/" element={<SupplierRegister />} />
           <Route path="/supplier-list/" element={<SupplierList />} />
+          <Route path="/supplier-update/" element={<SupplierUpdate />} />
           <Route path="/reset-password/" element={<ResetPassword />} />
         </Routes>
       </Router>

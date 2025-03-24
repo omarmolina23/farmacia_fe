@@ -1,7 +1,16 @@
 import { PiEyeSlash } from "react-icons/pi";
-import { CiEdit } from "react-icons/ci";
+import { FaEdit } from "react-icons/fa";
+import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const SupplierTable = ({ index, name, phone, email }) => {
+const SupplierTable = ({ index, id, name, phone, email, status }) => {
+
+    const navigate = useNavigate();
+    const handleEditClick = () => {
+        const supplierData = { id, name, phone, email, status };
+        localStorage.setItem("supplierData", JSON.stringify(supplierData));
+        navigate(`/supplier-update`);
+    };
 
     return (
         <>
@@ -11,14 +20,16 @@ const SupplierTable = ({ index, name, phone, email }) => {
                 <td>{phone}</td>
                 <td>{email}</td>
                 <td className="flex flex-row p-1">
-                    <div className='flex flex-row items-center cursor-pointer hover:bg-[#f1d167] w-fit m-[1px] px-[3px] rounded-sm mr-4'
+                    <div
+                        className="flex flex-row items-center cursor-pointer hover:bg-[#f1d167] w-fit m-[1px] px-[3px] rounded-sm mr-4"
+                        onClick={handleEditClick}
                     >
-                        <CiEdit size={16} className='mr-2' />Editar
+                        <FaEdit size={16} className="mr-2 text-[#232323]" />Editar
                     </div>
                     <div
                         className='flex flex-row items-center cursor-pointer hover:bg-[#d13737] w-fit m-[1px] px-[3px] rounded-sm'
                     >
-                        <PiEyeSlash size={16} className='mr-2' />Deshabilitar
+                        <EyeOff size={16} className='mr-2 text-[#181818]' />Deshabilitar
                     </div>
                 </td>
             </tr>
