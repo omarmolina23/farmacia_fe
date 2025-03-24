@@ -83,7 +83,7 @@ export default function AdminSideBar() {
                 </ul>
             </div>
             <div className="flex justify-end items-center p-3">
-                <Link to="/list-users">
+                <Link to="/user-list">
                     <FaUsers className="text-3xl cursor-pointer hover:text-[#8B83BA] transition-colors duration-300" />
                 </Link>
             </div>

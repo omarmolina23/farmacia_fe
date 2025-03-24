@@ -4,8 +4,8 @@ import TextField from "../../../../components/TextField";
 
 const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-3xl p-5 bg-white rounded-lg shadow-md">
-      <div className="grid grid-cols-2 gap-4 p-4">
+    <form onSubmit={handleSubmit} className="w-full max-w-4xl space-y-4 p-4">
+      <div className="grid grid-cols-2 gap-6 p-4">
         <div>
           <label className="text-md font-medium w-70">Rol</label>
           <select
