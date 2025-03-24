@@ -5,7 +5,6 @@ import Button from "../../components/Button";
 import SupplierTable from "../../modules/admin/supplier/components/SupplierTable.jsx";
 import { getSupplierAll, searchSupplier } from "../../services/SupplierService";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 
 const SuppliersList = () => {
@@ -21,7 +20,7 @@ const SuppliersList = () => {
         getSupplierAll()
             .then(data => {
                 if (Array.isArray(data)) {
-                    setSuppliers(data);
+                    setSuppliers(data.filter(supplier => supplier.status === "ACTIVE"));
                 } else {
                     console.error("La respuesta no es un array");
                 }
@@ -81,6 +80,7 @@ const SuppliersList = () => {
                             phone={supplier.phone}
                             email={supplier.email}
                             status={supplier.status}
+                            refreshList={fetchSuppliers}
                         />
                     ))}
                 </tbody>
