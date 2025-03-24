@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import TextField from "./TextField";
-import Button from "./Button";
+import TextField from "../../components/TextField";
+import Button from "../../components/Button";
+import ModalSendReset from "../../components/ModalSendReset";
 
 const ModalResetPassword = ({ onClose }) => {
     const [email, setEmail] = useState("");

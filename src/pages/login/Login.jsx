@@ -7,7 +7,7 @@ import TextField from "../../components/TextField";
 import PasswordField from "../../components/PasswordFiled";
 import Button from "../../components/Button";
 import AuthSidebar from "../../components/AuthSidebar";
-import ModalResetPassword from "../../components/ModalResetPassword";
+import ModalResetPassword from "./ModalResetPassword";
 
 const Login = () => {
     const [user, setUser] = useState({
