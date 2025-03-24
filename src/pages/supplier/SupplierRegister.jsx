@@ -16,7 +16,6 @@ export default function SupplierRegister() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
-      // Asegurar que solo se ingresen los 10 dígitos después del +57 y evitar múltiples +57
       let cleanedValue = value.replace(/\D/g, "");
       if (cleanedValue.startsWith("57")) {
         cleanedValue = cleanedValue.slice(2);
