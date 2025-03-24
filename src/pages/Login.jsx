@@ -13,8 +13,6 @@ const Login = () => {
         password: "",
     });
 
-    const [showPassword, setShowPassword] = useState(false);
-
     const { login } = useAuth();
 
     const navigate = useNavigate();
@@ -54,10 +52,6 @@ const Login = () => {
         } catch (error) {
             toast.error(error.message);
         }
-    };
-
-    const toggleShowPassword = () => {
-        setShowPassword((prev) => !prev);
     };
 
     return (
@@ -118,7 +112,7 @@ const Login = () => {
                         </p>
 
                         <hr className="border-[#1e1e1e63] w-full mt-6 mb-6" />
-                        <Button type="submit" title="Iniciar Sesión" />
+                        <Button color="bg-[#D0F25E]" colorSecundary="bg-[#8B83BA]" type="submit" title="Iniciar Sesión" />
                     </form>
                 </div>
             </div>
