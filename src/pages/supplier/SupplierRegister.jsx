@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout";
 import SupplierForm from "../../modules/admin/supplier/components/SupplierForm";
@@ -6,6 +7,7 @@ import { createSupplier } from "../../services/SupplierService";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function SupplierRegister() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -62,7 +64,7 @@ export default function SupplierRegister() {
     try {
       await createSupplier(formData);
       toast.success("Proveedor registrado exitosamente", { position: "top-right", autoClose: 3000 });
-
+      navigate("/supplier-list");
       setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
     } catch (error) {
       if (error.response) {
@@ -95,6 +97,7 @@ export default function SupplierRegister() {
 
   const handleCancel = () => {
     setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
+    navigate("/supplier-list");
   };
 
   return (
