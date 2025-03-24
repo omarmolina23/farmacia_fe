@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout";
 import SupplierForm from "../../modules/admin/supplier/components/SupplierForm";
@@ -6,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { updateSupplier } from "../../services/SupplierService";
 
 export default function SupplierUpdate() {
-
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         name: "",
@@ -72,7 +73,7 @@ export default function SupplierUpdate() {
         try {
             await updateSupplier(formData.id, formData);
             toast.success("Proveedor actualizado exitosamente", { position: "top-right", autoClose: 3000 });
-
+            navigate("/supplier-list");
             setFormData({ id: "", name: "", phone: "", email: "" });
             localStorage.removeItem("supplierData"); // Limpiar localStorage después de actualizar
         } catch (error) {
@@ -106,6 +107,7 @@ export default function SupplierUpdate() {
 
     const handleCancel = () => {
         setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
+        navigate("/supplier-list");
     };
 
     return (
