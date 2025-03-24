@@ -14,36 +14,44 @@ export default function SupplierRegister() {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "phone") {
+      // Asegurar que solo se ingresen los 10 dígitos después del +57 y evitar múltiples +57
+      let cleanedValue = value.replace(/\D/g, "");
+      if (cleanedValue.startsWith("57")) {
+        cleanedValue = cleanedValue.slice(2);
+      }
+      const phoneNumber = cleanedValue.slice(0, 10);
+      setFormData({ ...formData, [name]: `+57${phoneNumber}` });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const validateForm = () => {
-  const errors = [];
+    const errors = [];
 
-  if (!formData.name.trim()) {
-    errors.push("El nombre del proveedor es obligatorio.");
-  }
+    if (!formData.name.trim()) {
+      errors.push("El nombre del proveedor es obligatorio.");
+    }
 
-  if (!formData.phone.trim()) {
-    errors.push("El teléfono del proveedor es obligatorio.");
-  } else if (!/^\+57\s?\d{10}$/.test(formData.phone)) {
-    errors.push("El teléfono debe estar en formato +573XXXXXXXXX");
-  }
+    if (!formData.phone || formData.phone.length !== 13) {
+      errors.push("El teléfono debe contener exactamente 10 dígitos después de +57.");
+    }
 
-  if (!formData.email.trim()) {
-    errors.push("El correo electrónico es obligatorio.");
-  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    errors.push("El correo electrónico no es válido.");
-  }
+    if (!formData.email.trim()) {
+      errors.push("El correo electrónico es obligatorio.");
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.push("El correo electrónico no es válido.");
+    }
 
-  if (errors.length > 0) {
-    errors.forEach((err) => toast.error(err, { position: "top-right", autoClose: 3000 }));
-    return false;
-  }
+    if (errors.length > 0) {
+      errors.forEach((err) => toast.error(err, { position: "top-right", autoClose: 3000 }));
+      return false;
+    }
 
-  return true;
-};
-
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,7 +97,6 @@ export default function SupplierRegister() {
   const handleCancel = () => {
     setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
   };
-
 
   return (
     <SupplierLayout title="Proveedores">
