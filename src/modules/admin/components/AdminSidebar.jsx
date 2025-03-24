@@ -34,24 +34,24 @@ export default function AdminSideBar() {
             <hr className="mb-1 border-[#1e1e1e63]" />
             <div className="flex-1 overflow-y-auto">
                 <ul className="list-none py-[1rem] px-[2rem]">
-                    <li className="mb-[10px] p-2 rounded-md hover:bg-[#8DB600] transition-colors duration-300">
+                    <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
                         <Link className="flex flex-row items-center" to="/inicio">
                             <FiHome className="mr-4 text-xl" /> Inicio
                         </Link>
                     </li>
-                    <li className="mb-[10px] p-2 rounded-md hover:bg-[#8DB600] transition-colors duration-300">
+                    <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
                         <Link className="flex flex-row items-center" to="/ver_ventas">
                             <LuCircleDollarSign className="mr-4 text-xl" /> Ventas
                         </Link>
                     </li>
-                    <li className="mb-[10px] p-2 rounded-md hover:bg-[#8DB600] transition-colors duration-300">
+                    <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
                         <Link className="flex flex-row items-center" to="/prediccion">
                             <BsStars className="mr-4 text-xl" /> Predicción
                         </Link>
                     </li>
                     <li className="flex flex-col">
                         <button
-                            className="flex flex-row mb-[10px] p-2 rounded-md hover:bg-[#8DB600] transition-colors duration-300 w-full text-left"
+                            className="flex flex-row mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300 w-full text-left"
                             onClick={() => setIsInventarioOpen(!isInventarioOpen)}
                         >
                             <div className="flex-1 flex items-center">
@@ -71,7 +71,7 @@ export default function AdminSideBar() {
                                     </Link>
                                 </li>
                                 <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
-                                    <Link className="flex flex-row items-center" to="/listar_proveedores">
+                                    <Link className="flex flex-row items-center" to="/supplier-register/">
                                         <IoIosArrowForward className="mr-4 text-xl" /> Proveedores
                                     </Link>
                                 </li>
@@ -87,7 +87,7 @@ export default function AdminSideBar() {
             </div>
             <div className="flex justify-end items-center p-3">
                 <Link to="/list-users">
-                    <FaUsers className="text-3xl cursor-pointer hover:text-[#8DB600] transition-colors duration-300" />
+                    <FaUsers className="text-3xl cursor-pointer hover:text-[#8B83BA] transition-colors duration-300" />
                 </Link>
             </div>
             <hr className="mb-4 border-[#1e1e1e63]" />
@@ -99,7 +99,7 @@ export default function AdminSideBar() {
                     <h5 className="font-semibold">Administrador</h5>
                     <button
                         name="cerrarSesion"
-                        className="flex flex-row items-center text-black hover:text-[#8DB600] transition-colors duration-300 cursor-pointer"
+                        className="flex flex-row items-center text-black hover:text-[#8B83BA] transition-colors duration-300 cursor-pointer"
                         onClick={handleSignOut}
                     >
                         <FiLogOut className="text-2xl" />
