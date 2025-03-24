@@ -68,7 +68,7 @@ export default function AdminSideBar() {
                                     </Link>
                                 </li>
                                 <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
-                                    <Link className="flex flex-row items-center" to="/supplier-register/">
+                                    <Link className="flex flex-row items-center" to="/supplier-list">
                                         <IoIosArrowForward className="mr-4 text-xl" /> Proveedores
                                     </Link>
                                 </li>

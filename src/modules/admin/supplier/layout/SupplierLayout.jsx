@@ -6,7 +6,7 @@ const SupplierLayout = ({ children, title }) => {
         <AdminLayout> 
             <div className="flex flex-col w-full">
                 <PageHeader title={title} />
-                <div className="flex-1 overflow-auto p-4">
+                <div className="flex-1 overflow-auto">
                     {children}
                 </div>
             </div>
