@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
@@ -10,18 +11,24 @@ import AuthSidebar from "../../components/AuthSidebar";
 import ModalResetPassword from "./ModalResetPassword";
 
 const Login = () => {
-  const [user, setUser] = useState({
+  const [userData, setUserData] = useState({
     email: "",
     password: "",
   });
 
   const [showResetModal, setShowResetModal] = useState(false);
 
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (user) {
+      navigate(user.isAdmin ? "/inicio" : "/employees-inicio");
+    }
+  }, [user]);
+
   const handleChange = ({ target: { name, value } }) => {
-    setUser((prev) => ({
+    setUserData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -30,13 +37,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user.email || !user.password) {
+    if (!userData.email || !userData.password) {
       toast.error("Por favor, complete todos los campos");
       return;
     }
 
     try {
-      const response = await loginService(user.email, user.password);
+      const response = await loginService(userData.email, userData.password);
 
       login({
         name: response.name,

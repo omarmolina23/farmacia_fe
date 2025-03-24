@@ -6,6 +6,7 @@ const instance = axios.create({
     withCredentials: true,
 });
 
+/*
 instance.interceptors.request.use(
     async (config) => {
         let token = localStorage.getItem("token");
@@ -45,7 +46,7 @@ instance.interceptors.response.use(
         }
         return Promise.reject(error);
     }
-);
+);*/
 
 
 export default instance;
