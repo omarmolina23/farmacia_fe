@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { login as loginService } from "../services/UserService";
+import { login as loginService } from "../../services/UserService";
 import { toast } from "react-toastify";
-import TextField from "../components/TextField";
-import PasswordField from "../components/PasswordFiled";
-import Button from "../components/Button";
+import TextField from "../../components/TextField";
+import PasswordField from "../../components/PasswordFiled";
+import Button from "../../components/Button";
+import AuthSidebar from "../../components/AuthSidebar";
 
 const Login = () => {
     const [user, setUser] = useState({
@@ -56,22 +57,8 @@ const Login = () => {
 
     return (
         <div className="bg-[#D0F25E] h-[100vh] w-[100%] flex flex-row">
-            <div className="w-[30%] flex-1 flex flex-col justify-center items-center">
-                <div className="w-[60%] flex flex-col h-[20%] justify-center items-center mb-2">
-                    <img
-                        className="h-auto w-[100%]"
-                        src="/img/textLogo.png"
-                        alt="Droguería La Nueva Esperanza"
-                    />
-                </div>
-                <div className="w-[60%] mt-6 flex flex-col justify-center items-center">
-                    <img
-                        className="rounded-full h-auto w-[100%]"
-                        src="/img/logo.png"
-                        alt="Logo"
-                    />
-                </div>
-            </div>
+            
+            <AuthSidebar />
 
             <div className="bg-white w-full lg:w-[60%] rounded-t-[40px] lg:rounded-l-[40px] overflow-hidden flex flex-col justify-center items-center py-8">
                 <div className="p-6 flex flex-col w-[90%] max-w-[400px] justify-evenly items-center">
