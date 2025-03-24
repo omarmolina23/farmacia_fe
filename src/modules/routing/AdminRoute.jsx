@@ -5,7 +5,7 @@ export function AdminRoute() {
   const { user } = useAuth();
 
   if (!user.isAdmin) {
-    return <Navigate to="/" />;
+    return <Navigate to="/employees-inicio" />;
   }
 
   return <Outlet />;
