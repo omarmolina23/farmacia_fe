@@ -98,7 +98,7 @@ export default function SupplierRegister() {
   };
 
   return (
-    <SupplierLayout title="Proveedores">
+    <SupplierLayout title="Registrar proveedor">
       <SupplierForm
         formData={formData}
         handleChange={handleChange}
