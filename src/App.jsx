@@ -22,7 +22,6 @@ function App() {
               <Route path="/inicio/*" element={<AdminHome />} />
 
             </Route>
-
             <Route path="/employees-inicio/" element={<EmployeesHome />} />
           </Route>
           <Route path="/supplier-register/" element={<SupplierRegister />} />
