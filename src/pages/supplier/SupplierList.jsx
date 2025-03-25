@@ -7,12 +7,16 @@ import SupplierTable from "../../modules/admin/supplier/components/SupplierTable
 import { getSupplierAll, searchSupplier } from "../../services/SupplierService";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const SuppliersList = () => {
     const [suppliers, setSuppliers] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+    const [hoverColumn, setHoverColumn] = useState(null);
+    
     const rowsOptions = [10, 15, 20, 25, 30, 50];
     const navigate = useNavigate();
 
@@ -57,25 +61,25 @@ const SuppliersList = () => {
         navigate('/supplier-register');
     };
 
-    const totalPages = Math.ceil(suppliers.length / rowsPerPage);
-    const paginatedSuppliers = suppliers.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(prev => prev + 1);
+    const sortedSuppliers = [...suppliers].sort((a, b) => {
+        if (sortConfig.key) {
+            const valueA = a[sortConfig.key].toLowerCase();
+            const valueB = b[sortConfig.key].toLowerCase();
+            if (valueA < valueB) return sortConfig.direction === "asc" ? -1 : 1;
+            if (valueA > valueB) return sortConfig.direction === "asc" ? 1 : -1;
+            return 0;
         }
-    };
+        return 0;
+    });
 
-    const handlePrevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(prev => prev - 1);
+    const paginatedSuppliers = sortedSuppliers.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    const handleSort = (key) => {
+        let direction = "asc";
+        if (sortConfig.key === key && sortConfig.direction === "asc") {
+            direction = "desc";
         }
-    };
-
-    const handleRowsPerPageChange = (e) => {
-        const value = e.target.value;
-        setRowsPerPage(value === 50 ? 50 : parseInt(value));
-        setCurrentPage(1);
+        setSortConfig({ key, direction });
     };
 
     return (
@@ -89,9 +93,33 @@ const SuppliersList = () => {
                 <thead className="p-5 bg-[#95A09D] text-left">
                     <tr className="h-9">
                         <th className="pl-5">Nº</th>
-                        <th>Nombre</th>
+                        <th 
+                            onMouseEnter={() => setHoverColumn("name")}
+                            onMouseLeave={() => setHoverColumn(null)}
+                            onClick={() => handleSort("name")}
+                            className="cursor-pointer flex items-center gap-2 p-2"
+                        >
+                            Nombre
+                            {(hoverColumn === "name" || sortConfig.key === "name") && (
+                                sortConfig.key === "name" && sortConfig.direction === "asc" 
+                                ? <IoIosArrowUp />
+                                : <IoIosArrowDown />
+                            )}
+                        </th>
                         <th>Teléfono</th>
-                        <th>Correo electrónico</th>
+                        <th 
+                            onMouseEnter={() => setHoverColumn("email")}
+                            onMouseLeave={() => setHoverColumn(null)}
+                            onClick={() => handleSort("email")}
+                            className="cursor-pointer flex items-center gap-2"
+                        >
+                            Correo electrónico
+                            {(hoverColumn === "email" || sortConfig.key === "email") && (
+                                sortConfig.key === "email" && sortConfig.direction === "asc" 
+                                ? <IoIosArrowUp />
+                                : <IoIosArrowDown />
+                            )}
+                        </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -112,7 +140,7 @@ const SuppliersList = () => {
             </table>
             <Pagination 
                 currentPage={currentPage} 
-                totalItems={suppliers.length} 
+                totalItems={sortedSuppliers.length} 
                 rowsPerPage={rowsPerPage} 
                 setCurrentPage={setCurrentPage} 
                 setRowsPerPage={setRowsPerPage} 
