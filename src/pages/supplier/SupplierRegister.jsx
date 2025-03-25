@@ -56,42 +56,16 @@ export default function SupplierRegister() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     }
-
     try {
       await createSupplier(formData);
       toast.success("Proveedor registrado exitosamente", { position: "top-right", autoClose: 3000 });
       navigate("/admin/supplier/list");
       setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
     } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
-
-        switch (status) {
-          case 400:
-            if (data.errors) {
-              data.errors.forEach((err) => {
-                toast.error(err.message, { position: "top-right", autoClose: 3000 });
-              });
-            } else {
-              toast.error(`Error: ${data.message || "Datos inválidos."}`, { position: "top-right", autoClose: 3000 });
-            }
-            break;
-          case 409:
-            toast.error("Ya existe un proveedor con este correo o teléfono.", { position: "top-right", autoClose: 3000 });
-            break;
-          case 500:
-            toast.error("Error en el servidor, inténtelo más tarde.", { position: "top-right", autoClose: 3000 });
-            break;
-          default:
-            toast.error("Ocurrió un error inesperado.", { position: "top-right", autoClose: 3000 });
-        }
-      } else {
-        toast.error("No se pudo conectar con el servidor.", { position: "top-right", autoClose: 3000 });
-      }
+      toast.error(error.message);
     }
   };
 

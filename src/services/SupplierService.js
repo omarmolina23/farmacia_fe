@@ -5,7 +5,7 @@ export const createSupplier = async (SupplierData) => {
         const response = await axios.post("/supplier", SupplierData);
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || "Error creating Supplier");
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 };
 export const getSupplierAll = async () => {
@@ -13,7 +13,7 @@ export const getSupplierAll = async () => {
         const response = await axios.get(`/supplier`);
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || "Error fetching Supplier");
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 };
 
@@ -24,7 +24,7 @@ export const searchSupplier = async (query) => {
         });
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || "Error searching for Supplier");
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 };
 
@@ -33,7 +33,7 @@ export const updateSupplier = async (id, SupplierData) => {
         const response = await axios.patch(`/supplier/${id}`, SupplierData);
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || "Error updating Supplier");
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 };
 
@@ -42,6 +42,6 @@ export const deleteSupplier = async (id) => {
         const response = await axios.delete(`/supplier/${id}`);
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || "Error deleting Supplier");
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 };
