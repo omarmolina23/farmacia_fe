@@ -35,17 +35,17 @@ export default function AdminSideBar() {
             <div className="flex-1 overflow-y-auto">
                 <ul className="list-none py-[1rem] px-[2rem]">
                     <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
-                        <Link className="flex flex-row items-center" to="/inicio">
+                        <Link className="flex flex-row items-center" to="/admin/home">
                             <FiHome className="mr-4 text-xl" /> Inicio
                         </Link>
                     </li>
                     <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
-                        <Link className="flex flex-row items-center" to="/ver_ventas">
+                        <Link className="flex flex-row items-center" to="/admin/sales/list">
                             <LuCircleDollarSign className="mr-4 text-xl" /> Ventas
                         </Link>
                     </li>
                     <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
-                        <Link className="flex flex-row items-center" to="/prediccion">
+                        <Link className="flex flex-row items-center" to="/admin/prediccion">
                             <BsStars className="mr-4 text-xl" /> Predicción
                         </Link>
                     </li>
@@ -66,17 +66,17 @@ export default function AdminSideBar() {
                         {isInventarioOpen && (
                             <ul className="mx-2 ml-2 bg-[#fffcfca8] rounded-md transition-all duration-300">
                                 <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
-                                    <Link className="flex flex-row items-center" to="/ver_categorias">
+                                    <Link className="flex flex-row items-center" to="/admin/category/list">
                                         <IoIosArrowForward className="mr-4 text-xl" /> Categorías
                                     </Link>
                                 </li>
                                 <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
-                                    <Link className="flex flex-row items-center" to="/supplier-list">
+                                    <Link className="flex flex-row items-center" to="/admin/supplier/list">
                                         <IoIosArrowForward className="mr-4 text-xl" /> Proveedores
                                     </Link>
                                 </li>
                                 <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
-                                    <Link className="flex flex-row items-center" to="/listar_productos">
+                                    <Link className="flex flex-row items-center" to="/admin/product/list">
                                         <IoIosArrowForward className="mr-4 text-xl" /> Productos
                                     </Link>
                                 </li>

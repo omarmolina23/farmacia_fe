@@ -58,7 +58,7 @@ const SuppliersList = () => {
     };
 
     const handleSupplierRegister = () => {
-        navigate('/supplier-register');
+        navigate('/admin/supplier/register');
     };
 
     const sortedSuppliers = [...suppliers].sort((a, b) => {
