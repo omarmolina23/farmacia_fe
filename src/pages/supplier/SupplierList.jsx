@@ -30,11 +30,9 @@ const SuppliersList = () => {
                 if (Array.isArray(data)) {
                     setSuppliers(data.filter(supplier => supplier.status === "ACTIVE"));
                 } else {
-                    console.error("La respuesta no es un array");
                 }
             })
             .catch(error => {
-                console.error("Error al obtener los proveedores:", error);
                 toast.error("Error al obtener proveedores");
             });
     };
@@ -52,7 +50,6 @@ const SuppliersList = () => {
             const results = await searchSupplier(query);
             setSuppliers(results);
         } catch (error) {
-            console.error("Error en la búsqueda:", error);
             toast.error("Error en la búsqueda de proveedores");
         }
     };

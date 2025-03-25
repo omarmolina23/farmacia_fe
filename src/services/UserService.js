@@ -11,7 +11,7 @@ export const login = async (email, password) => {
 
         return response.data;
     } catch (error) {
-        throw new Error(error.response.data.message);
+        throw new Error(error.response.data.message || "Ha ocurrido un error");
     }
 };
 
@@ -30,11 +30,10 @@ export const setPassword = async (token, password) => {
             }
         );
 
-        console.log(response)
         return response.data;
     }
     catch (error) {
-        throw new Error(error.response.data.message);
+        throw new Error(error.response.data.message || "Ha ocurrido un error");
     }
 }
 
@@ -54,6 +53,6 @@ export const refreshToken = async () => {
         return response.data;
     }
     catch (error) {
-        throw new Error(error.response.data.message);
+        throw new Error(error.response.data.message || "Ha ocurrido un error");
     }
 }
