@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
@@ -17,28 +17,26 @@ const EmployeesHome = lazy(() => import("./pages/employees/EmployeesHome"));
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AdminRoute />}>
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AdminRoute />}>
               <Route path="/admin">
-                  <Route path="inicio" element={<AdminHome />} />
-                  <Route path="supplier">
-                    <Route path="register" element={<SupplierRegister />} />
-                    <Route path="list" element={<SupplierList />} />
-                    <Route path="update" element={<SupplierUpdate />} />
-                  </Route>
+                <Route path="inicio" element={<AdminHome />} />
+                <Route path="supplier">
+                  <Route path="register" element={<SupplierRegister />} />
+                  <Route path="list" element={<SupplierList />} />
+                  <Route path="update" element={<SupplierUpdate />} />
                 </Route>
               </Route>
-              <Route path="/employees/home" element={<EmployeesHome />} />
             </Route>
-          </Routes>
-        </Suspense>
-      </Router>
+            <Route path="/employees/home" element={<EmployeesHome />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </AuthProvider>
   );
 }
