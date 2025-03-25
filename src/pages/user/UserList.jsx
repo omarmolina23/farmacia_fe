@@ -51,7 +51,7 @@ const UserList = () => {
   };
 
   const handleUserRegister = () => {
-    navigate("/user-register");
+    navigate("/admin/user/register");
   };
 
   const calculateAge = (birthdate) => {

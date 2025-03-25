@@ -12,6 +12,8 @@ const AdminHome = lazy(() => import("./pages/admin/AdminHome"));
 const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
+const UserList = lazy(() => import("./pages/user/UserList"));
+const UserRegister = lazy(() => import("./pages/user/UserRegister"));
 const EmployeesHome = lazy(() => import("./pages/employees/EmployeesHome"));
 
 function App() {
@@ -25,11 +27,15 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
               <Route path="/admin">
-                <Route path="inicio" element={<AdminHome />} />
+                <Route path="home" element={<AdminHome />} />
                 <Route path="supplier">
                   <Route path="register" element={<SupplierRegister />} />
                   <Route path="list" element={<SupplierList />} />
                   <Route path="update" element={<SupplierUpdate />} />
+                </Route>
+                <Route path="user">
+                  <Route path="register" element={<UserRegister />} />
+                  <Route path="list" element={<UserList />} />
                 </Route>
               </Route>
             </Route>
