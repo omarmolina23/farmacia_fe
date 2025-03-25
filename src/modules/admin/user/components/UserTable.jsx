@@ -17,13 +17,20 @@ const UserTable = ({ id, name, phone, email, age, status }) => {
 
   const handleToggleUserStatus = async () => {
     Swal.fire({
+      customClass: {
+        confirmButton: "bg-[#8B83BB] text-black",  
+        cancelButton: "bg-[#FFFFFF] text-black",  
+        icon: "text-mb mx-auto",
+        title: "!font-semibold !mt-2 !text-gray-900 !text-mb !mx-auto",
+        text: "!font-medium !text-gray-500 !text-mb !mx-auto",
+      },
+      popup: "swal2-show",
       title:
         status === "ACTIVE" ? "¿Deshabilitar usuario?" : "¿Habilitar usuario?",
       text: "Esta acción cambiará el estado del usuario",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      iconColor: "#000000",
       confirmButtonText:
         status === "ACTIVE" ? "Sí, deshabilitar" : "Sí, habilitar",
       cancelButtonText: "No, cancelar",
