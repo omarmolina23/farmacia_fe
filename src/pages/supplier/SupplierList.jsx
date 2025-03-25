@@ -2,15 +2,22 @@ import { useEffect, useState } from "react";
 import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout.jsx";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
+import Pagination from "../../components/Pagination";
 import SupplierTable from "../../modules/admin/supplier/components/SupplierTable.jsx";
 import { getSupplierAll, searchSupplier } from "../../services/SupplierService";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const SuppliersList = () => {
     const [suppliers, setSuppliers] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+    const [hoverColumn, setHoverColumn] = useState(null);
+    
+    const rowsOptions = [10, 15, 20, 25, 30, 50];
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,7 +28,7 @@ const SuppliersList = () => {
         getSupplierAll()
             .then(data => {
                 if (Array.isArray(data)) {
-                    setSuppliers(data);
+                    setSuppliers(data.filter(supplier => supplier.status === "ACTIVE"));
                 } else {
                     console.error("La respuesta no es un array");
                 }
@@ -54,6 +61,27 @@ const SuppliersList = () => {
         navigate('/supplier-register');
     };
 
+    const sortedSuppliers = [...suppliers].sort((a, b) => {
+        if (sortConfig.key) {
+            const valueA = a[sortConfig.key].toLowerCase();
+            const valueB = b[sortConfig.key].toLowerCase();
+            if (valueA < valueB) return sortConfig.direction === "asc" ? -1 : 1;
+            if (valueA > valueB) return sortConfig.direction === "asc" ? 1 : -1;
+            return 0;
+        }
+        return 0;
+    });
+
+    const paginatedSuppliers = sortedSuppliers.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    const handleSort = (key) => {
+        let direction = "asc";
+        if (sortConfig.key === key && sortConfig.direction === "asc") {
+            direction = "desc";
+        }
+        setSortConfig({ key, direction });
+    };
+
     return (
         <SupplierLayout title="Proveedores">
             <div className="w-full bg-white p-3 flex justify-between items-center border-none">
@@ -65,28 +93,61 @@ const SuppliersList = () => {
                 <thead className="p-5 bg-[#95A09D] text-left">
                     <tr className="h-9">
                         <th className="pl-5">Nº</th>
-                        <th>Nombre</th>
+                        <th 
+                            onMouseEnter={() => setHoverColumn("name")}
+                            onMouseLeave={() => setHoverColumn(null)}
+                            onClick={() => handleSort("name")}
+                            className="cursor-pointer flex items-center gap-2 p-2"
+                        >
+                            Nombre
+                            {(hoverColumn === "name" || sortConfig.key === "name") && (
+                                sortConfig.key === "name" && sortConfig.direction === "asc" 
+                                ? <IoIosArrowUp />
+                                : <IoIosArrowDown />
+                            )}
+                        </th>
                         <th>Teléfono</th>
-                        <th>Correo electrónico</th>
+                        <th 
+                            onMouseEnter={() => setHoverColumn("email")}
+                            onMouseLeave={() => setHoverColumn(null)}
+                            onClick={() => handleSort("email")}
+                            className="cursor-pointer flex items-center gap-2"
+                        >
+                            Correo electrónico
+                            {(hoverColumn === "email" || sortConfig.key === "email") && (
+                                sortConfig.key === "email" && sortConfig.direction === "asc" 
+                                ? <IoIosArrowUp />
+                                : <IoIosArrowDown />
+                            )}
+                        </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {suppliers.map((supplier, index) => (
+                    {paginatedSuppliers.map((supplier, index) => (
                         <SupplierTable
-                            key={index}
+                            key={supplier.id}
                             id={supplier.id}
-                            index={index}
+                            index={(currentPage - 1) * rowsPerPage + index}
                             name={supplier.name}
                             phone={supplier.phone}
                             email={supplier.email}
                             status={supplier.status}
+                            refreshList={fetchSuppliers}
                         />
                     ))}
                 </tbody>
             </table>
+            <Pagination 
+                currentPage={currentPage} 
+                totalItems={sortedSuppliers.length} 
+                rowsPerPage={rowsPerPage} 
+                setCurrentPage={setCurrentPage} 
+                setRowsPerPage={setRowsPerPage} 
+                rowsOptions={rowsOptions}
+            />
         </SupplierLayout>
     );
-}
+};
 
 export default SuppliersList;
