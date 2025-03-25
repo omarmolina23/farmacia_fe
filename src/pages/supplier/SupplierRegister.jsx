@@ -64,7 +64,7 @@ export default function SupplierRegister() {
     try {
       await createSupplier(formData);
       toast.success("Proveedor registrado exitosamente", { position: "top-right", autoClose: 3000 });
-      navigate("/supplier-list");
+      navigate("/admin/supplier/list");
       setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
     } catch (error) {
       if (error.response) {
@@ -97,7 +97,7 @@ export default function SupplierRegister() {
 
   const handleCancel = () => {
     setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
-    navigate("/supplier-list");
+    navigate("/admin/supplier/list");
   };
 
   return (

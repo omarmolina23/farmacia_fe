@@ -73,7 +73,7 @@ export default function SupplierUpdate() {
         try {
             await updateSupplier(formData.id, formData);
             toast.success("Proveedor actualizado exitosamente", { position: "top-right", autoClose: 3000 });
-            navigate("/supplier-list");
+            navigate("/admin/supplier/list");
             setFormData({ id: "", name: "", phone: "", email: "" });
             localStorage.removeItem("supplierData"); // Limpiar localStorage después de actualizar
         } catch (error) {
@@ -107,7 +107,7 @@ export default function SupplierUpdate() {
 
     const handleCancel = () => {
         setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
-        navigate("/supplier-list");
+        navigate("/admin/supplier/list");
     };
 
     return (
