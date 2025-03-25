@@ -99,7 +99,7 @@ const Login = () => {
             <hr className="border-[#1e1e1e63] w-full mt-6 mb-6" />
             <Button
               color="bg-[#D0F25E]"
-              colorSecundary="bg-[#8B83BA]"
+              textColor="text-black"
               type="submit"
               title="Iniciar Sesión"
             />
