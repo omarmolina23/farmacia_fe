@@ -32,7 +32,7 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
         <>
             <tr className='text-left h-8 align-middle'>
                 <td className="pl-5">#{index + 1}</td>
-                <td>{name}</td>
+                <td className="pl-2">{name}</td>
                 <td>{phone}</td>
                 <td>{email}</td>
                 <td className="flex flex-row p-1">
