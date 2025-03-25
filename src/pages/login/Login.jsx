@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { login as loginService } from "../../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import TextField from "../../components/TextField";
 import PasswordField from "../../components/PasswordField";
 import Button from "../../components/Button";
@@ -23,7 +23,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(user.isAdmin ? "/inicio" : "/employees-inicio");
+      navigate(user.isAdmin ? "/admin/inicio" : "/employees/inicio");
     }
   }, [user]);
 
@@ -51,7 +51,7 @@ const Login = () => {
         status: response.status,
       });
       toast.success("Inicio de sesión exitoso");
-      navigate(response.isAdmin ? "/inicio" : "/employees-inicio");
+      navigate(response.isAdmin ? "/admin/inicio" : "/employees/inicio");
     } catch (error) {
       toast.error(error.message);
     }

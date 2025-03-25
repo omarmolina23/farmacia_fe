@@ -73,41 +73,17 @@ export default function SupplierUpdate() {
         try {
             await updateSupplier(formData.id, formData);
             toast.success("Proveedor actualizado exitosamente", { position: "top-right", autoClose: 3000 });
-            navigate("/supplier-list");
+            navigate("/admin/supplier/list");
             setFormData({ id: "", name: "", phone: "", email: "" });
             localStorage.removeItem("supplierData"); // Limpiar localStorage después de actualizar
         } catch (error) {
-            if (error.response) {
-                const { status, data } = error.response;
-
-                switch (status) {
-                    case 400:
-                        if (data.errors) {
-                            data.errors.forEach((err) => {
-                                toast.error(err.message, { position: "top-right", autoClose: 3000 });
-                            });
-                        } else {
-                            toast.error(`Error: ${data.message || "Datos inválidos."}`, { position: "top-right", autoClose: 3000 });
-                        }
-                        break;
-                    case 409:
-                        toast.error("Ya existe un proveedor con este correo o teléfono.", { position: "top-right", autoClose: 3000 });
-                        break;
-                    case 500:
-                        toast.error("Error en el servidor, inténtelo más tarde.", { position: "top-right", autoClose: 3000 });
-                        break;
-                    default:
-                        toast.error("Ocurrió un error inesperado.", { position: "top-right", autoClose: 3000 });
-                }
-            } else {
-                toast.error("No se pudo conectar con el servidor.", { position: "top-right", autoClose: 3000 });
-            }
+            toast.error(error.message);
         }
     };
 
     const handleCancel = () => {
         setFormData({ name: "", phone: "", email: "", status: "ACTIVE" });
-        navigate("/supplier-list");
+        navigate("/admin/supplier/list");
     };
 
     return (

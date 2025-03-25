@@ -10,7 +10,7 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
     const handleEditClick = () => {
         const supplierData = { id, name, phone, email, status };
         localStorage.setItem("supplierData", JSON.stringify(supplierData));
-        navigate(`/supplier-update`);
+        navigate(`/admin/supplier/update`);
     };
 
     const handleToggleStatus = async () => {

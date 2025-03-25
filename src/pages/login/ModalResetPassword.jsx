@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { forgotPassword as forgotPasswordService } from "../../services/UserService";
 import { toast } from "react-toastify";
-import TextField from "../../components/TextField";
-import Button from "../../components/Button";
 import ModalSendReset from "../../components/ModalSendReset";
 import ModalResetPasswordField from "../../components/ModalResetPasswordField";
 
