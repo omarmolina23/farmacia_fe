@@ -4,8 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 export function ProtectedRoute() {
   const { user } = useAuth();
 
-  console.log("user", user);
-  if (!user && user.isActive) {
+  if (!user || user.status === "INACTIVE") {
     return <Navigate to="/" />;
   }
 

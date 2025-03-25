@@ -3,7 +3,7 @@ import UserLayout from "../../modules/admin/user/layout/UserLayout.jsx";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import UserTable from "../../modules/admin/user/components/UserTable.jsx";
-import { getSupplierAll, searchSupplier } from "../../services/SupplierService";
+import { getUserAll, searchUser, deleteUser } from "../../services/UserService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
@@ -18,33 +18,18 @@ const UserList = () => {
   }, []);
 
   const fetchUsers = () => {
-    const mockData = [
-      {
-        id: 1093,
-        name: "Juan Pérez",
-        phone: "3012345678",
-        email: "juan@example.com",
-        age: 30,
-        status: "Activo",
-      },
-      {
-        id: 1094,
-        name: "María Gómez",
-        phone: "3123456789",
-        email: "maria@example.com",
-        age: 25,
-        status: "Inactivo",
-      },
-      {
-        id: 1095,
-        name: "Carlos López",
-        phone: "3009876543",
-        email: "carlos@example.com",
-        age: 40,
-        status: "Activo",
-      },
-    ];
-    setUsers(mockData);
+    getUserAll()
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setUsers(data);
+        } else {
+          console.error("La respuesta no es un array");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener los usuarios:", error);
+        toast.error("Error al obtener usuarios");
+      });
   };
 
   const handleSearch = async (e) => {
@@ -57,7 +42,7 @@ const UserList = () => {
     }
 
     try {
-      const results = await searchSupplier(query);
+      const results = await searchUser(query);
       setUsers(results);
     } catch (error) {
       console.error("Error en la búsqueda:", error);
@@ -67,6 +52,24 @@ const UserList = () => {
 
   const handleUserRegister = () => {
     navigate("/user-register");
+  };
+
+  const calculateAge = (birthdate) => {
+    if (!birthdate) return "N/A";
+    const birthDate = new Date(birthdate);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
   };
 
   return (
@@ -100,11 +103,10 @@ const UserList = () => {
             <UserTable
               key={index}
               id={user.id}
-              index={index}
               name={user.name}
               phone={user.phone}
               email={user.email}
-              age={user.age}
+              age={calculateAge(user.birthdate)}
               status={user.status}
             />
           ))}

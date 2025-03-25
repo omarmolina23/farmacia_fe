@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { signUp } from "../../services/UserService";
 import UserLayout from "../../modules/admin/user/layout/UserLayout";
 import UserForm from "../../modules/admin/user/components/UserForm";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function UserRegister() {
   const [formData, setFormData] = useState({
-    role: "",
-    fullName: "",
+    id: "",
+    name: "",
     phone: "",
     email: "",
     confirmEmail: "",
-    age: "",
+    birthdate: "",
     status: "ACTIVE",
+    role: "",
   });
 
   const handleChange = (e) => {
@@ -23,17 +25,17 @@ export default function UserRegister() {
   const validateForm = () => {
     const errors = [];
 
-    if (!formData.role) {
+    if (!formData.role.trim()) {
       errors.push("El rol es obligatorio.");
     }
 
-    if (!formData.fullName.trim()) {
+    if (!formData.name.trim()) {
       errors.push("El nombre completo es obligatorio.");
     }
 
-    if (!formData.phone || formData.phone.length !== 13) {
+    if (!formData.phone || !/^\+57\d{10}$/.test(formData.phone)) {
       errors.push(
-        "El teléfono debe contener exactamente 10 dígitos después de +57."
+        "El teléfono debe tener el formato +57 seguido de 10 dígitos."
       );
     }
 
@@ -47,8 +49,16 @@ export default function UserRegister() {
       errors.push("Los correos electrónicos no coinciden.");
     }
 
-    if (!formData.age.trim() || isNaN(formData.age) || formData.age < 18) {
-      errors.push("La edad es obligatoria y debe ser mayor o igual a 18 años.");
+    if (!formData.birthdate.trim()) {
+      errors.push("La fecha de nacimiento es obligatoria.");
+    } else {
+      const birthYear = new Date(formData.birthdate).getFullYear();
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - birthYear;
+
+      if (isNaN(age) || age < 18) {
+        errors.push("Debe ser mayor o igual a 18 años.");
+      }
     }
 
     if (errors.length > 0) {
@@ -68,37 +78,91 @@ export default function UserRegister() {
       return;
     }
 
+    const userData = {
+      id: formData.id,
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      birthdate: formData.birthdate,
+      status: formData.status,
+      isAdmin: formData.role === "Administrador",
+      isEmployee: formData.role === "Vendedor",
+    };
+
     try {
+      console.log(userData);
+      await signUp(userData);
       toast.success("Usuario registrado exitosamente", {
         position: "top-right",
         autoClose: 3000,
       });
       setFormData({
-        role: "",
-        fullName: "",
+        id: "",
+        name: "",
         phone: "",
         email: "",
         confirmEmail: "",
-        age: "",
+        birthdate: "",
         status: "ACTIVE",
+        role: "",
       });
     } catch (error) {
-      toast.error("Ocurrió un error al registrar el usuario.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      if (error.response) {
+        const { status, data } = error.response;
+
+        switch (status) {
+          case 400:
+            if (data.errors) {
+              data.errors.forEach((err) => {
+                toast.error(err.message, {
+                  position: "top-right",
+                  autoClose: 3000,
+                });
+              });
+            } else {
+              toast.error(`Error: ${data.message || "Datos inválidos."}`, {
+                position: "top-right",
+                autoClose: 3000,
+              });
+            }
+            break;
+          case 409:
+            toast.error("Ya existe un usuario con este correo o teléfono.", {
+              position: "top-right",
+              autoClose: 3000,
+            });
+            break;
+          case 500:
+            toast.error("Error en el servidor, inténtelo más tarde.", {
+              position: "top-right",
+              autoClose: 3000,
+            });
+            break;
+          default:
+            toast.error("Ocurrió un error inesperado.", {
+              position: "top-right",
+              autoClose: 3000,
+            });
+        }
+      } else {
+        toast.error("No se pudo conectar con el servidor.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
     }
   };
 
   const handleCancel = () => {
     setFormData({
-      role: "",
-      fullName: "",
+      id: "",
+      name: "",
       phone: "",
       email: "",
       confirmEmail: "",
-      age: "",
+      birthdate: "",
       status: "ACTIVE",
+      role: "",
     });
   };
 

@@ -1,3 +1,6 @@
+env
+.env
+
 # Logs
 logs
 *.log
@@ -23,3 +26,5 @@ dist-ssr
 *.sln
 *.sw?
 
+
+.vercel

@@ -31,11 +31,22 @@ const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
           />
         </div>
         <div>
+          <label className="text-md font-medium w-70">Cédula</label>
+          <TextField
+            type="text"
+            name="id"
+            value={formData.id}
+            onChange={handleChange}
+            className="bg-gray-200"
+            disabled
+          />
+        </div>
+        <div>
           <label className="text-md font-medium w-70">Nombre completo</label>
           <TextField
             type="text"
-            name="fullName"
-            value={formData.fullName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             className="bg-gray-200"
             disabled
@@ -44,9 +55,9 @@ const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
         <div>
           <label className="text-md font-medium w-70">Edad</label>
           <TextField
-            type="number"
-            name="age"
-            value={formData.age}
+            type="date"
+            name="birthdate"
+            value={formData.birthdate}
             onChange={handleChange}
             className="bg-gray-200"
             disabled
