@@ -8,6 +8,7 @@ import { getSupplierAll, searchSupplier } from "../../services/SupplierService";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import FilterStatus from "../../components/FilterStatus";
 
 const SuppliersList = () => {
     const [suppliers, setSuppliers] = useState([]);
@@ -16,19 +17,20 @@ const SuppliersList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
     const [hoverColumn, setHoverColumn] = useState(null);
+    const [filterStatus, setFilterStatus] = useState("ACTIVE");
     
     const rowsOptions = [10, 15, 20, 25, 30, 50];
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchSuppliers();
-    }, []);
+    }, [filterStatus]);
 
     const fetchSuppliers = () => {
         getSupplierAll()
             .then(data => {
                 if (Array.isArray(data)) {
-                    setSuppliers(data.filter(supplier => supplier.status === "ACTIVE"));
+                    setSuppliers(data.filter(supplier => supplier.status === filterStatus));
                 } else {
                 }
             })
@@ -85,7 +87,9 @@ const SuppliersList = () => {
                 <SearchBar placeholder="Buscar un proveedor" value={searchQuery} onChange={handleSearch} />
                 <Button title="Registrar proveedor" color="bg-[#8B83BA]" onClick={handleSupplierRegister} />
             </div>
-            <div className="bg-[#D0F25E] p-5 h-6 w-full"></div>
+           
+            <FilterStatus filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
+
             <table className="text-sm w-full">
                 <thead className="p-5 bg-[#95A09D] text-left">
                     <tr className="h-9">
