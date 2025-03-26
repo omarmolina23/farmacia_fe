@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { updateUser } from "../../../../services/UserService";
 
-const UserTable = ({ id, name, phone, email, age, status }) => {
+const UserTable = ({ id, name, phone, email, age, status, refreshList }) => {
   const navigate = useNavigate();
   const handleEditClick = () => {
     navigate(`/admin/user/update/${id}`);
@@ -41,7 +41,8 @@ const UserTable = ({ id, name, phone, email, age, status }) => {
             `Usuario ${
               newStatus === "ACTIVE" ? "habilitado" : "deshabilitado"
             } correctamente`
-          );
+          )
+          refreshList();
         } catch (error) {
           console.error("Error al cambiar el estado del usuario:", error);
           toast.error("Error al cambiar el estado del usuario");

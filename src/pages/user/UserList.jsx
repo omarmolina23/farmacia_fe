@@ -30,7 +30,12 @@ const UserList = () => {
     getUserAll()
       .then((data) => {
         if (Array.isArray(data)) {
-          setUsers(data.filter(user => user.status === filterStatus));
+          const filteredUsers = data.filter(user => user.status === filterStatus);
+          const usersWithAge = filteredUsers.map(user => ({
+            ...user,
+            age: calculateAge(user.birthdate)
+          }));
+          setUsers(usersWithAge);
         }
       })
       .catch(() => {
@@ -135,6 +140,7 @@ const UserList = () => {
               email={user.email}
               age={calculateAge(user.birthdate)}
               status={user.status}
+              refreshList={fetchUsers}
             />
           ))}
         </tbody>
