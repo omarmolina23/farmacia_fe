@@ -17,7 +17,7 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
     const handleToggleStatus = async () => {
         const isActive = status === "ACTIVE";
         const action = isActive ? deleteSupplier(id) : updateSupplier(id, { status: "ACTIVE" });
-    
+
         Swal.fire({
             customClass: {
                 confirmButton: "bg-[#8B83BB] text-black",
@@ -50,42 +50,39 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
 
     return (
         <>
-            <tr className='text-left h-8 align-middle'>
+            <tr className="text-left h-8 align-middle border-b">
                 <td className="pl-5">#{index + 1}</td>
                 <td className="pl-2">{name}</td>
-                <td>{phone}</td>
-                <td>{email}</td>
-                <td className="flex flex-row p-1">
+                <td className="hidden md:table-cell">{phone}</td>
+                <td className="hidden md:table-cell">{email}</td>
+                <td className="flex flex-col md:flex-row p-1 gap-2">
                     <div
-                        className="flex flex-row items-center cursor-pointer hover:bg-[#f1d167] w-fit m-[1px] px-[3px] rounded-sm mr-4"
+                        className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
                         onClick={handleEditClick}
                     >
-                        <FaEdit size={16} className="mr-2 text-[#232323]" />Editar
+                        <FaEdit size={16} className="mr-2 text-[#232323]" />
+                        <span className="hidden md:inline">Editar</span>
                     </div>
                     {status === "ACTIVE" ? (
                         <div
-                            className="flex flex-row items-center cursor-pointer hover:bg-[#F16767] w-fit m-[1px] px-[3px] rounded-sm"
+                            className="flex items-center cursor-pointer hover:bg-[#F16767] w-fit px-[3px] rounded-sm"
                             onClick={handleToggleStatus}
                         >
                             <EyeOff size={16} className='mr-2 text-[#181818]' />
-                            Deshabilitar
+                            <span className="hidden md:inline">Deshabilitar</span>
                         </div>
                     ) : (
                         <div
-                            className="flex flex-row items-center cursor-pointer hover:bg-[#AAF167] w-fit m-[1px] px-[3px] rounded-sm"
+                            className="flex items-center cursor-pointer hover:bg-[#AAF167] w-fit px-[3px] rounded-sm"
                             onClick={handleToggleStatus}
                         >
                             <Eye size={16} className='mr-2 text-[#181818]' />
-                            Habilitar
+                            <span className="hidden md:inline">Habilitar</span>
                         </div>
                     )}
                 </td>
             </tr>
-            <tr>
-                <td colSpan="5">
-                    <hr />
-                </td>
-            </tr>
+
         </>
     );
 };

@@ -100,7 +100,7 @@ const UserList = () => {
 
   return (
     <UserLayout title="Usuarios">
-      <div className="w-full bg-white p-3 flex justify-between items-center border-none">
+      <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar placeholder="Buscar un usuario" value={searchQuery} onChange={handleSearch} />
         <Button title="Registrar usuario" color="bg-[#8B83BA]" onClick={handleUserRegister} />
       </div>
