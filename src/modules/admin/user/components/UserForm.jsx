@@ -2,7 +2,17 @@ import React from "react";
 import Button from "../../../../components/Button";
 import TextField from "../../../../components/TextField";
 
-const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
+const isFieldDisabled = (isEditMode) => {
+  return isEditMode? true : false;
+};
+
+const UserForm = ({
+  formData,
+  handleChange,
+  handleSubmit,
+  handleCancel,
+  isEditMode,
+}) => {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-4xl space-y-4 p-4">
       <div className="grid grid-cols-2 gap-6 p-4">
@@ -20,17 +30,6 @@ const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
           </select>
         </div>
         <div>
-          <label className="text-md font-medium w-70">Teléfono</label>
-          <TextField
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="bg-gray-200"
-            disabled
-          />
-        </div>
-        <div>
           <label className="text-md font-medium w-70">Cédula</label>
           <TextField
             type="text"
@@ -38,7 +37,7 @@ const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
             value={formData.id}
             onChange={handleChange}
             className="bg-gray-200"
-            disabled
+            disabled={isFieldDisabled(isEditMode)}
           />
         </div>
         <div>
@@ -49,18 +48,20 @@ const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
             value={formData.name}
             onChange={handleChange}
             className="bg-gray-200"
-            disabled
+            disabled={false}
           />
         </div>
         <div>
-          <label className="text-md font-medium w-70">Edad</label>
+          <label className="text-md font-medium w-70">
+            Fecha de nacimiento
+          </label>
           <TextField
             type="date"
             name="birthdate"
             value={formData.birthdate}
             onChange={handleChange}
             className="bg-gray-200"
-            disabled
+            disabled={false}
           />
         </div>
         <div>
@@ -71,25 +72,43 @@ const UserForm = ({ formData, handleChange, handleSubmit, handleCancel }) => {
             value={formData.email}
             onChange={handleChange}
             className="bg-gray-200"
-            disabled
+            disabled={isFieldDisabled(isEditMode)}
           />
         </div>
         <div>
-          <label className="text-md font-medium w-70">Confirme correo electrónico</label>
+          <label className="text-md font-medium w-70">
+            Confirme correo electrónico
+          </label>
           <TextField
             type="email"
             name="confirmEmail"
             value={formData.confirmEmail}
             onChange={handleChange}
             className="bg-gray-200"
-            disabled
+            disabled={isFieldDisabled(isEditMode)}
+          />
+        </div>
+        <div>
+          <label className="text-md font-medium w-70">Teléfono</label>
+          <TextField
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="bg-gray-200"
+            disabled={false}
           />
         </div>
       </div>
 
       <div className="flex justify-end space-x-4 p-4">
         <Button type="submit" title="Agregar" color="bg-[#8B83BA]" />
-        <Button type="button" title="Cancelar" color="bg-[#8B83BA]" onClick={handleCancel} />
+        <Button
+          type="button"
+          title="Cancelar"
+          color="bg-[#8B83BA]"
+          onClick={handleCancel}
+        />
       </div>
     </form>
   );

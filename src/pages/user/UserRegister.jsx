@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { signUp } from "../../services/UserService";
 import UserLayout from "../../modules/admin/user/layout/UserLayout";
@@ -6,6 +7,9 @@ import UserForm from "../../modules/admin/user/components/UserForm";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function UserRegister() {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -90,7 +94,6 @@ export default function UserRegister() {
     };
 
     try {
-      console.log(userData);
       await signUp(userData);
       toast.success("Usuario registrado exitosamente", {
         position: "top-right",
@@ -164,6 +167,7 @@ export default function UserRegister() {
       status: "ACTIVE",
       role: "",
     });
+    navigate("/admin/user/list");
   };
 
   return (
@@ -173,6 +177,7 @@ export default function UserRegister() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
+        isEditMode={false}
       />
     </UserLayout>
   );

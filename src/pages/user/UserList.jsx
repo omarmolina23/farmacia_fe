@@ -21,6 +21,7 @@ const UserList = () => {
     getUserAll()
       .then((data) => {
         if (Array.isArray(data)) {
+          console.log(data);
           setUsers(data);
         } else {
           console.error("La respuesta no es un array");

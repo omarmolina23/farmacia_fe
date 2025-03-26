@@ -14,6 +14,7 @@ const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const UserList = lazy(() => import("./pages/user/UserList"));
 const UserRegister = lazy(() => import("./pages/user/UserRegister"));
+const UserUpdate = lazy(() => import("./pages/user/UserUpdate"));
 const EmployeesHome = lazy(() => import("./pages/employees/EmployeesHome"));
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                 <Route path="user">
                   <Route path="register" element={<UserRegister />} />
                   <Route path="list" element={<UserList />} />
+                  <Route path="update/:id" element={<UserUpdate />} />
                 </Route>
               </Route>
             </Route>

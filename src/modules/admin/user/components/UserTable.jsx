@@ -10,9 +10,7 @@ import { updateUser } from "../../../../services/UserService";
 const UserTable = ({ id, name, phone, email, age, status }) => {
   const navigate = useNavigate();
   const handleEditClick = () => {
-    //const userData = { id, name, phone, email, age };
-    //localStorage.setItem("supplierData", JSON.stringify(userDateData));
-    //navigate(`/supplier-update`);
+    navigate(`/admin/user/update/${id}`);
   };
 
   const handleToggleUserStatus = async () => {
