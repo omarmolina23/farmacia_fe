@@ -18,7 +18,7 @@ const SuppliersList = () => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
     const [hoverColumn, setHoverColumn] = useState(null);
     const [filterStatus, setFilterStatus] = useState("ACTIVE");
-    
+
     const rowsOptions = [10, 15, 20, 25, 30, 50];
     const navigate = useNavigate();
 
@@ -42,12 +42,12 @@ const SuppliersList = () => {
     const handleSearch = async (e) => {
         const query = e.target.value;
         setSearchQuery(query);
-        
+
         if (query.trim() === "") {
             fetchSuppliers();
             return;
         }
-        
+
         try {
             const results = await searchSupplier(query);
             setSuppliers(results);
@@ -83,68 +83,81 @@ const SuppliersList = () => {
 
     return (
         <SupplierLayout title="Proveedores">
-            <div className="w-full bg-white p-3 flex justify-between items-center border-none">
-                <SearchBar placeholder="Buscar un proveedor" value={searchQuery} onChange={handleSearch} />
-                <Button title="Registrar proveedor" color="bg-[#8B83BA]" onClick={handleSupplierRegister} />
+            <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
+                <SearchBar
+                    placeholder="Buscar un proveedor"
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="w-full md:w-auto"
+                />
+                <Button
+                    title="Registrar proveedor"
+                    color="bg-[#8B83BA]"
+                    onClick={handleSupplierRegister}
+                    className="w-full md:w-auto"
+                />
             </div>
-           
+
             <FilterStatus filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
 
-            <table className="text-sm w-full">
-                <thead className="p-5 bg-[#95A09D] text-left">
-                    <tr className="h-9">
-                        <th className="pl-5">Nº</th>
-                        <th 
-                            onMouseEnter={() => setHoverColumn("name")}
-                            onMouseLeave={() => setHoverColumn(null)}
-                            onClick={() => handleSort("name")}
-                            className="cursor-pointer flex items-center gap-2 p-2"
-                        >
-                            Nombre
-                            {(hoverColumn === "name" || sortConfig.key === "name") && (
-                                sortConfig.key === "name" && sortConfig.direction === "asc" 
-                                ? <IoIosArrowUp />
-                                : <IoIosArrowDown />
-                            )}
-                        </th>
-                        <th>Teléfono</th>
-                        <th 
-                            onMouseEnter={() => setHoverColumn("email")}
-                            onMouseLeave={() => setHoverColumn(null)}
-                            onClick={() => handleSort("email")}
-                            className="cursor-pointer flex items-center gap-2"
-                        >
-                            Correo electrónico
-                            {(hoverColumn === "email" || sortConfig.key === "email") && (
-                                sortConfig.key === "email" && sortConfig.direction === "asc" 
-                                ? <IoIosArrowUp />
-                                : <IoIosArrowDown />
-                            )}
-                        </th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedSuppliers.map((supplier, index) => (
-                        <SupplierTable
-                            key={supplier.id}
-                            id={supplier.id}
-                            index={(currentPage - 1) * rowsPerPage + index}
-                            name={supplier.name}
-                            phone={supplier.phone}
-                            email={supplier.email}
-                            status={supplier.status}
-                            refreshList={fetchSuppliers}
-                        />
-                    ))}
-                </tbody>
-            </table>
-            <Pagination 
-                currentPage={currentPage} 
-                totalItems={sortedSuppliers.length} 
-                rowsPerPage={rowsPerPage} 
-                setCurrentPage={setCurrentPage} 
-                setRowsPerPage={setRowsPerPage} 
+            <div className="w-full overflow-x-auto">
+                <table className="text-sm w-full min-w-[600px]">
+                    <thead className="p-5 bg-[#95A09D] text-left">
+                        <tr className="h-9">
+                            <th className="pl-5">Nº</th>
+                            <th
+                                onMouseEnter={() => setHoverColumn("name")}
+                                onMouseLeave={() => setHoverColumn(null)}
+                                onClick={() => handleSort("name")}
+                                className="cursor-pointer flex items-center gap-2 p-2"
+                            >
+                                Nombre
+                                {(hoverColumn === "name" || sortConfig.key === "name") && (
+                                    sortConfig.key === "name" && sortConfig.direction === "asc"
+                                        ? <IoIosArrowUp />
+                                        : <IoIosArrowDown />
+                                )}
+                            </th>
+                            <th className="hidden md:table-cell">Teléfono</th>
+                            <th
+                                onMouseEnter={() => setHoverColumn("email")}
+                                onMouseLeave={() => setHoverColumn(null)}
+                                onClick={() => handleSort("email")}
+                                className="cursor-pointer flex items-center gap-2 hidden md:table-cell"
+                            >
+                                Correo electrónico
+                                {(hoverColumn === "email" || sortConfig.key === "email") && (
+                                    sortConfig.key === "email" && sortConfig.direction === "asc"
+                                        ? <IoIosArrowUp />
+                                        : <IoIosArrowDown />
+                                )}
+                            </th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginatedSuppliers.map((supplier, index) => (
+                            <SupplierTable
+                                key={supplier.id}
+                                id={supplier.id}
+                                index={(currentPage - 1) * rowsPerPage + index}
+                                name={supplier.name}
+                                phone={supplier.phone}
+                                email={supplier.email}
+                                status={supplier.status}
+                                refreshList={fetchSuppliers}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalItems={sortedSuppliers.length}
+                rowsPerPage={rowsPerPage}
+                setCurrentPage={setCurrentPage}
+                setRowsPerPage={setRowsPerPage}
                 rowsOptions={rowsOptions}
             />
         </SupplierLayout>

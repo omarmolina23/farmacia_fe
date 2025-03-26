@@ -16,8 +16,8 @@ const UserTable = ({ id, name, phone, email, age, status, refreshList }) => {
   const handleToggleUserStatus = async () => {
     Swal.fire({
       customClass: {
-        confirmButton: "bg-[#8B83BB] text-black",  
-        cancelButton: "bg-[#FFFFFF] text-black",  
+        confirmButton: "bg-[#8B83BB] text-black",
+        cancelButton: "bg-[#FFFFFF] text-black",
         icon: "text-mb mx-auto",
         title: "!font-semibold !mt-2 !text-gray-900 !text-mb !mx-auto",
         text: "!font-medium !text-gray-500 !text-mb !mx-auto",
@@ -38,8 +38,7 @@ const UserTable = ({ id, name, phone, email, age, status, refreshList }) => {
           const newStatus = status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
           await updateUser(id, { status: newStatus });
           toast.success(
-            `Usuario ${
-              newStatus === "ACTIVE" ? "habilitado" : "deshabilitado"
+            `Usuario ${newStatus === "ACTIVE" ? "habilitado" : "deshabilitado"
             } correctamente`
           )
           refreshList();
@@ -53,42 +52,37 @@ const UserTable = ({ id, name, phone, email, age, status, refreshList }) => {
 
   return (
     <>
-      <tr className="text-left h-8 align-middle">
+      <tr className="text-left h-8 align-middle border-b">
         <td className="pl-5">{id}</td>
         <td>{name}</td>
-        <td>{phone}</td>
-        <td>{email}</td>
-        <td>{age}</td>
-        <td className="flex flex-row p-1">
+        <td className="hidden md:table-cell">{phone}</td>
+        <td className="hidden md:table-cell">{email}</td>
+        <td className="hidden lg:table-cell">{age}</td>
+        <td className="flex flex-wrap gap-2 p-1">
           <div
-            className="flex flex-row items-center cursor-pointer hover:bg-[#f1d167] w-fit m-[1px] px-[3px] rounded-sm mr-4"
+            className="flex items-center cursor-pointer hover:bg-[#f1d167] px-2 py-1 rounded"
             onClick={handleEditClick}
           >
-            <FaEdit size={16} className="mr-2 text-[#232323]" />
+            <FaEdit size={16} className="mr-1 text-[#232323]" />
             Editar
           </div>
           {status === "ACTIVE" ? (
             <div
-              className="flex flex-row items-center cursor-pointer hover:bg-[#d13737] w-fit m-[1px] px-[3px] rounded-sm"
+              className="flex items-center cursor-pointer hover:bg-[#d13737] px-2 py-1 rounded"
               onClick={handleToggleUserStatus}
             >
-              <EyeOff size={16} className="mr-2 text-[#181818]" />
+              <EyeOff size={16} className="mr-1 text-[#181818]" />
               Deshabilitar
             </div>
           ) : (
             <div
-              className="flex flex-row items-center cursor-pointer hover:bg-[#AAF167] w-fit m-[1px] px-[3px] rounded-sm"
+              className="flex items-center cursor-pointer hover:bg-[#AAF167] px-2 py-1 rounded"
               onClick={handleToggleUserStatus}
             >
-              <Eye size={16} className="mr-2 text-[#181818]" />
+              <Eye size={16} className="mr-1 text-[#181818]" />
               Habilitar
             </div>
           )}
-        </td>
-      </tr>
-      <tr>
-        <td colSpan="6">
-          <hr />
         </td>
       </tr>
     </>
