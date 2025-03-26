@@ -14,7 +14,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const Pagination = ({ currentPage, totalItems, rowsPerPage, setCurrentPage, setRowsPerPage, rowsOptions }) => {
     const totalPages = Math.ceil(totalItems / (rowsPerPage === "Todos" ? totalItems : rowsPerPage));
-    
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(prev => prev + 1);
@@ -34,22 +34,38 @@ const Pagination = ({ currentPage, totalItems, rowsPerPage, setCurrentPage, setR
     };
 
     return (
-        
-        <div className="flex justify-between items-center p-3 opacity-80">
-            <div className="flex items-center">
-                <span className="mr-2">Filas por página:</span>
-                <select value={rowsPerPage} onChange={handleRowsPerPageChange}>
+        <div className="flex flex-wrap justify-between items-center p-3 opacity-80 gap-3 text-sm md:text-base">
+            <div className="flex items-center gap-2">
+                <span>Filas por página:</span>
+                <select
+                    value={rowsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    className="p-1 border rounded-md text-sm md:text-base"
+                >
                     {rowsOptions.map(option => (
                         <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
             </div>
-            <span>{(currentPage - 1) * (rowsPerPage === "Todos" ? totalItems : rowsPerPage) + 1}-{Math.min(currentPage * (rowsPerPage === "Todos" ? totalItems : rowsPerPage), totalItems)} de {totalItems}</span>
-            <div className="flex items-center">
-                <button disabled={currentPage === 1} onClick={handlePrevPage} className="p-2 disabled:opacity-50">
+            
+            <span>
+                {(currentPage - 1) * (rowsPerPage === "Todos" ? totalItems : rowsPerPage) + 1}-
+                {Math.min(currentPage * (rowsPerPage === "Todos" ? totalItems : rowsPerPage), totalItems)} de {totalItems}
+            </span>
+
+            <div className="flex items-center gap-2">
+                <button
+                    disabled={currentPage === 1}
+                    onClick={handlePrevPage}
+                    className="p-2 rounded-md disabled:opacity-50 hover:bg-gray-200 transition"
+                >
                     <FaArrowLeft />
                 </button>
-                <button disabled={currentPage === totalPages} onClick={handleNextPage} className="p-2 disabled:opacity-50">
+                <button
+                    disabled={currentPage === totalPages}
+                    onClick={handleNextPage}
+                    className="p-2 rounded-md disabled:opacity-50 hover:bg-gray-200 transition"
+                >
                     <FaArrowRight />
                 </button>
             </div>
