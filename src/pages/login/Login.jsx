@@ -58,24 +58,14 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#D0F25E] h-[100vh] w-[100%] flex flex-row">
-      <AuthSidebar />
-      <div className="bg-white w-full lg:w-[60%] rounded-t-[40px] lg:rounded-l-[40px] overflow-hidden flex flex-col justify-center items-center py-8">
-        <div className="p-6 flex flex-col w-[90%] max-w-[400px] justify-evenly items-center">
-          <div className="flex flex-col w-full justify-between items-center">
-            <h3 className="text-2xl md:text-3xl mb-4">Iniciar Sesión</h3>
-            <hr className="border-[#1e1e1e63] w-full" />
-          </div>
-          <form
-            className="flex flex-col w-full justify-evenly items-center"
-            onSubmit={handleSubmit}
-          >
-            <label
-              className="w-full text-lg md:text-xl text-left mt-4"
-              htmlFor="email"
-            >
-              Correo Electrónico
-            </label>
+    <div className="bg-[#D0F25E] min-h-screen flex flex-col lg:flex-row items-center lg:items-stretch">
+      <AuthSidebar className="w-full md:w-[25%] sm:w-[35%]" />
+      <div className="bg-white w-full lg:w-3/5 rounded-t-3xl lg:rounded-l-3xl flex flex-col justify-center items-center py-8 px-6">
+        <div className="w-full max-w-md flex flex-col items-center">
+          <h3 className="text-2xl md:text-3xl font-semibold mb-4">Iniciar Sesión</h3>
+          <hr className="border-gray-300 w-full" />
+          <form className="w-full flex flex-col mt-6" onSubmit={handleSubmit}>
+            <label className="text-lg md:text-xl mb-1" htmlFor="email">Correo Electrónico</label>
             <TextField
               type="email"
               id="email"
@@ -83,32 +73,17 @@ const Login = () => {
               placeholder="Introduzca su correo aquí"
               onChange={handleChange}
             />
-            <label
-              className="w-full text-lg md:text-xl text-left mt-4"
-              htmlFor="password"
-            >
-              Contraseña
-            </label>
+            <label className="text-lg md:text-xl mt-4 mb-1" htmlFor="password">Contraseña</label>
             <PasswordField onChange={handleChange} />
-            <p
-              className="w-full text-sm text-gray-500 cursor-pointer mt-4 text-left"
-              onClick={() => setShowResetModal(true)}
-            >
+            <p className="text-sm text-gray-500 cursor-pointer mt-3 text-left" onClick={() => setShowResetModal(true)}>
               ¿Has olvidado tu contraseña?
             </p>
-            <hr className="border-[#1e1e1e63] w-full mt-6 mb-6" />
-            <Button
-              color="bg-[#D0F25E]"
-              textColor="text-black"
-              type="submit"
-              title="Iniciar Sesión"
-            />
+            <hr className="border-gray-300 w-full my-6" />
+            <Button color="bg-[#D0F25E]" textColor="text-black" type="submit" title="Iniciar Sesión" />
           </form>
         </div>
       </div>
-      {showResetModal && (
-        <ModalResetPassword onClose={() => setShowResetModal(false)} />
-      )}
+      {showResetModal && <ModalResetPassword onClose={() => setShowResetModal(false)} />}
     </div>
   );
 };
