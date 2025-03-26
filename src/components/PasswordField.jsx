@@ -17,7 +17,7 @@ const PasswordField = ({ id, name, onChange }) => {
                 type={showPassword ? "text" : "password"}
                 id={id || "password"}
                 name={name || "password"}
-                placeholder="Introduzca su contraseña aquí"
+                placeholder="Introduzca su contraseña"
                 onChange={onChange} />
 
             <button
