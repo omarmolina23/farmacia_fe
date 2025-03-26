@@ -16,8 +16,7 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
 
     const handleToggleStatus = async () => {
         const isActive = status === "ACTIVE";
-        const action = isActive ? deleteSupplier(id) : updateSupplier(id, { status: "ACTIVE" });
-
+    
         Swal.fire({
             customClass: {
                 confirmButton: "bg-[#8B83BB] text-black",
@@ -37,7 +36,11 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await action;
+                    const action = isActive 
+                        ? deleteSupplier(id) 
+                        : updateSupplier(id, { status: "ACTIVE" });
+    
+                    await action; // Ejecutar la acción aquí, solo si el usuario confirma
                     toast.success(`Proveedor ${isActive ? "deshabilitado" : "habilitado"}`);
                     refreshList();
                 } catch (error) {
@@ -46,7 +49,7 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
                 }
             }
         });
-    };
+    };    
 
     return (
         <>
