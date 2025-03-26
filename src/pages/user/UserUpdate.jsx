@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import UserLayout from "../../modules/admin/user/layout/UserLayout";
 import UserForm from "../../modules/admin/user/components/UserForm";
+import Loading from "../../components/Loading";
 import "react-toastify/dist/ReactToastify.css";
 import { updateUser, searchUser } from "../../services/UserService";
 
@@ -206,7 +207,7 @@ export default function UserUpdate() {
 
   if (loading) {
     return (
-      <p className="text-center text-lg font-semibold">Cargando usuario...</p>
+      <Loading />
     );
   }
 

@@ -19,7 +19,7 @@ import Button from "./Button";
 
 const FilterStatus = ({ filterStatus, setFilterStatus }) => {
     return (
-        <div className="bg-[#D0F25E] p-5 flex gap-4 flex-wrap justify-start">
+        <div className="w-full bg-[#D0F25E] p-5 flex gap-4 flex-wrap justify-start">
             <Button
                 title="Habilitados"
                 textColor={filterStatus === "ACTIVE" ? "text-white" : "text-gray-900"}
