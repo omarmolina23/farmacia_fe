@@ -15,6 +15,15 @@ export const login = async (email, password) => {
     }
 };
 
+export const signUp = async (userData) => {
+    try {
+        const response = await axios.post('/auth/sign-up', userData);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message);
+    }
+};
+
 export const signOut = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -56,3 +65,61 @@ export const refreshToken = async () => {
         throw new Error(error.response.data.message || "Ha ocurrido un error");
     }
 }
+
+export const getUserAll = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/users/all', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message);
+    }
+};
+
+export const searchUser = async (query) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`/users/search`, {
+            params: { query },
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error searching for User");
+    }
+};
+
+export const updateUser = async (id, updateData) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.patch(`/users/${id}`, updateData, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Error al desactivar el usuario');
+    }
+};
+
+export const deleteUser = async (id) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.delete(`/users/${id}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Error al desactivar el usuario');
+    }
+};
