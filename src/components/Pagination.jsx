@@ -35,7 +35,7 @@ const Pagination = ({ currentPage, totalItems, rowsPerPage, setCurrentPage, setR
 
     return (
         
-        <div className="flex justify-between items-center p-3 opacity-80">
+        <div className="flex justify-between items-center p-3 opacity-80 z-10">
             <div className="flex items-center">
                 <span className="mr-2">Filas por página:</span>
                 <select value={rowsPerPage} onChange={handleRowsPerPageChange}>
