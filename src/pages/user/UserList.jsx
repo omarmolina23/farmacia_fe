@@ -3,14 +3,18 @@ import UserLayout from "../../modules/admin/user/layout/UserLayout.jsx";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import UserTable from "../../modules/admin/user/components/UserTable.jsx";
-import { getUserAll, searchUser, deleteUser } from "../../services/UserService";
+import Pagination from "../../components/Pagination"; // Importa el componente de paginación
+import { getUserAll, searchUser } from "../../services/UserService";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsOptions = [10, 15, 20, 25, 30, 50];
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,14 +25,12 @@ const UserList = () => {
     getUserAll()
       .then((data) => {
         if (Array.isArray(data)) {
-          console.log(data);
           setUsers(data);
         } else {
           console.error("La respuesta no es un array");
         }
       })
       .catch((error) => {
-        console.error("Error al obtener los usuarios:", error);
         toast.error("Error al obtener usuarios");
       });
   };
@@ -46,7 +48,6 @@ const UserList = () => {
       const results = await searchUser(query);
       setUsers(results);
     } catch (error) {
-      console.error("Error en la búsqueda:", error);
       toast.error("Error en la búsqueda de usuarios");
     }
   };
@@ -63,15 +64,15 @@ const UserList = () => {
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
 
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
 
     return age;
   };
+
+  // Paginación: dividir la lista en páginas
+  const paginatedUsers = users.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   return (
     <UserLayout title="Usuarios">
@@ -81,13 +82,9 @@ const UserList = () => {
           value={searchQuery}
           onChange={handleSearch}
         />
-        <Button
-          title="Registrar usuario"
-          color="bg-[#8B83BA]"
-          onClick={handleUserRegister}
-        />
+        <Button title="Registrar usuario" color="bg-[#8B83BA]" onClick={handleUserRegister} />
       </div>
-      <div className="bg-[#D0F25E] p-5 h-6 w-full"></div>
+
       <table className="text-sm w-full">
         <thead className="p-5 bg-[#95A09D] text-left">
           <tr className="h-9">
@@ -100,9 +97,9 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
+          {paginatedUsers.map((user, index) => (
             <UserTable
-              key={index}
+              key={user.id}
               id={user.id}
               name={user.name}
               phone={user.phone}
@@ -113,6 +110,15 @@ const UserList = () => {
           ))}
         </tbody>
       </table>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={users.length}
+        rowsPerPage={rowsPerPage}
+        setCurrentPage={setCurrentPage}
+        setRowsPerPage={setRowsPerPage}
+        rowsOptions={rowsOptions}
+      />
     </UserLayout>
   );
 };
