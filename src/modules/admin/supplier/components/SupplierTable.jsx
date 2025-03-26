@@ -1,5 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { deleteSupplier, updateSupplier } from "../../../../services/SupplierService";
 import { toast } from "react-toastify";
@@ -14,18 +15,37 @@ const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) =
     };
 
     const handleToggleStatus = async () => {
-        try {
-            if (status === "ACTIVE") {
-                await deleteSupplier(id);
-                toast.success("Proveedor deshabilitado");
-            } else {
-                await updateSupplier(id, { status: "ACTIVE" });
-                toast.success("Proveedor habilitado");
+        const isActive = status === "ACTIVE";
+        const action = isActive ? deleteSupplier(id) : updateSupplier(id, { status: "ACTIVE" });
+    
+        Swal.fire({
+            customClass: {
+                confirmButton: "bg-[#8B83BB] text-black",
+                cancelButton: "bg-[#FFFFFF] text-black",
+                icon: "text-mb mx-auto",
+                title: "!font-semibold !mt-2 !text-gray-900 !text-mb !mx-auto",
+                text: "!font-medium !text-gray-500 !text-mb !mx-auto",
+            },
+            popup: "swal2-show",
+            title: `¿${isActive ? "Deshabilitar" : "Habilitar"} proveedor?`,
+            text: "Esta acción cambiará el estado del proveedor",
+            icon: "warning",
+            showCancelButton: true,
+            iconColor: "#000000",
+            confirmButtonText: `Sí, ${isActive ? "deshabilitar" : "habilitar"}`,
+            cancelButtonText: "No, cancelar",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await action;
+                    toast.success(`Proveedor ${isActive ? "deshabilitado" : "habilitado"}`);
+                    refreshList();
+                } catch (error) {
+                    console.error("Error al cambiar el estado del proveedor:", error);
+                    toast.error(`Error al ${isActive ? "deshabilitar" : "habilitar"} el proveedor`);
+                }
             }
-            refreshList();
-        } catch (error) {
-            toast.error("Error al deshabilitar el proveedor");
-        }
+        });
     };
 
     return (
