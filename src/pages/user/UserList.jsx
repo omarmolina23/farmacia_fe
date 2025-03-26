@@ -107,51 +107,54 @@ const UserList = () => {
 
       <FilterStatus filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
 
-      <table className="text-sm w-full">
-        <thead className="p-5 bg-[#95A09D] text-left">
-          <tr className="h-9">
-            <th className="pl-5">Cédula</th>
-            <th 
-              onMouseEnter={() => setHoverColumn("name")}
-              onMouseLeave={() => setHoverColumn(null)}
-              onClick={() => handleSort("name")}
-              className="cursor-pointer flex items-center gap-2 p-2"
-            >
-              Nombre
-              {(hoverColumn === "name" || sortConfig.key === "name") && (
-                sortConfig.key === "name" && sortConfig.direction === "asc" 
-                ? <IoIosArrowUp />
-                : <IoIosArrowDown />
-              )}
-            </th>
-            <th>Teléfono</th>
-            <th>Correo electrónico</th>
-            <th>Edad</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedUsers.map((user, index) => (
-            <UserTable
-              key={user.id}
-              id={user.id}
-              name={user.name}
-              phone={user.phone}
-              email={user.email}
-              age={calculateAge(user.birthdate)}
-              status={user.status}
-              refreshList={fetchUsers}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className="overflow-x-auto">
+        <table className="text-sm w-full border-collapse">
+          <thead className="bg-[#95A09D] text-left">
+            <tr className="h-9">
+              <th className="pl-5">Cédula</th>
+              <th
+                onMouseEnter={() => setHoverColumn("name")}
+                onMouseLeave={() => setHoverColumn(null)}
+                onClick={() => handleSort("name")}
+                className="cursor-pointer flex items-center gap-2 p-2"
+              >
+                Nombre
+                {(hoverColumn === "name" || sortConfig.key === "name") && (
+                  sortConfig.key === "name" && sortConfig.direction === "asc"
+                    ? <IoIosArrowUp />
+                    : <IoIosArrowDown />
+                )}
+              </th>
+              <th className="hidden md:table-cell">Teléfono</th>
+              <th className="hidden md:table-cell">Correo electrónico</th>
+              <th className="hidden lg:table-cell">Edad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedUsers.map((user, index) => (
+              <UserTable
+                key={user.id}
+                id={user.id}
+                name={user.name}
+                phone={user.phone}
+                email={user.email}
+                age={calculateAge(user.birthdate)}
+                status={user.status}
+                refreshList={fetchUsers}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <Pagination 
-        currentPage={currentPage} 
-        totalItems={sortedUsers.length} 
-        rowsPerPage={rowsPerPage} 
-        setCurrentPage={setCurrentPage} 
-        setRowsPerPage={setRowsPerPage} 
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={sortedUsers.length}
+        rowsPerPage={rowsPerPage}
+        setCurrentPage={setCurrentPage}
+        setRowsPerPage={setRowsPerPage}
         rowsOptions={rowsOptions}
       />
     </UserLayout>
