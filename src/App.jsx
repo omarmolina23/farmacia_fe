@@ -5,11 +5,14 @@ import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
 import "./App.css";
+import CategoryList from "./pages/category/CategoryList";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
 const AdminHome = lazy(() => import("./pages/admin/AdminHome"));
-const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
+const SupplierRegister = lazy(() =>
+  import("./pages/supplier/SupplierRegister")
+);
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const UserList = lazy(() => import("./pages/user/UserList"));
@@ -29,6 +32,9 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin">
                 <Route path="home" element={<AdminHome />} />
+                <Route path="category">
+                  <Route path="list" element={<CategoryList />} />
+                </Route>
                 <Route path="supplier">
                   <Route path="register" element={<SupplierRegister />} />
                   <Route path="list" element={<SupplierList />} />
