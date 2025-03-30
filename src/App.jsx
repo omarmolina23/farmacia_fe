@@ -7,6 +7,7 @@ import Loading from "./components/Loading";
 import "./App.css";
 import CategoryList from "./pages/category/CategoryList";
 import CategoryRegister from "./pages/category/CategoryRegister";
+import CategoryUpdate from "./pages/category/CategoryUpdate";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -36,6 +37,7 @@ function App() {
                 <Route path="category">
                   <Route path="register" element={<CategoryRegister />} />
                   <Route path="list" element={<CategoryList />} />
+                  <Route path="update" element={<CategoryUpdate />} />
                 </Route>
                 <Route path="supplier">
                   <Route path="register" element={<SupplierRegister />} />
