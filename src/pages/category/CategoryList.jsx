@@ -94,7 +94,7 @@ const CategoryList = () => {
           className="w-full md:w-auto"
         />
         <Button
-          title="Registrar categoría"
+          title="Crear categoría"
           color="bg-[#8B83BA]"
           onClick={handleCategoryRegister}
           className="w-full md:w-auto"

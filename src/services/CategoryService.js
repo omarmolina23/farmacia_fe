@@ -1,8 +1,8 @@
 import axios from "../config/axios";
 
-export const createSupplier = async (SupplierData) => {
+export const createCategory = async (category) => {
   try {
-    const response = await axios.post("/supplier", SupplierData);
+    const response = await axios.post("/category", category);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Ha ocurrido un error");
@@ -28,9 +28,9 @@ export const searchCategory = async (query) => {
   }
 };
 
-export const updateCategory = async (id, SupplierData) => {
+export const updateCategory = async (id, category) => {
   try {
-    const response = await axios.patch(`/category/${id}`, SupplierData);
+    const response = await axios.patch(`/category/${id}`, category);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Ha ocurrido un error");

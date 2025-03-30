@@ -6,6 +6,7 @@ import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
 import "./App.css";
 import CategoryList from "./pages/category/CategoryList";
+import CategoryRegister from "./pages/category/CategoryRegister";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -33,6 +34,7 @@ function App() {
               <Route path="/admin">
                 <Route path="home" element={<AdminHome />} />
                 <Route path="category">
+                  <Route path="register" element={<CategoryRegister />} />
                   <Route path="list" element={<CategoryList />} />
                 </Route>
                 <Route path="supplier">
