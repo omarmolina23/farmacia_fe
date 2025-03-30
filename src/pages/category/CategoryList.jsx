@@ -11,6 +11,7 @@ import {
 } from "../../services/CategoryService.js";
 import CategoryTable from "../../modules/admin/category/components/CategoryTable.jsx";
 import CategoryLayout from "../../modules/admin/category/layout/CategoryLayout.jsx";
+import FilterStatus from "../../components/FilterStatus.jsx";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -19,13 +20,14 @@ const CategoryList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [hoverColumn, setHoverColumn] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("ACTIVE");
 
   const rowsOptions = [10, 15, 20, 25, 30, 50];
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [filterStatus]);
 
   const setCategoryIndex = (category, index) => {
     return { ...category, index };
@@ -37,7 +39,11 @@ const CategoryList = () => {
 
       if (!Array.isArray(categories)) return;
 
-      setCategories(categories.map(setCategoryIndex));
+      setCategories(
+        categories
+          .filter((category) => category.status == filterStatus)
+          .map(setCategoryIndex)
+      );
     } catch {
       toast.error("Error al obtener categorías");
     }
@@ -108,6 +114,11 @@ const CategoryList = () => {
           className="w-full md:w-auto"
         />
       </div>
+
+      <FilterStatus
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+      />
 
       <div className="w-full overflow-x-auto">
         <table className="text-sm w-full min-w-[600px]">
