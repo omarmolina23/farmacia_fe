@@ -27,13 +27,17 @@ const CategoryList = () => {
     fetchCategories();
   }, []);
 
+  const setCategoryIndex = (category, index) => {
+    return { ...category, index };
+  };
+
   const fetchCategories = async () => {
     try {
       const categories = await getCategoryAll();
 
       if (!Array.isArray(categories)) return;
 
-      setCategories(categories);
+      setCategories(categories.map(setCategoryIndex));
     } catch {
       toast.error("Error al obtener categorías");
     }
@@ -50,7 +54,7 @@ const CategoryList = () => {
 
     try {
       const results = await searchCategory(query);
-      setCategories(results);
+      setCategories(results.map(setCategoryIndex));
     } catch {
       toast.error("Error en la búsqueda de categorías");
     }
@@ -62,8 +66,12 @@ const CategoryList = () => {
 
   const sortedCategories = [...categories].sort((a, b) => {
     if (sortConfig.key) {
-      const valueA = a[sortConfig.key].toLowerCase();
-      const valueB = b[sortConfig.key].toLowerCase();
+      const transformValue = (value) =>
+        typeof value === "string" ? value.toLowerCase() : value;
+
+      const valueA = transformValue(a[sortConfig.key]);
+      const valueB = transformValue(b[sortConfig.key]);
+
       if (valueA < valueB) return sortConfig.direction === "asc" ? -1 : 1;
       if (valueA > valueB) return sortConfig.direction === "asc" ? 1 : -1;
       return 0;
@@ -105,7 +113,22 @@ const CategoryList = () => {
         <table className="text-sm w-full min-w-[600px]">
           <thead className="p-5 bg-[#95A09D] text-left">
             <tr className="h-9">
-              <th className="pl-5">Nº</th>
+              <th>
+                <div
+                  onMouseEnter={() => setHoverColumn("index")}
+                  onMouseLeave={() => setHoverColumn(null)}
+                  onClick={() => handleSort("index")}
+                  className="cursor-pointer flex items-center gap-2 p-2 ml-4 w-16"
+                >
+                  Nº
+                  {(hoverColumn === "index" || sortConfig.key === "index") &&
+                    (sortConfig.direction === "asc" ? (
+                      <IoIosArrowUp />
+                    ) : (
+                      <IoIosArrowDown />
+                    ))}
+                </div>
+              </th>
               <th
                 onMouseEnter={() => setHoverColumn("name")}
                 onMouseLeave={() => setHoverColumn(null)}
@@ -125,11 +148,11 @@ const CategoryList = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedCategories.map((category, index) => (
+            {paginatedCategories.map((category) => (
               <CategoryTable
                 key={category.id}
                 id={category.id}
-                index={(currentPage - 1) * rowsPerPage + index}
+                index={category.index}
                 name={category.name}
                 status={category.status}
                 refreshList={fetchCategories}
