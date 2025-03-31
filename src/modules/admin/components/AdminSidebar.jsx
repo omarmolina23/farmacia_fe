@@ -64,6 +64,40 @@ export default function AdminSideBar() {
                                     <BsStars className="mr-4 text-xl" /> Predicción
                                 </Link>
                             </li>
+                            <li className="flex flex-col">
+                                <button
+                                    className="flex flex-row mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300 w-full text-left"
+                                    onClick={() => setIsInventarioOpen(!isInventarioOpen)}
+                                >
+                                    <div className="flex-1 flex items-center">
+                                        <FiArchive className="mr-4 text-xl" /> Inventario
+                                    </div>
+                                    {isInventarioOpen ? (
+                                        <IoIosArrowDown className="text-xl" />
+                                    ) : (
+                                        <IoIosArrowForward className="text-xl" />
+                                    )}
+                                </button>
+                                {isInventarioOpen && (
+                                    <ul className="mx-2 ml-2 bg-[#fffcfca8] rounded-md transition-all duration-300">
+                                        <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
+                                            <Link className="flex flex-row items-center" to="/admin/category/list">
+                                                <IoIosArrowForward className="mr-4 text-xl" /> CategorÃ­as
+                                            </Link>
+                                        </li>
+                                        <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
+                                            <Link className="flex flex-row items-center" to="/admin/supplier/list">
+                                                <IoIosArrowForward className="mr-4 text-xl" /> Proveedores
+                                            </Link>
+                                        </li>
+                                        <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
+                                            <Link className="flex flex-row items-center" to="/admin/product/list">
+                                                <IoIosArrowForward className="mr-4 text-xl" /> Productos
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                )}
+                            </li>
                         </ul>
                     </div>
                     <div className="flex justify-end items-center p-3">
