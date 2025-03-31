@@ -4,6 +4,7 @@ import PasswordField from "../../components/PasswordField";
 import Button from "../../components/Button";
 import AuthSidebar from "../../components/AuthSidebar";
 import { setPassword as setPasswordService } from "../../services/UserService";
+import { signOut as signOutService } from "../../services/UserService";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
@@ -37,21 +38,18 @@ const ResetPassword = () => {
       return;
     }
 
-    console.log("token", token); 
-
     try{
       await setPasswordService(token, user.password);
 
       toast.success("Contraseña cambiada exitosamente");
 
+      await signOutService();
+
       navigate("/", { replace: true });
 
     } catch (error) {
-        console.log(error);
       toast.error(error.message);
     }
-
-    console.log(user);
   };
 
   return (
