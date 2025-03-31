@@ -82,7 +82,7 @@ export default function AdminSideBar() {
                                     <ul className="mx-2 ml-2 bg-[#fffcfca8] rounded-md transition-all duration-300">
                                         <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
                                             <Link className="flex flex-row items-center" to="/admin/category/list">
-                                                <IoIosArrowForward className="mr-4 text-xl" /> CategorÃ­as
+                                                <IoIosArrowForward className="mr-4 text-xl" /> Categorías
                                             </Link>
                                         </li>
                                         <li className="py-[10px] px-[20px] flex flex-row hover:bg-[#6aa7e038] transition-colors duration-300">
