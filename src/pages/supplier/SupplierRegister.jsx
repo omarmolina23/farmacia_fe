@@ -54,6 +54,7 @@ export default function SupplierRegister() {
     return true;
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
