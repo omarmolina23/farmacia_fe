@@ -100,6 +100,7 @@ const CategoryList = () => {
 
   return (
     <CategoryLayout title="Categorías">
+      
       <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar
           placeholder="Buscar categoría"
@@ -120,7 +121,7 @@ const CategoryList = () => {
         setFilterStatus={setFilterStatus}
       />
 
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-aut">
         <table className="text-sm w-full min-w-[600px]">
           <thead className="p-5 bg-[#95A09D] text-left">
             <tr className="h-9">

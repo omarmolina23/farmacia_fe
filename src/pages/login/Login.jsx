@@ -23,7 +23,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(user.isAdmin ? "/admin/home" : "/employees/home");
+      navigate(user.isAdmin ? "/admin/dashboard" : "/employees/dashboard");
     }
   }, [user]);
 
@@ -51,7 +51,7 @@ const Login = () => {
         status: response.status,
       });
       toast.success("Inicio de sesión exitoso");
-      navigate(response.isAdmin ? "/admin/home" : "/employees/home");
+      navigate(response.isAdmin ? "/admin/dashboard" : "/employees/dashboard");
     } catch (error) {
       toast.error(error.message);
     }
