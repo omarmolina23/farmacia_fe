@@ -2,6 +2,7 @@ import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import PageHeader from "../../components/PageHeader";
 import { SectionCards } from "../../modules/admin/components/section-cards";
 import { RadialChart } from "../../modules/admin/components/radial-charts";
+import { RadarChartStock } from "../../modules/admin/components/radar-charts";
 
 export default function Dashboard() {
     return (
@@ -14,6 +15,9 @@ export default function Dashboard() {
                         <div className="grid grid-cols-1 gap-4 px-4 sm:px-6 lg:px-6 @xl/main:grid-cols-6 items-center">
                             <div className="@xl/main:col-span-3 w-full">
                                 <RadialChart />
+                            </div>
+                            <div className="@xl/main:col-span-3 w-full">
+                                <RadarChartStock />
                             </div>
                         </div>
                     </div>
