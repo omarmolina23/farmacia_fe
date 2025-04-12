@@ -3,6 +3,7 @@ import PageHeader from "../../components/PageHeader";
 import { SectionCards } from "../../modules/admin/components/section-cards";
 import { RadialChart } from "../../modules/admin/components/radial-charts";
 import { RadarChartStock } from "../../modules/admin/components/radar-charts";
+import { AreaChartSales } from "../../modules/admin/components/area-charts";
 
 export default function Dashboard() {
     return (
@@ -19,6 +20,9 @@ export default function Dashboard() {
                             <div className="@xl/main:col-span-3 w-full">
                                 <RadarChartStock />
                             </div>
+                        </div>
+                        <div className="px-4 lg:px-6">
+                            <AreaChartSales />
                         </div>
                     </div>
                 </div>
