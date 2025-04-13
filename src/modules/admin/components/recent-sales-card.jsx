@@ -114,7 +114,7 @@ function RecentSalesCard() {
     return (
         <div className="w-full bg-black text-white p-4 rounded-md shadow-md">
             <div className="flex items-center justify-between mb-1">
-                <h2 className="text-xl font-bold">Ventas Recientes</h2>
+                <h2 className="text-xl font-bold">Ventas recientes</h2>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="bg-black p-2 hover:bg-gray-800">

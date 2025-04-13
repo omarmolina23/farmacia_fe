@@ -91,12 +91,15 @@ export function RadarChartStock() {
         ? `Aumento de ${percentChange.toFixed(1)}% este mes`
         : `Descenso de ${Math.abs(percentChange).toFixed(1)}% este mes`;
     const iconColor = isPositive ? "text-red-400" : "text-green-400";
+    const borderColor = isPositive ? "border-red-200/90" : "border-green-200/90";
 
     return (
-        <Card className="bg-black text-white">
+        <Card
+            className={`bg-black text-white border-3 ${borderColor}`}
+        >
             <CardHeader className="flex flex-col items-start mb-1">
-                <CardTitle className="text-white">Stock mínimo</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardTitle className="text-xl font-bold">Stock mínimo</CardTitle>
+                <CardDescription className="text-sm text-gray-400 mb-2">
                     Stock mínimo en los últimos 6 meses
                 </CardDescription>
             </CardHeader>
