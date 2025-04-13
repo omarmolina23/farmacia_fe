@@ -43,7 +43,6 @@ export function RadarChartStock() {
 
                 setChartData(data);
 
-                // Calcular el cambio porcentual
                 if (data.length >= 2) {
                     const first = data[0].Stock;
                     const last = data[data.length - 1].Stock;

@@ -119,16 +119,13 @@ export function AreaChartSales() {
     return { totalSelectedGanancias: sum, badges: bs };
   }, [gananciasPorCategoria, selectedCategories, timeRange, chartConfig]);
 
-  // ─── Loading Skeleton ────────────────────────────────────────────────────────
   if (loading) {
     return (
       <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-4 border-b pb-4">
-          {/* Título y monto */}
           <div className="flex-1 space-y-3">
             <Skeleton className="h-6 w-48 bg-neutral-800" />
             <Skeleton className="h-8 w-32 bg-neutral-800" />
-            {/* Badges */}
             <div className="flex flex-wrap gap-2">
               {[...Array(3)].map((_, i) => (
                 <Skeleton
@@ -138,23 +135,20 @@ export function AreaChartSales() {
               ))}
             </div>
           </div>
-          {/* Controles */}
           <div className="flex gap-2">
             <Skeleton className="h-10 w-40 rounded-md bg-neutral-800" />
             <Skeleton className="h-10 w-40 rounded-md bg-neutral-800" />
           </div>
         </CardHeader>
         <CardContent className="px-1 pt-4 sm:px-6 sm:pt-6">
-          {/* Gráfica */}
           <Skeleton className="h-40 w-full rounded-md bg-neutral-800" />
         </CardContent>
       </Card>
     );
   }
-  // ─────────────────────────────────────────────────────────────────────────────
 
   return (
-    <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
+    <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative h-full">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b pb-2">
         <div className="flex-1 space-y-2">
           <CardTitle className="ml-2 mt-4 sm:mt-2">
@@ -214,7 +208,7 @@ export function AreaChartSales() {
 
       <CardContent className="px-1 pt-2 sm:px-6 sm:pt-6">
         {filteredData.length ? (
-          <ChartContainer config={chartConfig} className="aspect-auto h-40 w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-65 w-full">
             <AreaChart data={filteredData}>
               <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="3 3" />
               <XAxis
