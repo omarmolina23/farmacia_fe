@@ -1,16 +1,14 @@
-import AdminSideBar from "../components/AdminSidebar";
+import { AppSidebar } from "../components/app-sidebar";
+import { SidebarProvider, SidebarInset } from "../../../components/ui/sidebar";
 
 const AdminLayout = ({ children }) => {
     return (
-        <>
-            <div className="flex flex-row h-screen overflow-hidden">
-                <AdminSideBar/>
-                <div className="flex-1 overflow-auto"> 
-                    {children}
-                </div>
-            </div>
-        </>
-
+        <SidebarProvider>
+            <AppSidebar variant="inset" />
+            <SidebarInset className="bg-white">
+            {children}
+            </SidebarInset>
+        </SidebarProvider>
     );
 };
 

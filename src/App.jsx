@@ -8,13 +8,10 @@ import "./App.css";
 import CategoryList from "./pages/category/CategoryList";
 import CategoryRegister from "./pages/category/CategoryRegister";
 import CategoryUpdate from "./pages/category/CategoryUpdate";
-
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
-const AdminHome = lazy(() => import("./pages/admin/AdminHome"));
-const SupplierRegister = lazy(() =>
-  import("./pages/supplier/SupplierRegister")
-);
+const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
+const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const UserList = lazy(() => import("./pages/user/UserList"));
@@ -33,7 +30,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
               <Route path="/admin">
-                <Route path="home" element={<AdminHome />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="category">
                   <Route path="register" element={<CategoryRegister />} />
                   <Route path="list" element={<CategoryList />} />
