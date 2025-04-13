@@ -1,9 +1,5 @@
-import {
-  IoMdNotificationsOutline ,
-  IoMdTrendingUp,
-  IoMdTrendingDown,
-} from "react-icons/io";
-import { FaRegHeart, FaOpencart, FaCashRegister } from "react-icons/fa";
+import { IoMdTrendingUp, IoMdTrendingDown, IoMdCash, IoIosArchive  } from "react-icons/io";
+import { FaRegHeart, FaOpencart } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { cn } from "../../../lib/utils";
 import { Skeleton } from "../../../components/ui/skeleton";
@@ -17,9 +13,9 @@ import {
 
 const icons = {
   Clientes: <FaRegHeart className="text-red-400" />,
-  Inventario: <FaOpencart className="text-blue-400" />,
-  Ventas: <IoMdNotificationsOutline className="text-yellow-400" />,
-  Ingresos: <FaCashRegister className="text-green-500" />,
+  Inventario: <IoIosArchive className="text-blue-400" />,
+  Ventas: <FaOpencart className="text-yellow-400" />,
+  Ingresos: <IoMdCash className="text-green-500" />,
 };
 
 const formatCurrency = (num) => {
@@ -39,6 +35,7 @@ export function SectionCards() {
   }, []);
 
   const isLoading = metrics.length === 0;
+
 
   return (
     <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 lg:px-6">
@@ -60,15 +57,18 @@ export function SectionCards() {
           ))
         : metrics.map((metric, index) => {
             const isPositive = metric.change >= 0;
+            const FooterIcon = isPositive ? IoMdTrendingUp : IoMdTrendingDown;
+            const iconColor = isPositive ? "text-green-400" : "text-red-400";
+            const borderColor = isPositive ? "border-green-200/90" : "border-red-200/90";
             const isCurrency = metric.title === "Ingresos";
             const displayValue = isCurrency
               ? formatCurrency(metric.value)
               : metric.value;
             return (
-              <Card key={index} className="@container/card bg-black text-white">
+              <Card key={index} className={`@container/card bg-black text-white border-3 ${borderColor}`}>
                 <CardHeader className="relative">
                   <div className="flex justify-between items-start">
-                    <CardDescription className="flex items-center gap-2 text-sm text-black-200">
+                    <CardDescription className="text-xl font-bold flex items-center gap-2 text-black-200">
                       {icons[metric.title] || null}
                       {metric.title}
                     </CardDescription>
@@ -87,11 +87,7 @@ export function SectionCards() {
                       variant="ghost"
                     >
                       {metric.change}%
-                      {isPositive ? (
-                        <IoMdTrendingUp size={14} className="ml-0.5" />
-                      ) : (
-                        <IoMdTrendingDown size={14} className="ml-0.5" />
-                      )}
+                      <FooterIcon size={14} className={`ml-0.5${iconColor}`} />
                     </Badge>
                   </div>
                 </CardHeader>

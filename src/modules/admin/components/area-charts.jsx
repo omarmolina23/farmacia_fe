@@ -22,7 +22,7 @@ import {
   SelectItem,
 } from "../../../components/ui/select";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { AreaChart, Area, CartesianGrid, XAxis } from "recharts";
+import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Skeleton } from "../../../components/ui/skeleton";
 
 const defaultColors = [
@@ -149,26 +149,26 @@ export function AreaChartSales() {
 
   return (
     <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative h-full">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b pb-2">
-        <div className="flex-1 space-y-2">
-          <CardTitle className="ml-2 mt-4 sm:mt-2">
+      <CardHeader className="pb-2 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mt-2">
+        <div>
+          <CardTitle className="text-xl font-bold">
             Ventas por categoría
           </CardTitle>
-          <div className="text-lg font-semibold ml-2">
+          <div className="text-2xl font-extrabold mt-2">$
             {new Intl.NumberFormat("es-ES", {
               style: "currency",
               currency: "COP",
               maximumFractionDigits: 0,
             }).format(totalSelectedGanancias)}
           </div>
-          <div className="flex flex-wrap gap-2 items-center ml-2">
+          <div className="flex flex-wrap gap-2 justify-center items-center ml-3 mt-3">
             {badges.slice(0, 4).map(({ category, porcentaje, color }) => {
               const isPos = porcentaje >= 0;
               return (
                 <Badge
                   key={category}
                   variant="ghost"
-                  className="px-2 py-0.5 text-xs font-medium border"
+                  className="px-2 py-0.5 text-ls font-black border-3"
                   style={{
                     borderColor: color,
                     backgroundColor: `${color}20`,
@@ -176,24 +176,32 @@ export function AreaChartSales() {
                   }}
                 >
                   {porcentaje.toFixed(1)}%{" "}
-                  {isPos ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                  {isPos ? (
+                    <TrendingUp size={20} className="inline align-middle ml-1" />
+                  ) : (
+                    <TrendingDown size={20} className="inline align-middle ml-1" />
+                  )}
+
                 </Badge>
               );
             })}
           </div>
         </div>
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 z-10 pr-4">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-full sm:w-[160px]">
-              <SelectValue placeholder="Seleccionar rango" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">Últimos 7 días</SelectItem>
-              <SelectItem value="30d">Últimos 30 días</SelectItem>
-              <SelectItem value="90d">Últimos 3 meses</SelectItem>
-            </SelectContent>
-          </Select>
-          <div className="relative z-20 w-full sm:w-[200px]">
+
+        <div className="flex gap-3 flex-wrap mt-1">
+          <div className="w-full">
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Seleccionar rango" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7d">Últimos 7 días</SelectItem>
+                <SelectItem value="30d">Últimos 30 días</SelectItem>
+                <SelectItem value="90d">Últimos 3 meses</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full">
             <MultiSelect
               options={categoryOptions}
               defaultValue={selectedCategories}
@@ -206,55 +214,63 @@ export function AreaChartSales() {
         </div>
       </CardHeader>
 
-      <CardContent className="px-1 pt-2 sm:px-6 sm:pt-6">
+      <CardContent className="pl-0 pr-1 pt-2 -sm:pl-10 sm:pr-5 sm:pt-2">
         {filteredData.length ? (
-          <ChartContainer config={chartConfig} className="aspect-auto h-65 w-full">
-            <AreaChart data={filteredData}>
-              <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="3 3" />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
-                tickFormatter={(val) =>
-                  new Date(val).toLocaleDateString("es-ES", {
-                    month: "short",
-                    day: "numeric",
-                  })
-                }
-              />
-              <ChartTooltip
-                cursor={false}
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={(val) =>
-                      new Date(val).toLocaleDateString("es-ES", {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "short",
-                      })
-                    }
-                    labelClassName="text-black"
-                    indicator="dot"
-                  />
-                }
-              />
-              {Object.entries(chartConfig)
-                .filter(([key]) => selectedCategories.includes(key))
-                .map(([key, { color }]) => (
-                  <Area
-                    key={key}
-                    type="natural"
-                    dataKey={key}
-                    stroke={color}
-                    fillOpacity={0.1}
-                    fill={color}
-                    dot={{ r: 1.5 }}
-                    strokeWidth={2}
-                  />
-                ))}
-            </AreaChart>
+          <ChartContainer config={chartConfig} className="aspect-auto h-80 w-full p-1 pl-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={filteredData}>
+                <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="3 4" />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={32}
+                  tickFormatter={(val) =>
+                    new Date(val).toLocaleDateString("es-ES", {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  }
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  domain={[50, 230]}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(val) =>
+                        new Date(val).toLocaleDateString("es-ES", {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "short",
+                        })
+                      }
+                      labelClassName="text-black"
+                      indicator="dot"
+                    />
+                  }
+                />
+                {Object.entries(chartConfig)
+                  .filter(([key]) => selectedCategories.includes(key))
+                  .map(([key, { color }]) => (
+                    <Area
+                      key={key}
+                      type="natural"
+                      dataKey={key}
+                      stroke={color}
+                      fillOpacity={0.1}
+                      fill={color}
+                      dot={{ r: 2 }}
+                      strokeWidth={2}
+                    />
+                  ))}
+              </AreaChart>
+            </ResponsiveContainer>
           </ChartContainer>
         ) : (
           <p className="text-sm text-center mt-2">
