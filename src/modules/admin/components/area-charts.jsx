@@ -1,29 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "../../../components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";
 import { MultiSelect } from "../../../components/multi-select";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../../../components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../../components/ui/select";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Skeleton } from "../../../components/ui/skeleton";
+import { getProfitByCategory, getSalesByCategory } from "../../../services/DashboardService";
 
 const defaultColors = [
   "hsl(var(--chart-6))",
@@ -47,23 +33,22 @@ export function AreaChartSales() {
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       try {
-        const [resChart, resGan] = await Promise.all([
-          fetch("https://run.mocky.io/v3/605f0981-e797-4065-92e0-031ab5101bcb"),
-          fetch("https://run.mocky.io/v3/80ea92bd-b6a9-4dca-8656-23bfd164c0a9"),
+        const [chartData, gananciasData] = await Promise.all([
+          getSalesByCategory(),
+          getProfitByCategory(),
         ]);
-        const chartJson = await resChart.json();
-        const ganJson = await resGan.json();
 
-        setData(chartJson);
-        setGananciasPorCategoria(ganJson.ganancias_por_categoria);
+        setData(chartData);
+        setGananciasPorCategoria(gananciasData.ganancias_por_categoria);
 
         const allCats = Object.keys(
-          ganJson.ganancias_por_categoria[periodKeyMap["7d"]]
+          gananciasData.ganancias_por_categoria[periodKeyMap["7d"]]
         );
         setSelectedCategories(allCats);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching chart data:", err);
       } finally {
         setLoading(false);
       }
@@ -227,7 +212,7 @@ export function AreaChartSales() {
                   tickMargin={8}
                   minTickGap={32}
                   tickFormatter={(val) =>
-                    new Date(val).toLocaleDateString("es-ES", {
+                    new Date(`${val}T00:00:00`).toLocaleDateString("es-ES", {
                       month: "short",
                       day: "numeric",
                     })
@@ -244,7 +229,7 @@ export function AreaChartSales() {
                   content={
                     <ChartTooltipContent
                       labelFormatter={(val) =>
-                        new Date(val).toLocaleDateString("es-ES", {
+                        new Date(`${val}T00:00:00`).toLocaleDateString("es-ES", {
                           weekday: "long",
                           day: "numeric",
                           month: "short",

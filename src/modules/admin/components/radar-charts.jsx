@@ -3,21 +3,10 @@
 import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getMinimumStock } from "../../../services/DashboardService";
 
 const chartConfig = {
     Stock: {
@@ -35,11 +24,8 @@ export function RadarChartStock() {
     useEffect(() => {
         async function fetchChartData() {
             try {
-                const res = await fetch(
-                    "https://run.mocky.io/v3/deb503d6-1651-4bbe-9641-be4aeef69038" //test
-                );
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
+                const data = await getMinimumStock(); // Usamos el servicio aquí
+                setChartData(data);
 
                 setChartData(data);
 
@@ -59,6 +45,7 @@ export function RadarChartStock() {
 
         fetchChartData();
     }, []);
+    
 
     if (loading) {
         return (

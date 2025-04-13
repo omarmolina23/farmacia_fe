@@ -2,27 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import {
-    PolarGrid,
-    RadialBar,
-    RadialBarChart,
-    ResponsiveContainer,
-} from "recharts";
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "../../../components/ui/card";
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "../../../components/ui/chart";
+import { PolarGrid, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";
 import { Skeleton } from "../../../components/ui/skeleton";
+import { getProductsSold } from "../../../services/DashboardService";
 
 const chartColors = [
     "hsl(var(--chart-1))",
@@ -41,11 +25,8 @@ export function RadialChart() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const res = await fetch(
-                    "https://run.mocky.io/v3/11100d0f-c00c-458b-9934-573bd3931e11" // test
-                );
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const json = await res.json();
+                const response = await getProductsSold();
+                const json = response;
 
                 const colorMap = {};
                 let colorIndex = 0;
@@ -72,9 +53,9 @@ export function RadialChart() {
                 setLoading(false);
             }
         }
-
         fetchData();
     }, []);
+
 
     if (loading) {
         return (

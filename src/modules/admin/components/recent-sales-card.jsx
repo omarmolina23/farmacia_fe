@@ -1,19 +1,16 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import NiceAvatar, { genConfig } from "react-nice-avatar";
 import { SlOptions } from "react-icons/sl";
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuCheckboxItem,
-} from "../../../components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "../../../components/ui/dropdown-menu";
 import { Button } from "../../../components/ui/button";
 import { Skeleton } from "../../../components/ui/skeleton"; 
+import { getRecentSales } from "../../../services/DashboardService";
 
-const ITEMS_PER_PAGE = 5;
-const API_URL = "https://run.mocky.io/v3/4165e1a9-5d7f-4601-88b4-ea147fe44ba8";
+export function RecentSalesCard() {
+    const item_per_page = 6;
 
-function RecentSalesCard() {
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -26,12 +23,11 @@ function RecentSalesCard() {
         async function fetchSales() {
             setLoading(true);
             try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
+                const data = await getRecentSales();
                 const sortedData = [...data].sort(
                     (a, b) => new Date(b.fecha) - new Date(a.fecha)
                 );
-                const last20 = sortedData.slice(0, 20);
+                const last20 = sortedData.slice(0, 200);
                 setSales(last20);
             } catch (error) {
                 console.error("Error fetching sales:", error);
@@ -51,9 +47,9 @@ function RecentSalesCard() {
     }, [sales]);
 
     const totalSales = sales.length;
-    const totalPages = Math.ceil(totalSales / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const totalPages = Math.ceil(totalSales / item_per_page);
+    const startIndex = (currentPage - 1) * item_per_page;
+    const endIndex = startIndex + item_per_page;
     const currentSales = sales.slice(startIndex, endIndex);
 
     const handlePrev = () => {
@@ -84,7 +80,7 @@ function RecentSalesCard() {
                 </div>
                 <Skeleton className="h-4 w-full mb-4" />
                 <ul className="space-y-2">
-                    {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+                    {Array.from({ length: item_per_page }).map((_, index) => (
                         <li
                             key={index}
                             className="flex items-center justify-between bg-neutral-800 px-2 py-2 rounded"
@@ -202,5 +198,3 @@ function RecentSalesCard() {
         </div>
     );
 }
-
-export default RecentSalesCard;
