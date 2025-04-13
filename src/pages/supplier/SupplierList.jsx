@@ -123,7 +123,7 @@ const SuppliersList = () => {
                                 onMouseEnter={() => setHoverColumn("email")}
                                 onMouseLeave={() => setHoverColumn(null)}
                                 onClick={() => handleSort("email")}
-                                className="cursor-pointer flex items-center gap-2 hidden md:table-cell"
+                                className="cursor-pointer hidden md:flex items-center gap-2"
                             >
                                 Correo electrónico
                                 {(hoverColumn === "email" || sortConfig.key === "email") && (
