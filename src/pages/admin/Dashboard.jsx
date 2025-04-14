@@ -1,10 +1,9 @@
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
-import PageHeader from "../../components/PageHeader";
 import { SectionCards } from "../../modules/admin/components/section-cards";
 import { RadialChart } from "../../modules/admin/components/radial-charts";
 import { RadarChartStock } from "../../modules/admin/components/radar-charts";
 import { AreaChartSales } from "../../modules/admin/components/area-charts";
-import RecentSalesCard from "../../modules/admin/components/recent-sales-card";
+import { RecentSalesCard } from "../../modules/admin/components/recent-sales-card";
 
 export default function Dashboard() {
     return (

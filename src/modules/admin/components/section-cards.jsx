@@ -1,15 +1,13 @@
-import { IoMdTrendingUp, IoMdTrendingDown, IoMdCash, IoIosArchive  } from "react-icons/io";
+"use client";
+import { IoMdTrendingUp, IoMdTrendingDown, IoMdCash, IoIosArchive } from "react-icons/io";
 import { FaRegHeart, FaOpencart } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useEffect, useState, useRef } from "react";
 import { cn } from "../../../lib/utils";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { Badge } from "../../../components/ui/badge";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../../components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { getDailyStatus } from "../../../services/DashboardService";
 
 const icons = {
   Clientes: <FaRegHeart className="text-red-400" />,
@@ -26,21 +24,34 @@ const formatCurrency = (num) => {
 
 export function SectionCards() {
   const [metrics, setMetrics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const didFetch = useRef(false);
 
   useEffect(() => {
-    fetch("https://run.mocky.io/v3/55dc086e-69f8-4ff1-885b-235a8e234031") // test
-      .then((res) => res.json())
-      .then((data) => setMetrics(data))
-      .catch((err) => console.error("Error fetching metrics:", err));
+    if (didFetch.current) return;
+    didFetch.current = true;
+
+    const fetchMetrics = async () => {
+      try {
+        const data = await getDailyStatus();
+        setMetrics(data);
+      } catch (error) {
+        toast.error("No se pudieron cargar las métricas.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMetrics();
   }, []);
 
-  const isLoading = metrics.length === 0;
-
+  const isEmpty = metrics.length === 0;
 
   return (
-    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 lg:px-6">
-      {isLoading
-        ? Array.from({ length: 4 }).map((_, index) => (
+    <>
+      <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 lg:px-6">
+        {(isLoading || isEmpty) ? (
+          Array.from({ length: 4 }).map((_, index) => (
             <Card
               key={index}
               className="@container/card bg-black text-white border border-neutral-800"
@@ -55,7 +66,8 @@ export function SectionCards() {
               </CardHeader>
             </Card>
           ))
-        : metrics.map((metric, index) => {
+        ) : (
+          metrics.map((metric, index) => {
             const isPositive = metric.change >= 0;
             const FooterIcon = isPositive ? IoMdTrendingUp : IoMdTrendingDown;
             const iconColor = isPositive ? "text-green-400" : "text-red-400";
@@ -93,7 +105,9 @@ export function SectionCards() {
                 </CardHeader>
               </Card>
             );
-          })}
-    </div>
-  );
-}
+          })
+        )}
+      </div>
+    </>
+  )
+};
