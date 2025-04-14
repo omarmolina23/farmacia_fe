@@ -1,14 +1,34 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { FiHome, FiArchive, FiLogOut } from "react-icons/fi";
-import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { LuCircleDollarSign } from "react-icons/lu";
-import { FaUserAlt, FaUsers } from "react-icons/fa";
-import { BsStars } from "react-icons/bs";
+import {
+    FiHome, FiArchive, FiLogOut
+} from "react-icons/fi";
+import {
+    IoIosArrowDown, IoIosArrowForward
+} from "react-icons/io";
+import {
+    LuCircleDollarSign
+} from "react-icons/lu";
+import {
+    FaUserAlt, FaUsers
+} from "react-icons/fa";
+import {
+    BsStars
+} from "react-icons/bs";
+
 import { useAuth } from "../../../context/authContext";
 import { signOut as signOutService } from "../../../services/UserService";
-import { toast } from "react-toastify";
-import { Sidebar } from "../../../components/ui/sidebar";
+import { toast } from "react-hot-toast";
+
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+} from "../../../components/ui/sidebar";
 
 export function AppSidebar({ ...props }) {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
