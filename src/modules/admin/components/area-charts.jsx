@@ -6,27 +6,11 @@ import { toast } from "sonner";
 import { Badge } from "../../../components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";
 import { MultiSelect } from "../../../components/multi-select";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../../../components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../../components/ui/select";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-} from "recharts";
+import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Skeleton } from "../../../components/ui/skeleton";
-import {
-  getProfitByCategory,
-  getSalesByCategory,
-} from "../../../services/DashboardService";
+import { getProfitByCategory, getSalesByCategory } from "../../../services/DashboardService";
 
 const defaultColors = [
   "hsl(var(--chart-6))",
@@ -62,10 +46,10 @@ export function AreaChartSales() {
         ]);
 
         setData(chartData);
-        setGananciasPorCategoria(gananciasData.ganancias_por_categoria);
+        setGananciasPorCategoria(gananciasData?.ganancias_por_categoria);
 
         const allCats = Object.keys(
-          gananciasData.ganancias_por_categoria[periodKeyMap["7d"]]
+          gananciasData?.ganancias_por_categoria?.[periodKeyMap["7d"]] || {}
         );
         setSelectedCategories(allCats);
 
@@ -80,7 +64,6 @@ export function AreaChartSales() {
           toast.error("No hay datos en este rango.");
         }
       } catch (err) {
-        console.error("Error fetching chart data:", err);
         toast.error("No se pudieron cargar las ventas por categoría.");
       } finally {
         setLoading(false);
@@ -112,7 +95,8 @@ export function AreaChartSales() {
   const categoryOptions = useMemo(() => {
     if (!gananciasPorCategoria) return [];
     const key = periodKeyMap[timeRange];
-    return Object.keys(gananciasPorCategoria[key]).map((cat) => ({
+    const categoriasRaw = gananciasPorCategoria?.[key] ?? {};
+    return Object.keys(categoriasRaw).map((cat) => ({
       value: cat,
       label: cat.charAt(0).toUpperCase() + cat.slice(1),
     }));
@@ -122,7 +106,7 @@ export function AreaChartSales() {
     if (!gananciasPorCategoria)
       return { totalSelectedGanancias: 0, badges: [] };
     const key = periodKeyMap[timeRange];
-    const periodData = gananciasPorCategoria[key];
+    const periodData = gananciasPorCategoria?.[key] ?? {};
     let sum = 0;
     const bs = selectedCategories.map((cat) => {
       const { total = 0, porcentaje = 0 } = periodData[cat] || {};
@@ -166,9 +150,7 @@ export function AreaChartSales() {
         <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative h-full">
           <CardHeader className="pb-2 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mt-2">
             <div>
-              <CardTitle className="text-xl font-bold">
-                Ventas por categoría
-              </CardTitle>
+              <CardTitle className="text-xl font-bold">Ventas por categoría</CardTitle>
               <div className="text-2xl font-extrabold mt-2">
                 $
                 {new Intl.NumberFormat("es-ES", {
