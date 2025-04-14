@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { login as loginService } from "../../services/UserService";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import TextField from "../../components/TextField";
 import PasswordField from "../../components/PasswordField";
 import Button from "../../components/Button";
