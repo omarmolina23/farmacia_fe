@@ -16,12 +16,8 @@ export const login = async (email, password) => {
 };
 
 export const signUp = async (userData) => {
-    try {
-        const response = await axios.post('/auth/sign-up', userData);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response.data.message);
-    }
+    const response = await axios.post('/auth/sign-up', userData);
+    return response.data;
 };
 
 export const signOut = async () => {

@@ -19,11 +19,21 @@ export default function UserRegister() {
     birthdate: "",
     status: "ACTIVE",
     role: "",
+    documentType: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "phone") {
+      let cleanedValue = value.replace(/\D/g, ""); 
+      if (cleanedValue.startsWith("57")) {
+        cleanedValue = cleanedValue.slice(2); 
+      }
+      const phoneNumber = cleanedValue.slice(0, 10); 
+      setFormData({ ...formData, [name]: `+57${phoneNumber}` });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const validateForm = () => {
@@ -31,6 +41,10 @@ export default function UserRegister() {
 
     if (!formData.role.trim()) {
       errors.push("El rol es obligatorio.");
+    }
+
+    if (!formData.documentType.trim()) {
+      errors.push("El tipo de documento es obligatorio.");
     }
 
     if (!formData.name.trim()) {
@@ -89,6 +103,7 @@ export default function UserRegister() {
       email: formData.email,
       birthdate: formData.birthdate,
       status: formData.status,
+      documentType: formData.documentType,
       isAdmin: formData.role === "Administrador",
       isEmployee: formData.role === "Vendedor",
     };
@@ -107,12 +122,12 @@ export default function UserRegister() {
         confirmEmail: "",
         birthdate: "",
         status: "ACTIVE",
+        documentType: "",
         role: "",
       });
     } catch (error) {
       if (error.response) {
         const { status, data } = error.response;
-
         switch (status) {
           case 400:
             if (data.errors) {
@@ -164,6 +179,7 @@ export default function UserRegister() {
       email: "",
       confirmEmail: "",
       birthdate: "",
+      documentType: "",
       status: "ACTIVE",
       role: "",
     });
