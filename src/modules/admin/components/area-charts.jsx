@@ -6,11 +6,27 @@ import { toast } from "sonner";
 import { Badge } from "../../../components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";
 import { MultiSelect } from "../../../components/multi-select";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../../components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../../../components/ui/select";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+} from "recharts";
 import { Skeleton } from "../../../components/ui/skeleton";
-import { getProfitByCategory, getSalesByCategory } from "../../../services/DashboardService";
+import {
+  getProfitByCategory,
+  getSalesByCategory,
+} from "../../../services/DashboardService";
 
 const defaultColors = [
   "hsl(var(--chart-6))",
@@ -33,15 +49,12 @@ export function AreaChartSales() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const didFetch = useRef(false);
 
-
-
   useEffect(() => {
     if (didFetch.current) return;
     didFetch.current = true;
 
     async function fetchChartData() {
       setLoading(true);
-
       try {
         const [chartData, gananciasData] = await Promise.all([
           getSalesByCategory(),
@@ -126,10 +139,9 @@ export function AreaChartSales() {
 
   const isEmpty = data.length === 0;
 
-
   return (
     <>
-      {(loading || isEmpty) ? (
+      {loading || isEmpty ? (
         <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-4 pb-4">
             <div className="flex-1 space-y-3">
@@ -137,10 +149,7 @@ export function AreaChartSales() {
               <Skeleton className="h-8 w-32 bg-neutral-800" />
               <div className="flex flex-wrap gap-2">
                 {[...Array(3)].map((_, i) => (
-                  <Skeleton
-                    key={i}
-                    className="h-5 w-20 rounded-full bg-neutral-800"
-                  />
+                  <Skeleton key={i} className="h-5 w-20 rounded-full bg-neutral-800" />
                 ))}
               </div>
             </div>
@@ -160,7 +169,8 @@ export function AreaChartSales() {
               <CardTitle className="text-xl font-bold">
                 Ventas por categoría
               </CardTitle>
-              <div className="text-2xl font-extrabold mt-2">$
+              <div className="text-2xl font-extrabold mt-2">
+                $
                 {new Intl.NumberFormat("es-ES", {
                   style: "currency",
                   currency: "COP",
@@ -187,7 +197,6 @@ export function AreaChartSales() {
                       ) : (
                         <TrendingDown size={20} className="inline align-middle ml-1" />
                       )}
-
                     </Badge>
                   );
                 })}
@@ -238,12 +247,7 @@ export function AreaChartSales() {
                       })
                     }
                   />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={10}
-                    domain={[50, 230]}
-                  />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={10} domain={[50, 230]} />
                   <ChartTooltip
                     cursor={false}
                     content={
