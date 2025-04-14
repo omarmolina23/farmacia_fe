@@ -1,4 +1,4 @@
-import mockAxios from "../config/axiosMock";
+import mockAxios from "../config/axiosMock"; 
 
 export const getDailyStatus = async () => {
     try {
