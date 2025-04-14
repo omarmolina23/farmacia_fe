@@ -107,17 +107,17 @@ const UserList = () => {
 
       <FilterStatus filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
 
-      <div className="overflow-x-auto">
-        <table className="text-sm w-full border-collapse">
+      <div className="overflow-x-auto w-full">
+        <table className="text-sm w-full min-w-[700px] border-collapse">
           <thead className="bg-[#95A09D] text-left">
             <tr className="h-9">
-              <th className="pl-5">Tipo Doc.</th>
-              <th className="pl-5">Num Doc.</th>
+              <th className="pl-4">Tipo Doc.</th>
+              <th className="pl-4">Num Doc.</th>
               <th
                 onMouseEnter={() => setHoverColumn("name")}
                 onMouseLeave={() => setHoverColumn(null)}
                 onClick={() => handleSort("name")}
-                className="cursor-pointer flex items-center gap-2 p-2"
+                className="cursor-pointer flex items-center gap-2 p-2 pl-4"
               >
                 Nombre
                 {(hoverColumn === "name" || sortConfig.key === "name") && (
@@ -126,9 +126,9 @@ const UserList = () => {
                     : <IoIosArrowDown />
                 )}
               </th>
-              <th className="hidden md:table-cell">Teléfono</th>
-              <th className="hidden md:table-cell">Correo electrónico</th>
-              <th className="hidden lg:table-cell">Edad</th>
+              <th className="pl-4 hidden md:table-cell">Teléfono</th>
+              <th className="pl-4 hidden md:table-cell">Correo electrónico</th>
+              <th className="pl-4 hidden lg:table-cell">Edad</th>
               <th>Acciones</th>
             </tr>
           </thead>

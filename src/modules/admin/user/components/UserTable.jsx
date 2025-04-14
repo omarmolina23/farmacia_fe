@@ -7,7 +7,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { updateUser } from "../../../../services/UserService";
 
-const UserTable = ({ id, documentType, name, phone, email, age, status, refreshList }) => {
+const UserTable = ({
+  id,
+  documentType,
+  name,
+  phone,
+  email,
+  age,
+  status,
+  refreshList,
+}) => {
   const navigate = useNavigate();
   const handleEditClick = () => {
     navigate(`/admin/user/update/${id}`);
@@ -38,9 +47,10 @@ const UserTable = ({ id, documentType, name, phone, email, age, status, refreshL
           const newStatus = status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
           await updateUser(id, { status: newStatus });
           toast.success(
-            `Usuario ${newStatus === "ACTIVE" ? "habilitado" : "deshabilitado"
+            `Usuario ${
+              newStatus === "ACTIVE" ? "habilitado" : "deshabilitado"
             } correctamente`
-          )
+          );
           refreshList();
         } catch (error) {
           console.error("Error al cambiar el estado del usuario:", error);
@@ -53,37 +63,39 @@ const UserTable = ({ id, documentType, name, phone, email, age, status, refreshL
   return (
     <>
       <tr className="text-left h-8 align-middle border-b">
-        <td className="pl-5 hidden lg:table-cell">{documentType}</td>
+        <td className="pl-4 hidden lg:table-cell">{documentType}</td>
         <td className="pl-4">{id}</td>
-        <td className="pl-4">{name}</td>
-        <td className="hidden md:table-cell">{phone}</td>
-        <td className="hidden md:table-cell">{email}</td>
-        <td className="hidden lg:table-cell">{age}</td>
-        <td className="flex flex-wrap gap-2 p-1">
-          <div
-            className="flex items-center cursor-pointer hover:bg-[#f1d167] px-2 py-1 rounded"
-            onClick={handleEditClick}
-          >
-            <FaEdit size={16} className="mr-1 text-[#232323]" />
-            Editar
+        <td className="pl-4 truncate max-w-[120px]">{name}</td>
+        <td className="pl-4 hidden md:table-cell">{phone}</td>
+        <td className="pl-4 hidden md:table-cell truncate max-w-[120px]">{email}</td>
+        <td className="pl-4 hidden lg:table-cell">{age}</td>
+        <td className="p-1">
+          <div className="flex flex-wrap gap-2">
+            <div
+              className="flex items-center cursor-pointer hover:bg-[#f1d167] px-2 py-1 rounded"
+              onClick={handleEditClick}
+            >
+              <FaEdit size={16} className="mr-1 text-[#232323]" />
+              Editar
+            </div>
+            {status === "ACTIVE" ? (
+              <div
+                className="flex items-center cursor-pointer hover:bg-[#d13737] px-2 py-1 rounded"
+                onClick={handleToggleUserStatus}
+              >
+                <EyeOff size={16} className="mr-1 text-[#181818]" />
+                Deshabilitar
+              </div>
+            ) : (
+              <div
+                className="flex items-center cursor-pointer hover:bg-[#AAF167] px-2 py-1 rounded"
+                onClick={handleToggleUserStatus}
+              >
+                <Eye size={16} className="mr-1 text-[#181818]" />
+                Habilitar
+              </div>
+            )}
           </div>
-          {status === "ACTIVE" ? (
-            <div
-              className="flex items-center cursor-pointer hover:bg-[#d13737] px-2 py-1 rounded"
-              onClick={handleToggleUserStatus}
-            >
-              <EyeOff size={16} className="mr-1 text-[#181818]" />
-              Deshabilitar
-            </div>
-          ) : (
-            <div
-              className="flex items-center cursor-pointer hover:bg-[#AAF167] px-2 py-1 rounded"
-              onClick={handleToggleUserStatus}
-            >
-              <Eye size={16} className="mr-1 text-[#181818]" />
-              Habilitar
-            </div>
-          )}
         </td>
       </tr>
     </>

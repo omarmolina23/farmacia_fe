@@ -1,29 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../components/ui/card";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { toast } from "sonner";
 import { Badge } from "../../../components/ui/badge";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "../../../components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";
 import { MultiSelect } from "../../../components/multi-select";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../../../components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../../components/ui/select";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { AreaChart, Area, CartesianGrid, XAxis } from "recharts";
+import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Skeleton } from "../../../components/ui/skeleton";
+import { getProfitByCategory, getSalesByCategory } from "../../../services/DashboardService";
 
 const defaultColors = [
   "hsl(var(--chart-6))",
@@ -44,32 +31,46 @@ export function AreaChartSales() {
   const [gananciasPorCategoria, setGananciasPorCategoria] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const didFetch = useRef(false);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [resChart, resGan] = await Promise.all([
-          fetch("https://run.mocky.io/v3/605f0981-e797-4065-92e0-031ab5101bcb"),
-          fetch("https://run.mocky.io/v3/80ea92bd-b6a9-4dca-8656-23bfd164c0a9"),
-        ]);
-        const chartJson = await resChart.json();
-        const ganJson = await resGan.json();
+    if (didFetch.current) return;
+    didFetch.current = true;
 
-        setData(chartJson);
-        setGananciasPorCategoria(ganJson.ganancias_por_categoria);
+    async function fetchChartData() {
+      setLoading(true);
+      try {
+        const [chartData, gananciasData] = await Promise.all([
+          getSalesByCategory(),
+          getProfitByCategory(),
+        ]);
+
+        setData(chartData);
+        setGananciasPorCategoria(gananciasData?.ganancias_por_categoria);
 
         const allCats = Object.keys(
-          ganJson.ganancias_por_categoria[periodKeyMap["7d"]]
+          gananciasData?.ganancias_por_categoria?.[periodKeyMap["7d"]] || {}
         );
         setSelectedCategories(allCats);
+
+        const days = 7;
+        const now = Date.now();
+        const hasAny = chartData.some((entry) => {
+          const diff =
+            (now - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24);
+          return diff <= days;
+        });
+        if (chartData.length > 0 && !hasAny) {
+          toast.error("No hay datos en este rango.");
+        }
       } catch (err) {
-        console.error(err);
+        toast.error("No se pudieron cargar las ventas por categoría.");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchData();
+    fetchChartData();
   }, []);
 
   const chartConfig = useMemo(() => {
@@ -94,7 +95,8 @@ export function AreaChartSales() {
   const categoryOptions = useMemo(() => {
     if (!gananciasPorCategoria) return [];
     const key = periodKeyMap[timeRange];
-    return Object.keys(gananciasPorCategoria[key]).map((cat) => ({
+    const categoriasRaw = gananciasPorCategoria?.[key] ?? {};
+    return Object.keys(categoriasRaw).map((cat) => ({
       value: cat,
       label: cat.charAt(0).toUpperCase() + cat.slice(1),
     }));
@@ -104,7 +106,7 @@ export function AreaChartSales() {
     if (!gananciasPorCategoria)
       return { totalSelectedGanancias: 0, badges: [] };
     const key = periodKeyMap[timeRange];
-    const periodData = gananciasPorCategoria[key];
+    const periodData = gananciasPorCategoria?.[key] ?? {};
     let sum = 0;
     const bs = selectedCategories.map((cat) => {
       const { total = 0, porcentaje = 0 } = periodData[cat] || {};
@@ -119,155 +121,151 @@ export function AreaChartSales() {
     return { totalSelectedGanancias: sum, badges: bs };
   }, [gananciasPorCategoria, selectedCategories, timeRange, chartConfig]);
 
-  // ─── Loading Skeleton ────────────────────────────────────────────────────────
-  if (loading) {
-    return (
-      <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-4 border-b pb-4">
-          {/* Título y monto */}
-          <div className="flex-1 space-y-3">
-            <Skeleton className="h-6 w-48 bg-neutral-800" />
-            <Skeleton className="h-8 w-32 bg-neutral-800" />
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2">
-              {[...Array(3)].map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="h-5 w-20 rounded-full bg-neutral-800"
-                />
-              ))}
-            </div>
-          </div>
-          {/* Controles */}
-          <div className="flex gap-2">
-            <Skeleton className="h-10 w-40 rounded-md bg-neutral-800" />
-            <Skeleton className="h-10 w-40 rounded-md bg-neutral-800" />
-          </div>
-        </CardHeader>
-        <CardContent className="px-1 pt-4 sm:px-6 sm:pt-6">
-          {/* Gráfica */}
-          <Skeleton className="h-40 w-full rounded-md bg-neutral-800" />
-        </CardContent>
-      </Card>
-    );
-  }
-  // ─────────────────────────────────────────────────────────────────────────────
+  const isEmpty = data.length === 0;
 
   return (
-    <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b pb-2">
-        <div className="flex-1 space-y-2">
-          <CardTitle className="ml-2 mt-4 sm:mt-2">
-            Ventas por categoría
-          </CardTitle>
-          <div className="text-lg font-semibold ml-2">
-            {new Intl.NumberFormat("es-ES", {
-              style: "currency",
-              currency: "COP",
-              maximumFractionDigits: 0,
-            }).format(totalSelectedGanancias)}
-          </div>
-          <div className="flex flex-wrap gap-2 items-center ml-2">
-            {badges.slice(0, 4).map(({ category, porcentaje, color }) => {
-              const isPos = porcentaje >= 0;
-              return (
-                <Badge
-                  key={category}
-                  variant="ghost"
-                  className="px-2 py-0.5 text-xs font-medium border"
-                  style={{
-                    borderColor: color,
-                    backgroundColor: `${color}20`,
-                    color: color,
-                  }}
-                >
-                  {porcentaje.toFixed(1)}%{" "}
-                  {isPos ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 z-10 pr-4">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-full sm:w-[160px]">
-              <SelectValue placeholder="Seleccionar rango" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">Últimos 7 días</SelectItem>
-              <SelectItem value="30d">Últimos 30 días</SelectItem>
-              <SelectItem value="90d">Últimos 3 meses</SelectItem>
-            </SelectContent>
-          </Select>
-          <div className="relative z-20 w-full sm:w-[200px]">
-            <MultiSelect
-              options={categoryOptions}
-              defaultValue={selectedCategories}
-              onValueChange={setSelectedCategories}
-              placeholder="Categorías..."
-              animation={2}
-              variant="inverted"
-            />
-          </div>
-        </div>
-      </CardHeader>
+    <>
+      {loading || isEmpty ? (
+        <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-4 pb-4">
+            <div className="flex-1 space-y-3">
+              <Skeleton className="h-6 w-48 bg-neutral-800" />
+              <Skeleton className="h-8 w-32 bg-neutral-800" />
+              <div className="flex flex-wrap gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={i} className="h-5 w-20 rounded-full bg-neutral-800" />
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-40 rounded-md bg-neutral-800" />
+              <Skeleton className="h-10 w-40 rounded-md bg-neutral-800" />
+            </div>
+          </CardHeader>
+          <CardContent className="px-1 pt-4 sm:px-6 sm:pt-6">
+            <Skeleton className="h-40 w-full rounded-md bg-neutral-800" />
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative h-full">
+          <CardHeader className="pb-2 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mt-2">
+            <div>
+              <CardTitle className="text-xl font-bold">Ventas por categoría</CardTitle>
+              <div className="text-2xl font-extrabold mt-2">
+                $
+                {new Intl.NumberFormat("es-ES", {
+                  style: "currency",
+                  currency: "COP",
+                  maximumFractionDigits: 0,
+                }).format(totalSelectedGanancias)}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center items-center ml-3 mt-3">
+                {badges.slice(0, 4).map(({ category, porcentaje, color }) => {
+                  const isPos = porcentaje >= 0;
+                  return (
+                    <Badge
+                      key={category}
+                      variant="ghost"
+                      className="px-2 py-0.5 text-ls font-black border-3"
+                      style={{
+                        borderColor: color,
+                        backgroundColor: `${color}20`,
+                        color: color,
+                      }}
+                    >
+                      {porcentaje.toFixed(1)}%{" "}
+                      {isPos ? (
+                        <TrendingUp size={20} className="inline align-middle ml-1" />
+                      ) : (
+                        <TrendingDown size={20} className="inline align-middle ml-1" />
+                      )}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
 
-      <CardContent className="px-1 pt-2 sm:px-6 sm:pt-6">
-        {filteredData.length ? (
-          <ChartContainer config={chartConfig} className="aspect-auto h-40 w-full">
-            <AreaChart data={filteredData}>
-              <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="3 3" />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
-                tickFormatter={(val) =>
-                  new Date(val).toLocaleDateString("es-ES", {
-                    month: "short",
-                    day: "numeric",
-                  })
-                }
-              />
-              <ChartTooltip
-                cursor={false}
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={(val) =>
-                      new Date(val).toLocaleDateString("es-ES", {
-                        weekday: "long",
-                        day: "numeric",
+            <div className="flex gap-3 flex-wrap mt-1">
+              <div className="w-full">
+                <Select value={timeRange} onValueChange={setTimeRange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar rango" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7d">Últimos 7 días</SelectItem>
+                    <SelectItem value="30d">Últimos 30 días</SelectItem>
+                    <SelectItem value="90d">Últimos 3 meses</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-full">
+                <MultiSelect
+                  options={categoryOptions}
+                  defaultValue={selectedCategories}
+                  onValueChange={setSelectedCategories}
+                  placeholder="Categorías..."
+                  animation={2}
+                  variant="inverted"
+                />
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="pl-0 pr-1 pt-2 -sm:pl-10 sm:pr-5 sm:pt-2">
+            <ChartContainer config={chartConfig} className="aspect-auto h-80 w-full p-1 pl-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={filteredData}>
+                  <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="3 4" />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    minTickGap={32}
+                    tickFormatter={(val) =>
+                      new Date(`${val}T00:00:00`).toLocaleDateString("es-ES", {
                         month: "short",
+                        day: "numeric",
                       })
                     }
-                    labelClassName="text-black"
-                    indicator="dot"
                   />
-                }
-              />
-              {Object.entries(chartConfig)
-                .filter(([key]) => selectedCategories.includes(key))
-                .map(([key, { color }]) => (
-                  <Area
-                    key={key}
-                    type="natural"
-                    dataKey={key}
-                    stroke={color}
-                    fillOpacity={0.1}
-                    fill={color}
-                    dot={{ r: 1.5 }}
-                    strokeWidth={2}
+                  <YAxis tickLine={false} axisLine={false} tickMargin={10} domain={[50, 230]} />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(val) =>
+                          new Date(`${val}T00:00:00`).toLocaleDateString("es-ES", {
+                            weekday: "long",
+                            day: "numeric",
+                            month: "short",
+                          })
+                        }
+                        labelClassName="text-black"
+                        indicator="dot"
+                      />
+                    }
                   />
-                ))}
-            </AreaChart>
-          </ChartContainer>
-        ) : (
-          <p className="text-sm text-center mt-2">
-            No hay datos para el rango seleccionado.
-          </p>
-        )}
-      </CardContent>
-    </Card>
+                  {Object.entries(chartConfig)
+                    .filter(([key]) => selectedCategories.includes(key))
+                    .map(([key, { color }]) => (
+                      <Area
+                        key={key}
+                        type="natural"
+                        dataKey={key}
+                        stroke={color}
+                        fillOpacity={0.1}
+                        fill={color}
+                        dot={{ r: 2 }}
+                        strokeWidth={2}
+                      />
+                    ))}
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
+    </>
   );
 }

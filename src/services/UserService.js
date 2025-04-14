@@ -20,9 +20,19 @@ export const signUp = async (userData) => {
     return response.data;
 };
 
-export const signOut = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+export const signOut = async () => {
+
+    try {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        await axios.post('auth/sign-out');
+    }
+    catch (error) {
+        throw new Error(error.response.data.message || "Ha ocurrido un error");
+    }
+
+
 }
 
 export const setPassword = async (token, password) => {

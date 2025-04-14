@@ -24,7 +24,16 @@ export default function UserRegister() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "phone") {
+      let cleanedValue = value.replace(/\D/g, ""); 
+      if (cleanedValue.startsWith("57")) {
+        cleanedValue = cleanedValue.slice(2); 
+      }
+      const phoneNumber = cleanedValue.slice(0, 10); 
+      setFormData({ ...formData, [name]: `+57${phoneNumber}` });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const validateForm = () => {
@@ -98,7 +107,7 @@ export default function UserRegister() {
       isAdmin: formData.role === "Administrador",
       isEmployee: formData.role === "Vendedor",
     };
-    
+
     try {
       await signUp(userData);
       toast.success("Usuario registrado exitosamente", {
