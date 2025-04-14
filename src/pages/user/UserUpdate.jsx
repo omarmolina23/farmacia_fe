@@ -42,6 +42,7 @@ export default function UserUpdate() {
           phone: user.phone ?? "",
           email: user.email ?? "",
           confirmEmail: user.email ?? "",
+          documentType: user.documentType ?? "",
           birthdate: formattedBirthdate,
           role: role ?? "",
         });
@@ -87,6 +88,10 @@ export default function UserUpdate() {
 
     if (!formData.name.trim()) {
       errors.push("El nombre completo es obligatorio.");
+    }
+
+    if (!formData.documentType.trim()) {
+      errors.push("El tipo de documento es obligatorio.");
     }
 
     if (!formData.phone || !/^\+57\d{10}$/.test(formData.phone)) {
@@ -139,6 +144,7 @@ export default function UserUpdate() {
       email: formData.email,
       birthdate: formData.birthdate,
       status: formData.status,
+      documentType: formData.documentType,
       isAdmin: formData.role === "Administrador",
       isEmployee: formData.role === "Vendedor",
     };

@@ -19,6 +19,7 @@ export default function UserRegister() {
     birthdate: "",
     status: "ACTIVE",
     role: "",
+    documentType: "",
   });
 
   const handleChange = (e) => {
@@ -31,6 +32,10 @@ export default function UserRegister() {
 
     if (!formData.role.trim()) {
       errors.push("El rol es obligatorio.");
+    }
+
+    if (!formData.documentType.trim()) {
+      errors.push("El tipo de documento es obligatorio.");
     }
 
     if (!formData.name.trim()) {
@@ -89,10 +94,11 @@ export default function UserRegister() {
       email: formData.email,
       birthdate: formData.birthdate,
       status: formData.status,
+      documentType: formData.documentType,
       isAdmin: formData.role === "Administrador",
       isEmployee: formData.role === "Vendedor",
     };
-
+    
     try {
       await signUp(userData);
       toast.success("Usuario registrado exitosamente", {
@@ -107,12 +113,12 @@ export default function UserRegister() {
         confirmEmail: "",
         birthdate: "",
         status: "ACTIVE",
+        documentType: "",
         role: "",
       });
     } catch (error) {
       if (error.response) {
         const { status, data } = error.response;
-
         switch (status) {
           case 400:
             if (data.errors) {
@@ -164,6 +170,7 @@ export default function UserRegister() {
       email: "",
       confirmEmail: "",
       birthdate: "",
+      documentType: "",
       status: "ACTIVE",
       role: "",
     });

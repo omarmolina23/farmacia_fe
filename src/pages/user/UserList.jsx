@@ -111,7 +111,8 @@ const UserList = () => {
         <table className="text-sm w-full border-collapse">
           <thead className="bg-[#95A09D] text-left">
             <tr className="h-9">
-              <th className="pl-5">Cédula</th>
+              <th className="pl-5">Tipo Doc.</th>
+              <th className="pl-5">Num Doc.</th>
               <th
                 onMouseEnter={() => setHoverColumn("name")}
                 onMouseLeave={() => setHoverColumn(null)}
@@ -135,6 +136,7 @@ const UserList = () => {
             {paginatedUsers.map((user, index) => (
               <UserTable
                 key={user.id}
+                documentType={user.documentType}
                 id={user.id}
                 name={user.name}
                 phone={user.phone}

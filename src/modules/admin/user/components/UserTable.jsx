@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { updateUser } from "../../../../services/UserService";
 
-const UserTable = ({ id, name, phone, email, age, status, refreshList }) => {
+const UserTable = ({ id, documentType, name, phone, email, age, status, refreshList }) => {
   const navigate = useNavigate();
   const handleEditClick = () => {
     navigate(`/admin/user/update/${id}`);
@@ -53,8 +53,9 @@ const UserTable = ({ id, name, phone, email, age, status, refreshList }) => {
   return (
     <>
       <tr className="text-left h-8 align-middle border-b">
-        <td className="pl-5">{id}</td>
-        <td>{name}</td>
+        <td className="pl-5 hidden lg:table-cell">{documentType}</td>
+        <td className="pl-4">{id}</td>
+        <td className="pl-4">{name}</td>
         <td className="hidden md:table-cell">{phone}</td>
         <td className="hidden md:table-cell">{email}</td>
         <td className="hidden lg:table-cell">{age}</td>

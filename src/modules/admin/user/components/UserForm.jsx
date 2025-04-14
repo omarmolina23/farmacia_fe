@@ -29,7 +29,25 @@ const UserForm = ({
           </select>
         </div>
         <div>
-          <label htmlFor="id" className="text-md font-medium w-70">Cédula</label>
+          <label htmlFor="documentType" className="text-md font-medium w-70">
+            Tipo de documento
+          </label>
+          <select
+            id="documentType"
+            name="documentType"
+            value={formData.documentType}
+            onChange={handleChange}
+            className="border rounded-md p-2 bg-gray-200 w-full"
+            disabled={isFieldDisabled(isEditMode)}
+          >
+            <option value="">Seleccione un tipo</option>
+            <option value="CC">Cédula de ciudadanía (CC)</option>
+            <option value="CE">Cédula de extranjería (CE)</option>
+            <option value="NIT">(NIT) Número de Identificación Tributaria</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="id" className="text-md font-medium w-70">Número de Documento</label>
           <TextField
             id="id"
             type="text"
