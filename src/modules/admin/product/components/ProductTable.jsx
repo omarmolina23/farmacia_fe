@@ -1,5 +1,7 @@
-import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { Eye, EyeOff, Package, Info } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
+import { MdInsertPhoto } from "react-icons/md";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,17 +14,52 @@ const ProductTable = ({
   index,
   id,
   name,
+  description,
   category,
   price,
   status,
+  concentration,
+  activeIngredient,
+  weight,
+  volume,
+  images,
+  tags,
   refreshList,
 }) => {
   const navigate = useNavigate();
 
-  const handleEditClick = () => {
-    const productData = { index, id, name, category, price, status, refreshList };
+  const [openBatch, setOpenBatch] = useState(false);
+
+  const saveInfo = () => {
+    const productData = {
+      index,
+      id,
+      name,
+      description,
+      category,
+      price,
+      status,
+      concentration,
+      activeIngredient,
+      weight,
+      volume,
+      images,
+      tags,
+      refreshList,
+    };
+    console.log("tags", tags);
+    console.log("productData", productData);
     localStorage.setItem("productData", JSON.stringify(productData));
+  };
+
+  const handleEditClick = () => {
+    saveInfo();
     navigate(`/admin/product/update`);
+  };
+
+  const handleShowInfo = () => {
+    saveInfo();
+    navigate(`/admin/product/detail/${id}`);
   };
 
   const handleToggleStatus = async () => {
@@ -73,7 +110,7 @@ const ProductTable = ({
         <td className="pl-2">{name}</td>
         <td className="pl-2">{category}</td>
         <td className="pl-2">{price}</td>
-        <td className="flex flex-col md:flex-row p-1 gap-2">
+        <td className="flex flex-col md:flex-row pl-2 p-1 gap-2">
           <div
             className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
             onClick={handleEditClick}
@@ -98,6 +135,28 @@ const ProductTable = ({
               <span className="hidden md:inline">Habilitar</span>
             </div>
           )}
+
+          <div
+            className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
+            onClick={() => setOpenBatch(!openBatch)}
+          >
+            <Package size={16} className="mr-2 text-[#181818]" />
+            <span className="hidden md:inline">
+              {openBatch ? "Ocultar lote" : "Ver lote"}
+            </span>
+          </div>
+
+          <div
+            className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
+            onClick={handleShowInfo}
+          >
+            <Info size={16} className="mr-2 text-[#181818]" />
+            <span className="hidden md:inline">
+              Ver detalles
+            </span>
+
+            
+          </div>
         </td>
       </tr>
     </>

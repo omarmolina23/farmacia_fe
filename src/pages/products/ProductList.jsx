@@ -28,7 +28,6 @@ const ProductList = () => {
 
   useEffect(() => {
     fetchProducts();
-    console.log("products", products);
   }, [filterStatus]);
 
   const fetchProducts = () => {
@@ -172,7 +171,7 @@ const ProductList = () => {
                     ))}
                 </div>
               </th>
-              <th>Acciones</th>
+              <th className="pl-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -182,9 +181,16 @@ const ProductList = () => {
                 id={product.id}
                 index={(currentPage - 1) * rowsPerPage + index}
                 name={product.name}
+                description={product.description}
                 category={product.category.name}
                 price={product.price}
                 status={product.status}
+                concentration={product.concentration}
+                activeIngredient={product.activeIngredient}
+                weight={product.weight}
+                volume={product.volume}
+                images={product.images}
+                tags={product.ProductTag}
                 refreshList={fetchProducts}
               />
             ))}

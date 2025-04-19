@@ -148,3 +148,45 @@ html, body, #root {
     @apply bg-background text-foreground;
     }
 }
+
+.image-slider-container {
+    margin: 0 auto;
+    width: 350px;
+  }
+
+.image-slider-container .slick-prev:before,
+.image-slider-container .slick-next:before {
+    color: rgb(29, 68, 37);
+  }
+
+ .slick-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+ }
+
+ .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .tag-item {
+    background-color: #d8f45c;
+    color: #000000;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #ccc;
+  }
+  
+  .tag-item:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+  }
+  
+
