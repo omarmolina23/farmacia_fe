@@ -33,7 +33,6 @@ const ProductList = () => {
   const fetchProducts = () => {
     getProductAll()
       .then((data) => {
-        console.log("data", data);
         if (Array.isArray(data)) {
           setProducts(
             data.filter((product) => product.status === filterStatus)

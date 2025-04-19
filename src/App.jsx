@@ -5,6 +5,7 @@ import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
 import "./App.css";
+import ProductRegister from "./pages/products/ProductRegister";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -50,6 +51,7 @@ function App() {
                   <Route path="update/:id" element={<UserUpdate />} />
                 </Route>
                 <Route path="product">
+                  <Route path="register" element={<ProductRegister />} />
                   <Route path="list" element={<ProductList />} />
                   <Route path="detail/:id" element={<ProductDetail />} />
                 </Route>
