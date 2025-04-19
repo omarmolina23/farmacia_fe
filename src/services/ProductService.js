@@ -2,7 +2,11 @@ import axios from "../config/axios";
 
 export const createProduct = async (productData) => {
     try {
-        const response = await axios.post("/product", productData);
+        const response = await axios.post("/product", productData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
