@@ -93,7 +93,7 @@ const BatchList = () => {
   };
 
   return (
-    <BatchLayout title="Batches">
+    <BatchLayout title="Lotes">
       <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar
           placeholder="Buscar un lote"
