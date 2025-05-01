@@ -22,13 +22,15 @@ const UserList = lazy(() => import("./pages/user/UserList"));
 const UserRegister = lazy(() => import("./pages/user/UserRegister"));
 const UserUpdate = lazy(() => import("./pages/user/UserUpdate"));
 const EmployeesHome = lazy(() => import("./pages/employees/EmployeesHome"));
+const ClientHome = lazy(() => import("./pages/clients/ClientHome"));
 
 function App() {
   return (
     <AuthProvider>
       <Suspense fallback={<Loading />}>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<ClientHome />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route element={<ProtectedRoute />}>
