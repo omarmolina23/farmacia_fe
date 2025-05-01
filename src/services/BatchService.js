@@ -3,7 +3,7 @@ import axios from '../config/axios';
 export const createBatch = async (batchData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('/batches', batchData, {
+        const response = await axios.post('/batch', batchData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -18,7 +18,7 @@ export const createBatch = async (batchData) => {
 export const getAllBatches = async () => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/batches', {
+        const response = await axios.get('/batch', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -33,7 +33,7 @@ export const getAllBatches = async () => {
 export const searchBatchByNumber = async (query) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/batches/search/id', {
+        const response = await axios.get('/batch/search', {
             params: { query },
             headers: {
                 Authorization: `Bearer ${token}`
@@ -48,7 +48,7 @@ export const searchBatchByNumber = async (query) => {
 export const getBatchesByProductId = async (productId) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/batches/search/by-product', {
+        const response = await axios.get('/batch/search/by-product', {
             params: { productId },
             headers: {
                 Authorization: `Bearer ${token}`
@@ -63,7 +63,7 @@ export const getBatchesByProductId = async (productId) => {
 export const updateBatch = async (id, updateData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.patch(`/batches/${id}`, updateData, {
+        const response = await axios.patch(`/batch/${id}`, updateData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -77,7 +77,7 @@ export const updateBatch = async (id, updateData) => {
 export const deactivateBatch = async (id) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.delete(`/batches/${id}`, {
+        const response = await axios.delete(`/batch/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
