@@ -137,7 +137,7 @@ const ProductTable = ({
 
           <div
             className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
-            onClick={() => navigate(`/admin/product/lote/${id}`)}
+            onClick={() => navigate(`/admin/product/batch/${id}`)}
           >
             <Package size={16} className="mr-2 text-[#181818]" />
             <span className="hidden md:inline">Ver lote</span>
