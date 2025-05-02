@@ -35,32 +35,32 @@ const ClientHeader = () => {
 
         {/* Menú Desktop */}
         <nav className="hidden md:flex items-center gap-8">
-  <a
-    href="#about"
-    className="text-[#4CAF50] font-bold hover:underline flex items-center gap-1 text-lg"
-    style={fontStyle} // Mantener la fuente personalizada
-  >
-    ¿Quienes somos?
-  </a>
-  <a
-    href="#categories"
-    className="text-black hover:underline flex items-center gap-1 text-lg"
-  >
-    Categorías <IoIosArrowDown size={18} />
-  </a>
-  <a
-    href="#cart"
-    className="text-black hover:underline flex items-center gap-1 text-lg"
-  >
-    <FaHistory size={18} /> Mis compras
-  </a>
-  <a
-    href="/login"
-    className="text-black hover:underline flex items-center gap-1 text-lg"
-  >
-    <FaSignInAlt size={30} />
-  </a>
-</nav>
+          <a
+            href="#about"
+            className="text-[#4CAF50] font-bold hover:underline flex items-center gap-1 text-lg"
+            style={fontStyle} // Mantener la fuente personalizada
+          >
+            ¿Quienes somos?
+          </a>
+          <a
+            href="#categories"
+            className="text-black hover:underline flex items-center gap-1 text-lg"
+          >
+            Categorías <IoIosArrowDown size={18} />
+          </a>
+          <a
+            href="#cart"
+            className="text-black hover:underline flex items-center gap-1 text-lg"
+          >
+            <FaHistory size={18} /> Mis compras
+          </a>
+          <a
+            href="/login"
+            className="text-black hover:underline flex items-center gap-1 text-lg"
+          >
+            <FaSignInAlt size={30} />
+          </a>
+        </nav>
 
         {/* Botón Hamburguesa */}
         <button
