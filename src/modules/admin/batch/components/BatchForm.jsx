@@ -7,7 +7,8 @@ const BatchForm = ({
   handleChange,
   handleSubmit,
   handleCancel,
-  isEditMode,
+  suppliers = [],
+  product,
 }) => {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl space-y-4 p-5">
@@ -15,23 +16,11 @@ const BatchForm = ({
         <label className="text-md font-medium w-70">Número de lote:</label>
         <TextField
           type="text"
-          id="batchNumber"
-          name="batchNumber"
+          id="number_batch"
+          name="number_batch"
           value={formData.batchNumber}
           onChange={handleChange}
           placeholder="Escriba el número del lote"
-        />
-      </div>
-
-      <div className="flex items-center space-x-5">
-        <label className="text-md font-medium w-70">Proveedor:</label>
-        <TextField
-          type="text"
-          id="supplierId"
-          name="supplierId"
-          value={formData.supplierId}
-          onChange={handleChange}
-          placeholder="Escriba el ID del proveedor"
         />
       </div>
 
@@ -41,14 +30,35 @@ const BatchForm = ({
           type="text"
           id="productId"
           name="productId"
-          value={formData.productId}
+          value={product}
           onChange={handleChange}
           placeholder="Escriba el ID del producto"
+          disabled={true}
         />
       </div>
 
       <div className="flex items-center space-x-5">
-        <label className="text-md font-medium w-70">Fecha de vencimiento:</label>
+        <label className="text-md font-medium w-70">Proveedor:</label>
+        <select
+          id="supplierId"
+          name="supplierId"
+          value={formData.supplierId}
+          onChange={handleChange}
+          className="bg-gray-200 p-2 rounded-md w-full"
+        >
+          <option value="">Seleccione un proveedor</option>
+          {suppliers.map((supplier) => (
+            <option key={supplier.id} value={supplier.id}>
+              {supplier.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center space-x-5">
+        <label className="text-md font-medium w-70">
+          Fecha de vencimiento:
+        </label>
         <input
           type="date"
           id="expirationDate"
@@ -71,21 +81,14 @@ const BatchForm = ({
         />
       </div>
 
-      <div className="flex items-center space-x-5">
-        <label className="text-md font-medium w-70">Valor total:</label>
-        <TextField
-          type="number"
-          id="totalValue"
-          name="totalValue"
-          value={formData.totalValue}
-          onChange={handleChange}
-          placeholder="Escriba el valor total del lote"
-        />
-      </div>
-
       <div className="flex space-x-4 mt-4">
         <Button type="submit" title="Registrar" color="bg-[#8B83BA]" />
-        <Button type="button" title="Cancelar" color="bg-[#8B83BA]" onClick={handleCancel} />
+        <Button
+          type="button"
+          title="Cancelar"
+          color="bg-[#8B83BA]"
+          onClick={handleCancel}
+        />
       </div>
     </form>
   );
