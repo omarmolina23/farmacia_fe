@@ -6,6 +6,7 @@ import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
 import "./App.css";
 import ProductRegister from "./pages/products/ProductRegister";
+import ClientsAboutUs from "./pages/clients/ClientsAboutUs";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -30,6 +31,7 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<ClientHome />} />
+          <Route path="/about" element={<ClientsAboutUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 

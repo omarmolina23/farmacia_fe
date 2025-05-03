@@ -36,7 +36,7 @@ const ClientHeader = () => {
         {/* Menú Desktop */}
         <nav className="hidden md:flex items-center gap-8">
           <a
-            href="#about"
+            href=""
             className="text-[#4CAF50] hover:underline flex items-center gap-1 text-3xl"
             style={fontStyle} // Mantener la fuente personalizada
           >

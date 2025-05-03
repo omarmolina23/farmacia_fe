@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -22,7 +22,11 @@ const Footer = () => {
         <div className="flex flex-col items-center">
           <h3 className="text-black font-bold text-lg mb-4">Droguería</h3>
           <ul className="space-y-2 text-gray-700">
-            <li>Misión - Visión</li>
+            <li>
+              <Link to="/about" className="hover:underline">
+                Misión - Visión
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -44,7 +48,6 @@ const Footer = () => {
             className="h-7 sm:h-9 rounded-full"
           />
         </div>
-
       </div>
     </footer>
   );
