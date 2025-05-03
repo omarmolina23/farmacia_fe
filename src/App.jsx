@@ -18,6 +18,8 @@ const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const ProductList = lazy(() => import("./pages/products/ProductList"));
 const ProductDetail = lazy(() => import("./pages/products/ProductDetail"));
+const BatchList = lazy(() => import("./pages/batch/BatchList"));
+const BatchRegister = lazy(() => import("./pages/batch/BatchRegister"));
 const UserList = lazy(() => import("./pages/user/UserList"));
 const UserRegister = lazy(() => import("./pages/user/UserRegister"));
 const UserUpdate = lazy(() => import("./pages/user/UserUpdate"));
@@ -54,6 +56,8 @@ function App() {
                   <Route path="register" element={<ProductRegister />} />
                   <Route path="list" element={<ProductList />} />
                   <Route path="detail/:id" element={<ProductDetail />} />
+                  <Route path="batch/:id" element={<BatchList />} />
+                  <Route path="batch/register/:id" element={<BatchRegister />} />
                 </Route>
               </Route>
             </Route>

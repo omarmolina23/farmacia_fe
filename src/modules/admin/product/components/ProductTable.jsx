@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff, Package, Info } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
-import { MdInsertPhoto } from "react-icons/md";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import {
@@ -138,12 +137,10 @@ const ProductTable = ({
 
           <div
             className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
-            onClick={() => setOpenBatch(!openBatch)}
+            onClick={() => navigate(`/admin/product/batch/${id}`)}
           >
             <Package size={16} className="mr-2 text-[#181818]" />
-            <span className="hidden md:inline">
-              {openBatch ? "Ocultar lote" : "Ver lote"}
-            </span>
+            <span className="hidden md:inline">Ver lote</span>
           </div>
 
           <div
@@ -151,11 +148,7 @@ const ProductTable = ({
             onClick={handleShowInfo}
           >
             <Info size={16} className="mr-2 text-[#181818]" />
-            <span className="hidden md:inline">
-              Ver detalles
-            </span>
-
-            
+            <span className="hidden md:inline">Ver detalles</span>
           </div>
         </td>
       </tr>
