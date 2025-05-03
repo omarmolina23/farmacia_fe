@@ -7,6 +7,7 @@ import Loading from "./components/Loading";
 import "./App.css";
 import ProductRegister from "./pages/products/ProductRegister";
 import Catalog from "./pages/clients/catalog/Catalog";
+import Product from "./pages/clients/catalog/Product";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ClientHome />} />
           <Route path="/catalog" element={<Catalog />} />
+          <Route path="/catalog/:id" element={<Product />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 

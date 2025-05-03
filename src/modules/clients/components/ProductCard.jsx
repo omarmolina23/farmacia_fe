@@ -1,6 +1,7 @@
 import { TagIcon } from "lucide-react";
 import { ArrowRightIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { parseCurrency } from "../../../lib/utils";
 
 export default function ProductCard({ name, img, tags, price, url }) {
   return (
@@ -32,12 +33,7 @@ export default function ProductCard({ name, img, tags, price, url }) {
       <div className="w-64">
         <h2 className="font-bold text-2xl">{name}</h2>
         <div className="flex items-center justify-between mt-2">
-          <span>
-            {parseInt(price).toLocaleString("es-CO", {
-              style: "currency",
-              currency: "COP",
-            })}
-          </span>
+          <span>{parseCurrency(price)}</span>
           <Link
             to={url}
             className="inline-flex items-center justify-center gap-2 text-sm"
