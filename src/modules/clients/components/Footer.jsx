@@ -23,8 +23,6 @@ const Footer = () => {
           <h3 className="text-black font-bold text-lg mb-4">Droguería</h3>
           <ul className="space-y-2">
             <li>Misión - Visión</li>
-            <li>Proveedores</li>
-            <li>Contacto</li>
           </ul>
         </div>
 
@@ -33,7 +31,6 @@ const Footer = () => {
           <h3 className="text-black font-bold text-lg mb-4">Conoce</h3>
           <ul className="space-y-2">
             <li>Historial de compras</li>
-            <li>Detalles de facturas</li>
           </ul>
         </div>
       </div>

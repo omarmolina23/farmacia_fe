@@ -19,12 +19,12 @@ const ClientHeader = () => {
             <img
               src="/img/logo.png"
               alt="Logo"
-              className="h-7 sm:h-9 rounded-full" // Clase para hacerlo circular
+              className="h-12 sm:h-14 rounded-full" // Clase para hacerlo circular
             />
             <img
               src="/img/textLogo.png"
               alt="Texto Logo"
-              className="h-7 sm:h-9"
+              className="h-12 sm:h-14"
             />
           </div>
 
