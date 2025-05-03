@@ -5,23 +5,21 @@ import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { createBatch } from "../../services/BatchService";
 import { searchProductByNameOrId } from "../../services/ProductService";
-import { getSupplierAll } from "../../services/SupplierService";
 import BatchLayout from "../../modules/admin/batch/layout/BatchLayout";
 import BatchForm from "../../modules/admin/batch/components/BatchForm";
 
 export default function BatchRegister() {
   const defaultFormData = {
     productId: "",
-    supplierId: "",
     expirationDate: "",
     status: "ACTIVE",
     isExpired: false,
     number_batch: "",
     amount: 0,
+    purchaseValue: 0,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
-  const [suppliers, setSuppliers] = useState([]);
   const [product, setProduct] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,7 +28,6 @@ export default function BatchRegister() {
 
   useEffect(() => {
     fetchProduct();
-    fetchSuppliers();
   }, []);
 
   const fetchProduct = async () => {
@@ -58,21 +55,6 @@ export default function BatchRegister() {
     }
   };
 
-  const fetchSuppliers = async () => {
-    try {
-      const results = await getSupplierAll();
-
-      if (results.length > 0) {
-        setSuppliers(results);
-      } else {
-        toast.warn("No hay proveedores activos disponibles.");
-      }
-    } catch (error) {
-      console.error("Error al obtener proveedores:", error);
-      toast.error("Error al cargar los proveedores.");
-    }
-  };
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -84,10 +66,10 @@ export default function BatchRegister() {
   const validateForm = () => {
     const requiredFields = [
       "productId",
-      "supplierId",
       "expirationDate",
       "number_batch",
       "amount",
+      "purchaseValue",
     ];
     for (const field of requiredFields) {
       if (
@@ -96,7 +78,6 @@ export default function BatchRegister() {
       ) {
         const fieldNameMap = {
           productId: "Producto",
-          supplierId: "Proveedor",
           expirationDate: "Fecha de vencimiento",
           number_batch: "Número de lote",
           amount: "Cantidad",
@@ -107,6 +88,11 @@ export default function BatchRegister() {
     }
     if (isNaN(formData.amount) || formData.amount <= 0) {
       toast.error("La cantidad debe ser un número mayor a cero.");
+      return false;
+    }
+
+    if (isNaN(formData.purchaseValue) || formData.purchaseValue <= 0) {
+      toast.error("El valor total debe ser un valor mayor a cero.");
       return false;
     }
 
@@ -142,6 +128,7 @@ export default function BatchRegister() {
     const payload = {
       ...formData,
       amount: Number(formData.amount),
+      purchaseValue: Number(formData.purchaseValue),
     };
 
     try {
@@ -170,7 +157,6 @@ export default function BatchRegister() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
-        suppliers={suppliers}
         product={product}
       />
     </BatchLayout>

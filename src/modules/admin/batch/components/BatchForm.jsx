@@ -7,7 +7,6 @@ const BatchForm = ({
   handleChange,
   handleSubmit,
   handleCancel,
-  suppliers = [],
   product,
 }) => {
   return (
@@ -38,24 +37,6 @@ const BatchForm = ({
       </div>
 
       <div className="flex items-center space-x-5">
-        <label className="text-md font-medium w-70">Proveedor:</label>
-        <select
-          id="supplierId"
-          name="supplierId"
-          value={formData.supplierId}
-          onChange={handleChange}
-          className="bg-gray-200 p-2 rounded-md w-full"
-        >
-          <option value="">Seleccione un proveedor</option>
-          {suppliers.map((supplier) => (
-            <option key={supplier.id} value={supplier.id}>
-              {supplier.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex items-center space-x-5">
         <label className="text-md font-medium w-70">
           Fecha de vencimiento:
         </label>
@@ -78,6 +59,18 @@ const BatchForm = ({
           value={formData.amount}
           onChange={handleChange}
           placeholder="Escriba la cantidad del lote"
+        />
+      </div>
+
+      <div className="flex items-center space-x-5">
+        <label className="text-md font-medium w-70">Valor compra:</label>
+        <TextField
+          type="number"
+          id="purchaseValue"
+          name="purchaseValue"
+          value={formData.purchaseValue}
+          onChange={handleChange}
+          placeholder="Escriba el coste total del lote"
         />
       </div>
 
