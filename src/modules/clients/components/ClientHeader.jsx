@@ -11,7 +11,7 @@ const ClientHeader = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-[#D0F25E] p-4">
+    <header className="fixed top-0 left-0 w-full bg-[#D0F25E] p-4 z-50 shadow-md">
       <div className="flex justify-between items-center">
         {/* Logo y Navbar */}
         <div className="flex items-center gap-4">
@@ -37,7 +37,7 @@ const ClientHeader = () => {
         <nav className="hidden md:flex items-center gap-8">
           <a
             href="#about"
-            className="text-[#4CAF50] font-bold hover:underline flex items-center gap-1 text-lg"
+            className="text-[#4CAF50] hover:underline flex items-center gap-1 text-3xl"
             style={fontStyle} // Mantener la fuente personalizada
           >
             ¿Quienes somos?

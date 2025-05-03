@@ -8,7 +8,7 @@ const ClientLayout = ({ children, title }) => {
       <ClientHeader title={title} />
 
       {/* Ajuste: Elimina el padding horizontal */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto pt-20">
         {children}
       </main>
 
