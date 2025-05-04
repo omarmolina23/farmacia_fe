@@ -26,7 +26,7 @@ export default function SearchBar({ resizable = true, onSearch = () => {} }) {
       {open && (
         <input
           type="text"
-          className="outline-0 mr-4 ml-2"
+          className="outline-0 mr-4 ml-2 w-full"
           placeholder="Buscar..."
           onKeyUp={handleKeyUp}
         />
