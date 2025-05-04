@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createProduct as createProductService } from "../../services/ProductService";
@@ -15,6 +15,8 @@ export default function ProductRegister() {
     price: "",
     status: "ACTIVE",
     categoryId: "",
+    supplierId: "",
+    price: "",
     concentration: "",
     activeIngredient: "",
     weight: "",
@@ -25,8 +27,12 @@ export default function ProductRegister() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({
+      ...formData,
+      [name]: name === "price" ? Number(value) : value,
+    });
   };
+  
 
   const handleChangeImage = (imageList) => {
     const urls = imageList.map((image) => image);
@@ -34,7 +40,11 @@ export default function ProductRegister() {
   };
 
   const handleChangeTags = (selectedOptions) => {
-    const selectedTags = selectedOptions.map((option) => option.value);
+    const selectedTags = selectedOptions.map((option) => ({
+      value: option.value,
+      label: option.label,
+    }));
+
     setFormData({ ...formData, ProductTag: selectedTags });
   };
 
@@ -45,12 +55,12 @@ export default function ProductRegister() {
       errors.push("El nombre del producto es obligatorio.");
     }
 
-    if (!formData.price || isNaN(formData.price)) {
-      errors.push("El precio debe ser un número válido.");
-    }
-
     if (!formData.categoryId || formData.categoryId === "") {
       errors.push("La categoría es obligatoria.");
+    }
+
+    if (!formData.supplierId || formData.supplierId === "") {
+      errors.push("El proveedor es obligatorio.");
     }
 
     if (errors.length > 0) {
@@ -71,10 +81,11 @@ export default function ProductRegister() {
 
     const formDataToSend = {
       ...formData,
-      ProductTag: JSON.stringify(formData.ProductTag),
+      ProductTag: JSON.stringify(formData.ProductTag.map((tag) => tag.value)),
     };
 
     if (!validateForm()) return;
+
 
     try {
       await createProductService(formDataToSend);
@@ -99,6 +110,7 @@ export default function ProductRegister() {
     <ProductLayout title="Registrar producto">
       <ProductForm
         formData={formData}
+        setFormData={setFormData}
         handleChange={handleChange}
         handleChangeImage={handleChangeImage}
         handleChangeTags={handleChangeTags}
