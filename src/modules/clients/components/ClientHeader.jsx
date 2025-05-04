@@ -13,7 +13,7 @@ const ClientHeader = () => {
   }
 
   return (
-    <header className="bg-[#D0F25E] p-4">
+    <header className="fixed top-0 left-0 w-full bg-[#D0F25E] p-4 z-50 shadow-md">
       <div className="flex justify-between items-center">
         {/* Logo y Navbar */}
         <div className="flex items-center gap-4">
@@ -21,12 +21,14 @@ const ClientHeader = () => {
             <img
               src="/img/logo.png"
               alt="Logo"
-              className="h-7 sm:h-9 rounded-full" // Clase para hacerlo circular
+              className="h-12 sm:h-14 rounded-full" // Clase para hacerlo circular
             />
+            </Link>
+            <Link to="/">
             <img
               src="/img/textLogo.png"
               alt="Texto Logo"
-              className="h-7 sm:h-9"
+              className="h-12 sm:h-14"
             />
           </Link>
 

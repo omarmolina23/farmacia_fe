@@ -7,6 +7,7 @@ import Loading from "./components/Loading";
 import "./App.css";
 import Catalog from "./pages/clients/catalog/Catalog";
 import Product from "./pages/clients/catalog/Product";
+import ClientsAboutUs from "./pages/clients/ClientsAboutUs";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -39,6 +40,7 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<ClientHome />} />
+          <Route path="/about" element={<ClientsAboutUs />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:id" element={<Product />} />
           <Route path="/login" element={<Login />} />
