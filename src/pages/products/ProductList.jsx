@@ -68,14 +68,29 @@ const ProductList = () => {
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sortConfig.key) {
-      const valueA = a[sortConfig.key].toLowerCase();
-      const valueB = b[sortConfig.key].toLowerCase();
-      if (valueA < valueB) return sortConfig.direction === "asc" ? -1 : 1;
-      if (valueA > valueB) return sortConfig.direction === "asc" ? 1 : -1;
+      const valueA = a[sortConfig.key];
+      const valueB = b[sortConfig.key];
+  
+      if (sortConfig.key === "price") {
+        const numA = parseFloat(valueA);
+        const numB = parseFloat(valueB);
+  
+        if (numA < numB) return sortConfig.direction === "asc" ? -1 : 1;
+        if (numA > numB) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      }
+  
+      // Comparación para strings
+      const strA = valueA?.toString().toLowerCase() || "";
+      const strB = valueB?.toString().toLowerCase() || "";
+  
+      if (strA < strB) return sortConfig.direction === "asc" ? -1 : 1;
+      if (strA > strB) return sortConfig.direction === "asc" ? 1 : -1;
       return 0;
     }
     return 0;
   });
+  
 
   const paginatedProducts = sortedProducts.slice(
     (currentPage - 1) * rowsPerPage,
@@ -161,8 +176,8 @@ const ProductList = () => {
                 <div className="flex items-center gap-2">
                   Proveedor
                   {(hoverColumn === "supplier" ||
-                    sortConfig.key === "supplier") &&
-                    (sortConfig.key === "supplier" &&
+                    sortConfig.key === "supplierId") &&
+                    (sortConfig.key === "supplierId" &&
                     sortConfig.direction === "asc" ? (
                       <IoIosArrowUp />
                     ) : (
@@ -170,6 +185,25 @@ const ProductList = () => {
                     ))}
                 </div>
               </th>
+              <th
+                onMouseEnter={() => setHoverColumn("price")}
+                onMouseLeave={() => setHoverColumn(null)}
+                onClick={() => handleSort("price")}
+                className="cursor-pointer pl-2"
+              >
+                <div className="flex items-center gap-2">
+                  Precio
+                  {(hoverColumn === "price" ||
+                    sortConfig.key === "price") &&
+                    (sortConfig.key === "" &&
+                    sortConfig.direction === "asc" ? (
+                      <IoIosArrowUp />
+                    ) : (
+                      <IoIosArrowDown />
+                    ))}
+                </div>
+              </th>
+
               <th className="pl-2">Acciones</th>
             </tr>
           </thead>
@@ -183,6 +217,7 @@ const ProductList = () => {
                 description={product.description}
                 category={product.category.name}
                 supplier={product.supplier.name}
+                price={product.price}
                 status={product.status}
                 concentration={product.concentration}
                 activeIngredient={product.activeIngredient}

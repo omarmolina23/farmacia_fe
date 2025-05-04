@@ -38,6 +38,7 @@ const ProductTable = ({
       description,
       category,
       supplier,
+      price,
       status,
       concentration,
       activeIngredient,
@@ -107,6 +108,7 @@ const ProductTable = ({
         <td className="pl-2">{name}</td>
         <td className="pl-2">{category}</td>
         <td className="pl-2">{supplier}</td>
+        <td className="pl-2">{price}</td>
         <td className="flex flex-col md:flex-row pl-2 p-1 gap-2">
           <div
             className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
