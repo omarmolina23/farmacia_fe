@@ -38,7 +38,7 @@ export default function ClientHeaderItems() {
   return (
     <>
       <Link
-        to="#about"
+        to="/about"
         className="text-[#4CAF50] font-bold hover:underline flex items-center text-xl"
         style={fontStyle} // Mantener la fuente personalizada
       >
