@@ -6,15 +6,19 @@ import { useState } from "react";
 export default function FilterSelector({
   title,
   options: optionsProp,
+  type = "checkbox",
   onChange = () => {},
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    if (options.length === 0) {
-      setOptions(optionsProp.map((option) => ({ ...option, checked: false })));
-    }
+    setOptions(
+      optionsProp.map((option) => ({
+        ...option,
+        checked: option.checked !== undefined ? option.checked : false,
+      }))
+    );
   }, [optionsProp]);
 
   function handleChange(e) {
@@ -22,7 +26,10 @@ export default function FilterSelector({
 
     const updatedOptions = options.map((opt, i) => {
       if (i !== parseInt(value)) {
-        return opt;
+        return {
+          ...opt,
+          checked: type === "radio" ? false : opt.checked,
+        };
       }
 
       return {
@@ -31,7 +38,7 @@ export default function FilterSelector({
       };
     });
 
-    onChange(updatedOptions, title);
+    onChange(updatedOptions);
     setOptions(updatedOptions);
   }
   return (
@@ -53,9 +60,9 @@ export default function FilterSelector({
               <div className="flex justify-between" key={i}>
                 <label htmlFor={opt.label}>{opt.label}</label>
                 <input
-                  type="checkbox"
+                  type={type}
                   id={opt.label}
-                  name={opt.label}
+                  name={type === "checkbox" ? opt.label : title}
                   value={i}
                   onChange={handleChange}
                   checked={options[i].checked}
