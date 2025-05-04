@@ -66,3 +66,15 @@ export const deleteProduct = async (id) => {
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 }
+
+
+export const filterProduct = async (params) => {
+    try {
+        const response = await axios.get(`/product/filter`, {
+            params
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
+    }
+}
