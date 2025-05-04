@@ -9,5 +9,6 @@ export function parseCurrency(value) {
   return parseInt(value).toLocaleString("es-CO", {
     style: "currency",
     currency: "COP",
+    maximumFractionDigits: 0,
   });
 }
