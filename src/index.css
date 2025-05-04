@@ -151,7 +151,7 @@ html, body, #root {
 
 .image-slider-container {
     margin: 0 auto;
-    width: 350px;
+    width: 100%;
   }
 
 .image-slider-container .slick-prev:before,

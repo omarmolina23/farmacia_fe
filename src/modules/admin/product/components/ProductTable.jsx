@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff, Package, Info } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
-import { MdInsertPhoto } from "react-icons/md";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import {
@@ -16,6 +15,7 @@ const ProductTable = ({
   name,
   description,
   category,
+  supplier, 
   price,
   status,
   concentration,
@@ -37,6 +37,7 @@ const ProductTable = ({
       name,
       description,
       category,
+      supplier,
       price,
       status,
       concentration,
@@ -47,14 +48,12 @@ const ProductTable = ({
       tags,
       refreshList,
     };
-    console.log("tags", tags);
-    console.log("productData", productData);
     localStorage.setItem("productData", JSON.stringify(productData));
   };
 
   const handleEditClick = () => {
     saveInfo();
-    navigate(`/admin/product/update`);
+    navigate(`/admin/product/update/${id}`);
   };
 
   const handleShowInfo = () => {
@@ -94,7 +93,6 @@ const ProductTable = ({
           );
           refreshList();
         } catch (error) {
-          console.error("Error al cambiar el estado del producto:", error);
           toast.error(
             `Error al ${isActive ? "deshabilitar" : "habilitar"} el producto`
           );
@@ -109,6 +107,7 @@ const ProductTable = ({
         <td className="pl-5">#{index + 1}</td>
         <td className="pl-2">{name}</td>
         <td className="pl-2">{category}</td>
+        <td className="pl-2">{supplier}</td>
         <td className="pl-2">{price}</td>
         <td className="flex flex-col md:flex-row pl-2 p-1 gap-2">
           <div
@@ -138,12 +137,10 @@ const ProductTable = ({
 
           <div
             className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
-            onClick={() => setOpenBatch(!openBatch)}
+            onClick={() => navigate(`/admin/product/batch/${id}`)}
           >
             <Package size={16} className="mr-2 text-[#181818]" />
-            <span className="hidden md:inline">
-              {openBatch ? "Ocultar lote" : "Ver lote"}
-            </span>
+            <span className="hidden md:inline">Ver lote</span>
           </div>
 
           <div
@@ -151,11 +148,7 @@ const ProductTable = ({
             onClick={handleShowInfo}
           >
             <Info size={16} className="mr-2 text-[#181818]" />
-            <span className="hidden md:inline">
-              Ver detalles
-            </span>
-
-            
+            <span className="hidden md:inline">Ver detalles</span>
           </div>
         </td>
       </tr>
