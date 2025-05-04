@@ -14,6 +14,7 @@ function UploadImage({ images, setImages, handleChange, maxNumber = 1 }) {
 
   const handleImageChange = (imageList) => {
     handleChange(imageList);
+
     setLocalImages(imageList);
     const urls = imageList.map((image) => image);
     setImages(urls);

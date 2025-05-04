@@ -153,16 +153,16 @@ const ProductList = () => {
                 </div>
               </th>
               <th
-                onMouseEnter={() => setHoverColumn("price")}
+                onMouseEnter={() => setHoverColumn("supplier")}
                 onMouseLeave={() => setHoverColumn(null)}
-                onClick={() => handleSort("price")}
+                onClick={() => handleSort("supplierId")}
                 className="cursor-pointer pl-2"
               >
                 <div className="flex items-center gap-2">
-                  Precio
-                  {(hoverColumn === "price" ||
-                    sortConfig.key === "price") &&
-                    (sortConfig.key === "price" &&
+                  Proveedor
+                  {(hoverColumn === "supplier" ||
+                    sortConfig.key === "supplier") &&
+                    (sortConfig.key === "supplier" &&
                     sortConfig.direction === "asc" ? (
                       <IoIosArrowUp />
                     ) : (
@@ -182,7 +182,7 @@ const ProductList = () => {
                 name={product.name}
                 description={product.description}
                 category={product.category.name}
-                price={product.price}
+                supplier={product.supplier.name}
                 status={product.status}
                 concentration={product.concentration}
                 activeIngredient={product.activeIngredient}

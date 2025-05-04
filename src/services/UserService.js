@@ -31,8 +31,6 @@ export const signOut = async () => {
     catch (error) {
         throw new Error(error.response.data.message || "Ha ocurrido un error");
     }
-
-
 }
 
 export const setPassword = async (token, password) => {

@@ -5,7 +5,6 @@ import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
 import "./App.css";
-import ProductRegister from "./pages/products/ProductRegister";
 
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
@@ -16,7 +15,9 @@ const CategoryUpdate = lazy(() => import("./pages/category/CategoryUpdate"));
 const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
+const ProductRegister = lazy(() => import("./pages/products/ProductRegister"));
 const ProductList = lazy(() => import("./pages/products/ProductList"));
+const ProductUpdate = lazy(() => import("./pages/products/ProductUpdate"));
 const ProductDetail = lazy(() => import("./pages/products/ProductDetail"));
 const BatchList = lazy(() => import("./pages/batch/BatchList"));
 const BatchRegister = lazy(() => import("./pages/batch/BatchRegister"));
@@ -55,6 +56,7 @@ function App() {
                 <Route path="product">
                   <Route path="register" element={<ProductRegister />} />
                   <Route path="list" element={<ProductList />} />
+                  <Route path="update/:id" element={<ProductUpdate />} />
                   <Route path="detail/:id" element={<ProductDetail />} />
                   <Route path="batch/:id" element={<BatchList />} />
                   <Route path="batch/register/:id" element={<BatchRegister />} />

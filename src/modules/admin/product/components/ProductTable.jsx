@@ -15,6 +15,7 @@ const ProductTable = ({
   name,
   description,
   category,
+  supplier, 
   price,
   status,
   concentration,
@@ -36,7 +37,7 @@ const ProductTable = ({
       name,
       description,
       category,
-      price,
+      supplier,
       status,
       concentration,
       activeIngredient,
@@ -46,14 +47,12 @@ const ProductTable = ({
       tags,
       refreshList,
     };
-    console.log("tags", tags);
-    console.log("productData", productData);
     localStorage.setItem("productData", JSON.stringify(productData));
   };
 
   const handleEditClick = () => {
     saveInfo();
-    navigate(`/admin/product/update`);
+    navigate(`/admin/product/update/${id}`);
   };
 
   const handleShowInfo = () => {
@@ -93,7 +92,6 @@ const ProductTable = ({
           );
           refreshList();
         } catch (error) {
-          console.error("Error al cambiar el estado del producto:", error);
           toast.error(
             `Error al ${isActive ? "deshabilitar" : "habilitar"} el producto`
           );
@@ -108,7 +106,7 @@ const ProductTable = ({
         <td className="pl-5">#{index + 1}</td>
         <td className="pl-2">{name}</td>
         <td className="pl-2">{category}</td>
-        <td className="pl-2">{price}</td>
+        <td className="pl-2">{supplier}</td>
         <td className="flex flex-col md:flex-row pl-2 p-1 gap-2">
           <div
             className="flex items-center cursor-pointer hover:bg-[#f1d167] w-fit px-[3px] rounded-sm"
