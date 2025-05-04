@@ -35,8 +35,13 @@ const Footer = () => {
           <ul className="space-y-2 text-gray-700">
             {categories.slice(0, 5).map((category) => (
               <li key={category.id}>
-                <span className="hover:underline">{category.name}</span>
-              </li>
+              <Link 
+                to={`/catalog?category=${encodeURIComponent(category.name)}`}
+                className="hover:underline"
+              >
+                {category.name}
+              </Link>
+            </li>
             ))}
           </ul>
         </div>

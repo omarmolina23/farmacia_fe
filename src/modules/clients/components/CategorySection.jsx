@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import CategoryCard from "./CategoryCard";
 import { getCategoryAll } from "../../../services/CategoryService";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+
 
 const fontStyle = {
   fontFamily: "'Nanum Pen Script', cursive",
@@ -49,7 +51,7 @@ const CategorySection = () => {
               <CategoryCard 
               key={category.id} 
               title={category.name} 
-              link="#" 
+              link={`/catalog?category=${encodeURIComponent(category.name)}`} 
               colors={{
                 top: "#87CEEB", // Azul claro
                 left: "#4682B4", // Azul acero
