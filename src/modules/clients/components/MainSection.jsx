@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const fontStyle = {
   fontFamily: "'Nanum Pen Script', cursive",
@@ -31,12 +32,14 @@ const MainSection = () => {
             de medicamentos y proporcionar parámetros de búsqueda según los
             síntomas del paciente.
           </p>
+          <Link to = "/about">
           <button
             className="bg-[#C0DAE5] hover:brightness-90 text-black font-bold py-3 px-6 rounded-lg shadow-md transition-all"
             aria-label="Conocer más sobre Drogueria Nueva Esperanza"
           >
             Conocer más
           </button>
+          </Link>
         </div>
 
         {/* Imagen: solo visible en md en adelante */}

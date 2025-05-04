@@ -1,16 +1,17 @@
 import React from "react";
+import ColoredCube from "../../../components/ColoredCube";
 
-const CategoryCard = ({ title, link }) => {
+const CategoryCard = ({ title, link, colors }) => {
   return (
     <div className="bg-white border border-black rounded-lg shadow-md p-4 flex flex-col justify-between items-center w-[240px] h-[240px]">
       <div className="flex flex-col items-center">
         {/* Título centrado con margen inferior */}
         <h3 className="text-xl font-bold text-center mb-4">{title}</h3>
         {/* Imagen con margen superior */}
-        <img
-          src="/img/abstract_image.png"
-          alt="Medicine"
-          className="w-20 h-20 mt-2"
+        <ColoredCube
+          topColor={colors.top}
+          leftColor={colors.left}
+          rightColor={colors.right}
         />
       </div>
       <a

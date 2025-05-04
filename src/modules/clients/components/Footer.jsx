@@ -1,6 +1,31 @@
+import React, { useEffect, useState } from "react";
+import { getCategoryAll } from "../../../services/CategoryService";
+import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const [categories, setCategories] = useState([]);
+  const [filterStatus, setFilterStatus] = useState("ACTIVE");
+
+  useEffect(() => {
+    fetchCategories();
+  }, [filterStatus]);
+
+  const fetchCategories = () => {
+    getCategoryAll()
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const filtered = data.filter(
+            (category) => category?.status === filterStatus
+          );
+          setCategories(filtered);
+        }
+      })
+      .catch((error) => {
+        toast.error("Error al obtener categorías");
+      });
+  };
+
   return (
     <footer className="bg-gray-200 py-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 text-center md:text-left">
@@ -8,13 +33,11 @@ const Footer = () => {
         <div className="flex flex-col items-center md:items-start">
           <h3 className="text-black font-bold text-lg mb-4">Categorías</h3>
           <ul className="space-y-2 text-gray-700">
-            <li>Analgésicos y antiinflamatorios</li>
-            <li>
-              Antialérgicos <span className="text-blue-500 text-sm">new</span>
-            </li>
-            <li>Producto 3</li>
-            <li>Producto 4</li>
-            <li>Producto 5</li>
+            {categories.slice(0, 5).map((category) => (
+              <li key={category.id}>
+                <span className="hover:underline">{category.name}</span>
+              </li>
+            ))}
           </ul>
         </div>
 

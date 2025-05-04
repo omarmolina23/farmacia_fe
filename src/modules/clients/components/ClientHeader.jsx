@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaHistory, FaSignInAlt, FaBars, FaTimes } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import Navbar from "./Navbar";
+import { Link } from "react-router-dom";
 
 const fontStyle = {
   fontFamily: "'Nanum Pen Script', cursive",
@@ -16,16 +17,20 @@ const ClientHeader = () => {
         {/* Logo y Navbar */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
+            <Link to="/">
             <img
               src="/img/logo.png"
               alt="Logo"
               className="h-12 sm:h-14 rounded-full" // Clase para hacerlo circular
             />
+            </Link>
+            <Link to="/">
             <img
               src="/img/textLogo.png"
               alt="Texto Logo"
               className="h-12 sm:h-14"
             />
+            </Link>
           </div>
 
           <div className="hidden md:block">
@@ -36,7 +41,7 @@ const ClientHeader = () => {
         {/* Menú Desktop */}
         <nav className="hidden md:flex items-center gap-8">
           <a
-            href=""
+            href="about"
             className="text-[#4CAF50] hover:underline flex items-center gap-1 text-3xl"
             style={fontStyle} // Mantener la fuente personalizada
           >
