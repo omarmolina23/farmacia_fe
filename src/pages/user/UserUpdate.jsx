@@ -51,7 +51,6 @@ export default function UserUpdate() {
         navigate("/admin/user/list");
       }
     } catch (error) {
-      console.error("Error en la búsqueda:", error);
       toast.error("Error en la búsqueda de usuarios");
     } finally {
       setLoading(false);

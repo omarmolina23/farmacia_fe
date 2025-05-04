@@ -34,6 +34,7 @@ export function SectionCards() {
     const fetchMetrics = async () => {
       try {
         const data = await getDailyStatus();
+        console.log("Data received:", data);
         setMetrics(data);
       } catch (error) {
         toast.error("No se pudieron cargar las métricas.");

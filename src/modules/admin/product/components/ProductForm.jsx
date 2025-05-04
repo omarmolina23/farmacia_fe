@@ -4,6 +4,7 @@ import TextField from "../../../../components/TextField";
 import UploadImage from "../../../../components/UploadImage";
 import Select from "react-select";
 import { getCategoryAll as getCategoriesService } from "../../../../services/CategoryService";
+import { getSupplierAll as getSuppliersService } from "../../../../services/SupplierService";
 import { getTagAll as getTagsService } from "../../../../services/TagService";
 import { toast } from "react-toastify";
 
@@ -11,6 +12,7 @@ const isFieldDisable = (isEditMode) => isEditMode;
 
 const ProductForm = ({
   formData,
+  setFormData,
   handleChange,
   handleChangeImage,
   handleChangeTags,
@@ -19,12 +21,14 @@ const ProductForm = ({
   isEditMode,
 }) => {
   const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
 
   const [tags, setTags] = useState([]);
   const [optionsTags, setOptionsTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
 
   const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -42,6 +46,23 @@ const ProductForm = ({
     fetchCategories();
   }, []);
 
+  useEffect(() =>{
+    const fetchSuppliers = async () => {
+      try {
+        const response = await getSuppliersService();
+        setSuppliers(response);
+      } catch (error) {
+        toast.error("Error cargando los proveedores", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    };
+
+    fetchSuppliers();
+    
+  }, [])
+
   useEffect(() => {
     const fetchTags = async () => {
       try {
@@ -53,6 +74,15 @@ const ProductForm = ({
             label: tag.name,
           }))
         );
+
+        if (formData.ProductTag) {
+          const mappedTags = formData.ProductTag.map((item) => ({
+            value: item.tag.id,
+            label: item.tag.name,
+          }));
+
+          setSelectedTags(mappedTags);
+        }
       } catch (error) {
         toast.error("Error cargando las etiquetas", {
           position: "top-right",
@@ -62,6 +92,35 @@ const ProductForm = ({
     };
 
     fetchTags();
+  }, []);
+
+  useEffect(() => {
+    if (isEditMode && formData.images) {
+
+      const existingImages2 = formData.images.map((image) => ({
+        data_url: image.url,
+        id: image.id,
+        isExisting: true,
+      }));
+
+      setFormData({
+        ...formData,
+        images: formData.images.map((image) => ({
+          data_url: image.url,
+          id: image.id,
+          isExisting: true,
+        })),
+      })
+
+      const existingImages = formData.images.map((image) => ({
+        data_url: image.url,
+        id: image.id,
+        isExisting: true,
+      }));
+
+      setImages(existingImages);
+      setExistingImages(existingImages);
+    }
   }, []);
 
   function base64ToFile(base64, filename) {
@@ -79,12 +138,35 @@ const ProductForm = ({
   }
 
   const handleConversionImage = (imageList) => {
-    const urls = imageList.map((image) => image.data_url);
-    const files = urls.map((url, index) =>
-      base64ToFile(url, `image-${index}.jpg`)
-    );
-    setImages(files);
-    handleChangeImage(files);
+    const existingImages = imageList.filter((image) => image.isExisting);
+    const newImages = imageList.filter((image) => !image.isExisting);
+  
+    const newImageObjects = newImages.map((image, index) => {
+      if (image.file) {
+        return {
+          file: image.file,
+          id: undefined,
+          data_url: image.data_url,
+          isExisting: false
+        };
+      } else {
+        return {
+          file: base64ToFile(image.data_url, `image-${index}.jpg`),
+          id: undefined,
+          data_url: image.data_url,
+          isExisting: false
+        };
+      }
+    });
+  
+    const allImages = [...existingImages, ...newImageObjects];
+    setImages(allImages);
+    handleChangeImage(allImages);
+  };
+  
+  const handleTags = (value) => {
+    handleChangeTags(value);
+    setSelectedTags(value);
   };
 
   return (
@@ -125,7 +207,7 @@ const ProductForm = ({
           <select
             id="categoryId"
             name="categoryId"
-            value={formData.category}
+            value={formData.categoryId}
             onChange={handleChange}
             className="border rounded-md p-3 bg-gray-200 w-full"
           >
@@ -140,17 +222,25 @@ const ProductForm = ({
           </select>
         </div>
         <div>
-          <label htmlFor="price" className="text-md font-medium w-70">
-            Precio
+          <label htmlFor="supplierId" className="text-md font-medium w-70 h-40">
+            Proveedor
           </label>
-          <TextField
-            id="price"
-            type="number"
-            name="price"
-            value={formData.price}
+          <select
+            id="supplierId"
+            name="supplierId"
+            value={formData.supplierId}
             onChange={handleChange}
-            className="bg-gray-200"
-          />
+            className="border rounded-md p-3 bg-gray-200 w-full"
+          >
+            <option value="">Seleccione un proveedor</option>
+            {suppliers
+              .filter((supplier) => supplier.status === "ACTIVE")
+              .map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
+              ))}
+          </select>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-6 px-4">
@@ -165,6 +255,7 @@ const ProductForm = ({
             value={formData.concentration}
             onChange={handleChange}
             className="bg-gray-200"
+            disabled={isFieldDisable(isEditMode)}
           />
         </div>
         <div>
@@ -221,13 +312,14 @@ const ProductForm = ({
             placeholder="Seleccione etiquetas"
             className="bg-gray-200 text-md "
             options={optionsTags}
+            value={selectedTags}
             isMulti
-            onChange={handleChangeTags}
+            onChange={handleTags}
           ></Select>
         </div>
         <div>
           <label htmlFor="images" className="text-md font-medium w-70">
-            Imágenes (máximo 3 imágenes de 5MB cada una) 
+            Imágenes (máximo 3 imágenes de 5MB cada una)
           </label>
           <UploadImage
             images={images}
@@ -239,8 +331,8 @@ const ProductForm = ({
         </div>
       </div>
 
-      <div className="flex space-x-4 mt-4">
-        <Button type="submit" title="Registrar" color="bg-[#8B83BA]" />
+      <div className="flex space-x-4 mt-4 ml-4">
+        <Button type="submit" title="Agregar" color="bg-[#8B83BA]" />
         <Button
           type="button"
           title="Cancelar"

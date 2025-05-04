@@ -45,13 +45,15 @@ export const searchProductByName = async (query) => {
 }
 
 export const updateProduct = async (id, productData) => {
+    console.log("productData", productData);
     try {
-        console.log("id", id, "productData", productData);
-        const response = await axios.patch(`/product/${id}`, productData);
-        console.log("response", response);  
+        const response = await axios.patch(`/product/${id}`, productData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         return response.data;
     } catch (error) {
-        console.log("Error", error);
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 }
