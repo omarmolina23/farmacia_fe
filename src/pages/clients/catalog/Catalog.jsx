@@ -9,6 +9,7 @@ import { getCategoryAll } from "../../../services/CategoryService";
 import { getTagAll } from "../../../services/TagService";
 import { getSupplierAll } from "../../../services/SupplierService";
 import { parseCurrency } from "../../../lib/utils";
+import Pagination from "../../../components/Pagination";
 
 export default function Catalog() {
   const [products, setProducts] = useState([]);
@@ -16,6 +17,8 @@ export default function Catalog() {
   const [tags, setTags] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [filters, setFilters] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [elemsPerPage, setElemsPerPage] = useState(10);
 
   async function getProducts() {
     const products = await getProductAll();
@@ -115,6 +118,14 @@ export default function Catalog() {
           <h1 className="text-3xl font-bold text-center my-6">Productos</h1>
           <div className="flex flex-wrap gap-6 justify-center m-6">
             {products.map((product, i) => {
+              const elemNumber = i + 1;
+
+              const isInRange =
+                elemsPerPage * (currentPage - 1) < elemNumber &&
+                elemNumber <= elemsPerPage * currentPage;
+
+              if (!isInRange) return;
+
               return (
                 <ProductCard
                   key={i}
@@ -126,6 +137,16 @@ export default function Catalog() {
                 />
               );
             })}
+          </div>
+          <div className="max-w-5xl mx-auto">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={products.length}
+              rowsPerPage={elemsPerPage}
+              setCurrentPage={setCurrentPage}
+              setRowsPerPage={setElemsPerPage}
+              rowsOptions={[10, 15, 20, 25, 30, 50]}
+            />
           </div>
         </div>
       </section>
