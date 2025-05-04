@@ -16,6 +16,7 @@ export default function ProductRegister() {
     status: "ACTIVE",
     categoryId: "",
     supplierId: "",
+    price: "",
     concentration: "",
     activeIngredient: "",
     weight: "",
@@ -26,8 +27,12 @@ export default function ProductRegister() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({
+      ...formData,
+      [name]: name === "price" ? Number(value) : value,
+    });
   };
+  
 
   const handleChangeImage = (imageList) => {
     const urls = imageList.map((image) => image);

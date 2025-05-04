@@ -31,6 +31,7 @@ export default function ProductUpdate() {
           status: response[0].status ?? "ACTIVE",
           categoryId: response[0].categoryId ?? "",
           supplierId: response[0].supplierId ?? "",
+          price: response[0].price ?? "",
           concentration: response[0].concentration ?? "",
           activeIngredient: response[0].activeIngredient ?? "",
           weight: response[0].weight ?? "",
@@ -58,8 +59,12 @@ export default function ProductUpdate() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({
+      ...formData,
+      [name]: name === "price" ? Number(value) : value,
+    });
   };
+  
 
   const handleChangeImage = (imageList) => {
     const urls = imageList.map((image) => image);

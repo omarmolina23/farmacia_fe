@@ -201,6 +201,22 @@ const ProductForm = ({
           ></textarea>
         </div>
         <div>
+          <label
+            htmlFor="price"
+            className="text-md font-medium w-70"
+          >
+            Precio
+          </label>
+          <TextField
+            id="price"
+            type="number"
+            name="price"
+            value={formData.price || ""}
+            onChange={handleChange}
+            className="bg-gray-200"
+          />
+        </div>
+        <div>
           <label htmlFor="categoryId" className="text-md font-medium w-70 h-40">
             Categoría
           </label>
