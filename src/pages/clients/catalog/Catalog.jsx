@@ -2,7 +2,7 @@ import React from "react";
 import ClientLayout from "../../../modules/clients/layouts/ClientLayout";
 import ProductCard from "../../../modules/clients/components/ProductCard";
 import { useState } from "react";
-import { getProductAll } from "../../../services/ProductService";
+import { filterProduct } from "../../../services/ProductService";
 import { useEffect } from "react";
 import FilterSelector from "../../../modules/clients/components/FilterSelector";
 import { getCategoryAll } from "../../../services/CategoryService";
@@ -22,7 +22,17 @@ export default function Catalog() {
   const [elemsPerPage, setElemsPerPage] = useState(10);
 
   async function getProducts() {
-    const products = await getProductAll();
+    const params = {};
+
+    const iterator = searchParams.keys();
+    let it = iterator.next();
+    while (!it.done) {
+      params[it.value] = searchParams.get(it.value);
+
+      it = iterator.next();
+    }
+
+    const products = await filterProduct(params);
     setProducts(products);
   }
 
@@ -42,11 +52,14 @@ export default function Catalog() {
   }
 
   useEffect(() => {
-    getProducts();
     getCategories();
     getTags();
     getSuppliers();
   }, []);
+
+  useEffect(() => {
+    getProducts();
+  }, [searchParams]);
 
   function handleCheckboxFilter(values, key) {
     const checkedValues = values.filter((value) => value.checked);
@@ -56,7 +69,7 @@ export default function Catalog() {
     } else {
       searchParams.set(
         key,
-        checkedValues.map((value) => value.label).join("|")
+        checkedValues.map((value) => value.label).join(",")
       );
     }
 
@@ -88,7 +101,7 @@ export default function Catalog() {
   function searchParamContainsValue(key, value) {
     if (!searchParams.get(key)) return false;
 
-    return searchParams.get(key).split("|").includes(String(value));
+    return searchParams.get(key).split(",").includes(String(value));
   }
 
   return (
@@ -113,25 +126,25 @@ export default function Catalog() {
               .filter((cat) => cat.status === "ACTIVE")
               .map((cat) => ({
                 label: cat.name,
-                checked: searchParamContainsValue("categoria", cat.name),
+                checked: searchParamContainsValue("category", cat.name),
               }))}
-            onChange={(values) => handleCheckboxFilter(values, "categoria")}
+            onChange={(values) => handleCheckboxFilter(values, "category")}
           />
           <FilterSelector
             title="Etiqueta"
             options={tags.map((tag) => ({
               label: tag.name,
-              checked: searchParamContainsValue("etiqueta", tag.name),
+              checked: searchParamContainsValue("tag", tag.name),
             }))}
-            onChange={(values) => handleCheckboxFilter(values, "etiqueta")}
+            onChange={(values) => handleCheckboxFilter(values, "tag")}
           />
           <FilterSelector
             title="Proveedor"
             options={suppliers.map((supplier) => ({
               label: supplier.name,
-              checked: searchParamContainsValue("proveedor", supplier.name),
+              checked: searchParamContainsValue("supplier", supplier.name),
             }))}
-            onChange={(values) => handleCheckboxFilter(values, "proveedor")}
+            onChange={(values) => handleCheckboxFilter(values, "supplier")}
           />
           <FilterSelector
             title="Precio"
