@@ -1,3 +1,5 @@
+// src/components/Category/CategorySection.jsx
+
 import React, { useEffect, useState } from "react";
 import CategoryCard from "./CategoryCard";
 import { getCategoryAll } from "../../../services/CategoryService";
@@ -10,64 +12,62 @@ const fontStyle = {
   fontFamily: "'Nanum Pen Script', cursive",
 };
 
+const MAX_CATS = 6;
+const ACTIVE = "ACTIVE";
+
 const CategorySection = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState("ACTIVE");
 
   useEffect(() => {
-    fetchCategories();
-  }, [filterStatus]);
+    (async () => {
+      setLoading(true);
+      try {
+        // 1) Trae y filtra categorías ACTIVAS, límite 8
+        const allCats = await getCategoryAll();
+        if (!Array.isArray(allCats)) throw new Error();
+        const filtered = allCats
+          .filter((c) => c.status === ACTIVE)
+          .slice(0, MAX_CATS);
 
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const data = await getCategoryAll();
-      if (!Array.isArray(data)) return;
+        // 2) Llamada única: traemos todos los productos de esas categorías
+        const names = filtered.map((c) => c.name);
+        const prods = await filterProduct({ categories: names });
 
-      const filtered = data
-        .filter((cat) => cat.status === filterStatus)
-        .slice(0, 8);
-
-      const categoriesWithImage = await Promise.all(
-        filtered.map(async (category) => {
-          try {
-            const products = await filterProduct({
-              categories: [category.name],
-            });
-
-            const valid = products.filter(
-              (p) =>
-                p.status === "ACTIVE" &&
-                p.images?.length > 0 &&
-                p.category?.name === category.name
-            );
-
-            const randomProduct =
-              valid[Math.floor(Math.random() * valid.length)];
-
-            return {
-              ...category,
-              imageUrl: randomProduct
-                ? randomProduct.images[0].url
-                : "/img/un-photo.png",
-            };
-          } catch {
-            return {
-              ...category,
-              imageUrl: "/img/un-photo.png",
-            };
+        // 3) Recorremos productos UNA VEZ y guardamos
+        // la PRIMERA imagen para cada categoría
+        const firstImageByCat = {};
+        let found = 0;
+        for (const p of prods) {
+          const catName = p.category?.name;
+          if (
+            catName &&
+            names.includes(catName) &&
+            p.status === ACTIVE &&
+            p.images?.length > 0 &&
+            !firstImageByCat[catName]
+          ) {
+            firstImageByCat[catName] = p.images[0].url;
+            found++;
+            if (found === filtered.length) break;
           }
-        })
-      );
+        }
 
-      setCategories(categoriesWithImage);
-    } catch {
-      toast.error("Error al obtener categorías");
-    } finally {
-      setLoading(false);
-    }
-  };
+        // 4) Construye el array final con imageUrl único
+        const result = filtered.map((c) => ({
+          ...c,
+          imageUrl: firstImageByCat[c.name] || "/img/un-photo.png",
+        }));
+
+        setCategories(result);
+      } catch (err) {
+        console.error(err);
+        toast.error("Error al cargar categorías");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <section className="bg-[#B6AEF2] py-12 px-4 sm:px-8 w-full">
@@ -81,36 +81,39 @@ const CategorySection = () => {
 
         <div className="flex justify-center flex-wrap gap-6 sm:gap-8 w-full">
           {loading
-            ? 
-            Array.from({ length: 6 }).map((_, idx) => (
-              <div
-              key={idx}
-              className="bg-white border border-black rounded-lg shadow-md p-4 flex flex-col justify-between items-center w-[240px] h-[240px] animate-pulse"
-            >
-              <Skeleton className="h-6 w-32 bg-neutral-200 rounded mb-4 animate-pulse" />
-              <Skeleton className="h-24 w-24 bg-neutral-200 rounded-full mb-4 animate-pulse" />
-              <Skeleton className="h-5 w-20 bg-neutral-200 rounded animate-pulse" />
-            </div>
-            ))
-            : categories.length === 0
-              ? <p className="text-white text-center">No hay categorías disponibles</p>
-              : categories.map((category) => (
-                <Link
-                  key={category.id}
-                  to={`/catalog?category=${encodeURIComponent(
-                    category.name
-                  ).replace(/%20/g, "+")}`}
-                  className="block transform transition-transform duration-300 hover:scale-105"
+            ? Array.from({ length: MAX_CATS }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white border border-black rounded-lg shadow-md p-4 flex flex-col justify-between items-center w-[240px] h-[240px] animate-pulse"
                 >
-                  <CategoryCard
-                    title={category.name}
-                    imageUrl={category.imageUrl}
-                  />
-                </Link>
-              ))}
+                  <Skeleton className="h-6 w-32 mb-4 bg-neutral-200 rounded" />
+                  <Skeleton className="h-24 w-24 mb-4 bg-neutral-200 rounded-full" />
+                  <Skeleton className="h-5 w-20 bg-neutral-200 rounded" />
+                </div>
+              ))
+            : categories.length === 0 ? (
+                <p className="text-white text-center">
+                  No hay categorías disponibles
+                </p>
+              ) : (
+                categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    to={`/catalog?category=${encodeURIComponent(
+                      cat.name
+                    ).replace(/%20/g, "+")}`}
+                    className="block transform transition-transform duration-300 hover:scale-105"
+                  >
+                    <CategoryCard
+                      title={cat.name}
+                      imageUrl={cat.imageUrl}
+                    />
+                  </Link>
+                ))
+              )}
         </div>
 
-        {!loading && (
+        {!loading && categories.length > 0 && (
           <div className="flex justify-center mt-10">
             <Link to="/catalog">
               <button className="flex items-center justify-center gap-2 border border-black text-black font-bold py-3 px-6 rounded-lg shadow-md transition-transform duration-300 hover:bg-black hover:text-white hover:scale-105">
