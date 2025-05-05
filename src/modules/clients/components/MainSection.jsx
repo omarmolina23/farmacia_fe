@@ -32,13 +32,13 @@ const MainSection = () => {
             de medicamentos y proporcionar parámetros de búsqueda según los
             síntomas del paciente.
           </p>
-          <Link to = "/about">
-          <button
-            className="bg-[#C0DAE5] hover:brightness-90 text-black font-bold py-3 px-6 rounded-lg shadow-md transition-all"
-            aria-label="Conocer más sobre Drogueria Nueva Esperanza"
-          >
-            Conocer más
-          </button>
+          <Link to="/about">
+            <button
+              className="bg-[#C0DAE5] hover:brightness-90 text-black font-bold py-3 px-6 rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
+              aria-label="Conocer más sobre Drogueria Nueva Esperanza"
+            >
+              Conocer más
+            </button>
           </Link>
         </div>
 

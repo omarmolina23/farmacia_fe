@@ -4,7 +4,6 @@ import { getCategoryAll } from "../../../services/CategoryService";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
-
 const fontStyle = {
   fontFamily: "'Nanum Pen Script', cursive",
 };
@@ -45,28 +44,42 @@ const CategorySection = () => {
         {/* Render cards */}
         <div className="flex justify-center flex-wrap gap-6 sm:gap-8 w-full">
           {categories.length === 0 ? (
-            <p className="text-white text-center">No hay categorías disponibles</p>
+            <p className="text-white text-center">
+              No hay categorías disponibles
+            </p>
           ) : (
             categories.slice(0, 8).map((category) => (
-              <CategoryCard 
-              key={category.id} 
-              title={category.name} 
-              link={`/catalog?category=${encodeURIComponent(category.name)}`} 
-              colors={{
-                top: "#87CEEB", // Azul claro
-                left: "#4682B4", // Azul acero
-                right: "#5F9EA0", // Azul cadete
-              }} />
+              <Link
+                key={category.id}
+                to={`/catalog?category=${encodeURIComponent(
+                  category.name
+                ).replace(/%20/g, "+")}`} // Enlace dinámico
+                className="block transform transition-transform duration-300 hover:scale-105" // Animación al pasar el mouse
+              >
+                <CategoryCard
+                  title={category.name}
+                  link={`/catalog?category=${encodeURIComponent(
+                    category.name
+                  ).replace(/%20/g, "+")}`}
+                  colors={{
+                    top: "#87CEEB", // Azul claro
+                    left: "#4682B4", // Azul acero
+                    right: "#5F9EA0", // Azul cadete
+                  }}
+                />
+              </Link>
             ))
           )}
         </div>
 
         {/* Botón explorar más */}
         <div className="flex justify-center mt-10 sm:mt-12">
-          <button className="flex items-center justify-center gap-2 border border-black text-black font-bold py-3 px-6 rounded-lg shadow-md transition-all hover:bg-black hover:text-white">
-            Explorar más
-            <span className="text-lg">→</span>
-          </button>
+          <Link to="/catalog">
+            <button className="flex items-center justify-center gap-2 border border-black text-black font-bold py-3 px-6 rounded-lg shadow-md transition-transform duration-300 hover:bg-black hover:text-white hover:scale-105">
+              Explorar más
+              <span className="text-lg">→</span>
+            </button>
+          </Link>
         </div>
       </div>
     </section>
