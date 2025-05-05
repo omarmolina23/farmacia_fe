@@ -7,9 +7,17 @@ import ProductTags from "../../../../components/ProductTag";
 const ProductInfo = ({ elementData, handleCancel }) => {
   return (
     <div className="w-full max-w-5xlxl space-y-4 p-4">
-      {elementData.images && elementData.images.length > 0 ? (
-        <ImageCarousel images={elementData.images} />
-      ) : null}
+      <div className="w-full flex justify-center">
+        <div className="w-full max-w-md">
+          <ImageCarousel
+            images={
+              elementData.images?.length > 0
+                ? elementData.images
+                : [{ url: "/img/default-med.png" }]
+            }
+          />
+        </div>
+      </div>
       <div className="grid grid-cols-1 gap-6 px-4 mt-4 mb-6">
         <div>
           <label htmlFor="name" className="text-md font-medium w-70">
