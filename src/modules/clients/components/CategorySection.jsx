@@ -56,7 +56,7 @@ const CategorySection = () => {
         // 4) Construye el array final con imageUrl único
         const result = filtered.map((c) => ({
           ...c,
-          imageUrl: firstImageByCat[c.name] || "/img/un-photo.png",
+          imageUrl: firstImageByCat[c.name] || "/img/default-med.png",
         }));
 
         setCategories(result);
