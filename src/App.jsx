@@ -8,18 +8,16 @@ import "./App.css";
 import Catalog from "./pages/clients/catalog/Catalog";
 import Product from "./pages/clients/catalog/Product";
 import ClientsAboutUs from "./pages/clients/ClientsAboutUs";
-
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
+const SalesList = lazy(() => import("./pages/sales/SalesList"));
+const SalesRegister = lazy(() => import("./pages/sales/SalesRegister"));
+const SalesReturn = lazy(() => import("./pages/sales/SalesReturn"));
 const CategoryList = lazy(() => import("./pages/category/CategoryList"));
-const CategoryRegister = lazy(() =>
-  import("./pages/category/CategoryRegister")
-);
+const CategoryRegister = lazy(() => import("./pages/category/CategoryRegister"));
 const CategoryUpdate = lazy(() => import("./pages/category/CategoryUpdate"));
-const SupplierRegister = lazy(() =>
-  import("./pages/supplier/SupplierRegister")
-);
+const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const ProductRegister = lazy(() => import("./pages/products/ProductRegister"));
@@ -50,6 +48,11 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin">
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="sales">
+                  <Route path="register" element={<SalesRegister />} />
+                  <Route path="list" element={<SalesList />} />
+                  <Route path="return:id" element={<SalesReturn />} />
+                </Route>
                 <Route path="category">
                   <Route path="register" element={<CategoryRegister />} />
                   <Route path="list" element={<CategoryList />} />

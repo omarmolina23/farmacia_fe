@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FiHome, FiArchive, FiLogOut } from "react-icons/fi";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { LuCircleDollarSign } from "react-icons/lu";
+import { PiCashRegister } from "react-icons/pi";
 import { FaUserAlt, FaUsers } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";

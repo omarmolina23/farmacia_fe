@@ -2,7 +2,6 @@ import React from 'react';
 import ClientLayout from '../../modules/clients/layouts/ClientLayout';
 import AboutUsSection from '../../modules/clients/components/AboutUsSection';
 import ServicesSection from '../../modules/clients/components/ServicesSection';
-import { Contact } from 'lucide-react';
 import ContactSection from '../../modules/clients/components/ContactSection';
 
 const ClientsAboutUs = () => {
@@ -16,3 +15,4 @@ const ClientsAboutUs = () => {
 };
 
 export default ClientsAboutUs;
+
