@@ -64,7 +64,6 @@ export default function ProductUpdate() {
       [name]: name === "price" ? Number(value) : value,
     });
   };
-  
 
   const handleChangeImage = (imageList) => {
     const urls = imageList.map((image) => image);
@@ -72,7 +71,11 @@ export default function ProductUpdate() {
   };
 
   const handleChangeTags = (selectedOptions) => {
-    const selectedTags = selectedOptions.map((option) => option.value);
+    const selectedTags = selectedOptions.map((option) => ({
+      value: option.value,
+      label: option.label,
+    }));
+
     setFormData({ ...formData, ProductTag: selectedTags });
   };
 
@@ -122,7 +125,6 @@ export default function ProductUpdate() {
 
     if (!validateForm()) return;
 
-    
     try {
       await updateProductService(id, formDataToSend);
       toast.success("Producto editado con éxito", {
