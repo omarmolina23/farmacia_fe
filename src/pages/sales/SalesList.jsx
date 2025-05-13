@@ -1,9 +1,11 @@
+import { useAuth } from "../../context/authContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
-import SalesLayout from "../../modules/admin/sales/layout/SalesLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
+import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesTable from "../../modules/admin/sales/components/SalesTable";
 import FilterModal from "../../modules/admin/sales/components/FilterModal";
 import { getSalesAll } from "../../services/SalesService";
@@ -14,7 +16,7 @@ import { toast } from "react-toastify";
 const SalesList = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [sales, setSales] = useState([]);
-    const [allSales, setAllSales] = useState([]); // Nueva copia original
+    const [allSales, setAllSales] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -23,6 +25,10 @@ const SalesList = () => {
     const [expandedSaleId, setExpandedSaleId] = useState(null);
     const rowsOptions = [10, 15, 20, 25, 30, 50];
     const navigate = useNavigate();
+
+    const { user } = useAuth();
+    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
+    const Modulo = user?.isAdmin ? "admin" : "employees";
 
     useEffect(() => {
         fetchSales();
@@ -44,7 +50,7 @@ const SalesList = () => {
     };
 
     const handleSaleRegister = () => {
-        navigate("/admin/sales/register");
+        navigate(`/${Modulo}/sales/register`);
     };
 
     const handleToggleExpand = (saleId) => {
@@ -118,7 +124,7 @@ const SalesList = () => {
     );
 
     return (
-        <SalesLayout title="Ventas">
+        <Layout title="Ventas"> 
 
             <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
                 <div className="flex w-full md:w-auto gap-3">
@@ -230,6 +236,7 @@ const SalesList = () => {
                                 key={sale.id}
                                 index={(currentPage - 1) * rowsPerPage + index}
                                 id={sale.id}
+                                // bill_id={sale.bill_id}
                                 fecha={sale.fecha}
                                 cliente={sale.cliente}
                                 vendedor={sale.vendedor}
@@ -251,7 +258,7 @@ const SalesList = () => {
                 setRowsPerPage={setRowsPerPage}
                 rowsOptions={rowsOptions}
             />
-        </SalesLayout>
+        </Layout>
     );
 };
 

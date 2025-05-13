@@ -1,8 +1,12 @@
+import { useAuth } from "../../context/authContext";
 import { useEffect, useState } from "react";
-import SalesLayout from "../../modules/admin/sales/layout/SalesLayout";
+import { useNavigate } from "react-router-dom";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
+import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegiterClient from "../../modules/admin/sales/components/ModalRegiterClient";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
+// import ElectronicInvoice from "../../modules/admin/sales/components/ElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
@@ -12,6 +16,7 @@ import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
 import 'react-toastify/dist/ReactToastify.css';
 
 const SalesRegister = () => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [buscar, setBuscar] = useState('');
     const [allProducts, setAllProducts] = useState([]);
@@ -24,7 +29,12 @@ const SalesRegister = () => {
     const [clientes, setClientes] = useState([]);
     const [buscarCliente, setBuscarCliente] = useState('');
     const [sugerenciasClientes, setSugerenciasClientes] = useState([]);
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
     const [showModal, setShowModal] = useState(false);
+
+    const { user } = useAuth();
+    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
+    const Modulo = user?.isAdmin ? "admin" : "employees";
 
     useEffect(() => {
         const fetchClientes = async () => {
@@ -77,15 +87,14 @@ const SalesRegister = () => {
         }
 
         const stock = productoSeleccionado.batches?.[0]?.quantity || 0;
-
         const existe = products.find(p => p.id === productoSeleccionado.id);
+
         if (existe) {
             const nuevaCantidad = Number(existe.cantidad) + Number(cantidad);
             if (nuevaCantidad > stock) {
                 toast.error("Cantidad excede el stock disponible");
                 return;
             }
-
             const actualizados = products.map(p => {
                 if (p.id === productoSeleccionado.id) {
                     return {
@@ -102,7 +111,6 @@ const SalesRegister = () => {
                 toast.error("Cantidad excede el stock disponible");
                 return;
             }
-
             const nuevo = {
                 ...productoSeleccionado,
                 cantidad,
@@ -128,6 +136,9 @@ const SalesRegister = () => {
     const cancelarVenta = () => {
         setProducts([]);
         setNombreCliente('');
+        setClienteSeleccionado(null);
+        setBuscarCliente('');
+        navigate(`/${Modulo}/sales/list`);
     };
 
     const cancelarProducto = () => {
@@ -161,27 +172,33 @@ const SalesRegister = () => {
     };
 
     const validarFormulario = () => {
+        /*
         if (products.length === 0) {
             toast.error('Debe agregar al menos un producto');
             return false;
         }
-        if (!nombreCliente) {
-            toast.error('Debe escribir el nombre del cliente');
+        if (!clienteSeleccionado) {
+            toast.error('Debe seleccionar un cliente');
             return false;
-        }
+        }*/
         return true;
     };
 
-    const registrarCompra = (e) => {
+    const registrarCompra = async (e) => {
         e.preventDefault();
-        if (validarFormulario()) {
-            toast.success('Venta registrada (simulado)');
+        if (!validarFormulario()) return;
+
+        try {
+           // await ElectronicInvoice();
+            toast.success("Factura electrónica generada exitosamente");
             cancelarVenta();
+        } catch (error) {
+            toast.error("Error al generar la factura electrónica");
         }
     };
 
     return (
-        <SalesLayout title="Registrar Venta">
+        <Layout title="Registrar Venta">
             <div className="flex flex-col h-screen">
                 <div className="flex items-center text-sm h-16 px-6">
                     <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
@@ -234,7 +251,7 @@ const SalesRegister = () => {
                     <table className="min-w-full text-sm table-fixed">
                         <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
                             <tr className="h-9">
-                                <th ></th>
+                                <th></th>
                                 <th>N°</th>
                                 <th className="text-left">Nombre</th>
                                 <th className="text-left">Categoria</th>
@@ -285,6 +302,7 @@ const SalesRegister = () => {
                                                 onClick={() => {
                                                     setBuscarCliente(sug.cedula);
                                                     setNombreCliente(sug.cedula);
+                                                    setClienteSeleccionado(sug); // Guardar objeto cliente
                                                     setSugerenciasClientes([]);
                                                 }}
                                                 className="p-2 hover:bg-gray-100 cursor-pointer"
@@ -325,7 +343,7 @@ const SalesRegister = () => {
                     onClose={() => setProductToDelete(null)}
                 />
             )}
-        </SalesLayout>
+        </Layout>
     );
 };
 

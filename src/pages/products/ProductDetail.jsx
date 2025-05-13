@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import ProductLayout from "../../modules/admin/product/layout/ProductLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import ProductInfo from "../../modules/admin/product/components/ProductInfo";
 
 export default function ProductDetail() {
@@ -59,8 +59,8 @@ export default function ProductDetail() {
   };
 
   return (
-    <ProductLayout title="Detalles del producto">
+    <AdminLayout title="Detalles del producto">
       <ProductInfo elementData={detailData} handleCancel={handleCancel} />
-    </ProductLayout>
+    </AdminLayout>
   );
 }

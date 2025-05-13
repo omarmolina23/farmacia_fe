@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import SupplierForm from "../../modules/admin/supplier/components/SupplierForm";
 import "react-toastify/dist/ReactToastify.css";
 import { updateSupplier } from "../../services/SupplierService";
@@ -87,13 +87,13 @@ export default function SupplierUpdate() {
     };
 
     return (
-        <SupplierLayout title="Editar proveedor">
+        <AdminLayout title="Editar proveedor">
             <SupplierForm
                 formData={formData}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
                 handleCancel={handleCancel}
             />
-        </SupplierLayout>
+        </AdminLayout>
     );
 }

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const SalesTable = ({
     index,
     id,
+    //bill_id,
     fecha,
     cliente,
     vendedor,
@@ -22,7 +23,7 @@ const SalesTable = ({
 
     const handleSalesReturn = () => {
         saveInfo();
-        navigate(`/admin/sales/return/${id}`);
+        navigate(`/admin/sales/return/${id}`); //en realidad, es bill_id
     };
 
     return (

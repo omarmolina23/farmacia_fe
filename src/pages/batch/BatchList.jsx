@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import BatchLayout from "../../modules/admin/batch/layout/BatchLayout.jsx";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import BatchTable from "../../modules/admin/batch/components/BatchTable.jsx";
@@ -93,7 +93,7 @@ const BatchList = () => {
   };
 
   return (
-    <BatchLayout title="Lotes">
+    <AdminLayout title="Lotes">
       <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar
           placeholder="Buscar un lote"
@@ -146,7 +146,7 @@ const BatchList = () => {
         setRowsPerPage={setRowsPerPage}
         rowsOptions={rowsOptions}
       />
-    </BatchLayout>
+    </AdminLayout>
   );
 };
 

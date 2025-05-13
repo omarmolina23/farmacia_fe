@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import SupplierForm from "../../modules/admin/supplier/components/SupplierForm";
 import { createSupplier } from "../../services/SupplierService";
 import "react-toastify/dist/ReactToastify.css";
@@ -76,13 +76,13 @@ export default function SupplierRegister() {
   };
 
   return (
-    <SupplierLayout title="Registrar proveedor">
+    <AdminLayout title="Registrar proveedor">
       <SupplierForm
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
       />
-    </SupplierLayout>
+    </AdminLayout>
   );
 }

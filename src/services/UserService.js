@@ -21,17 +21,20 @@ export const signUp = async (userData) => {
 };
 
 export const signOut = async () => {
-
     try {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
+        localStorage.removeItem('factus_access_token');
+        localStorage.removeItem('factus_refresh_token');
+
         await axios.post('auth/sign-out');
     }
     catch (error) {
-        throw new Error(error.response.data.message || "Ha ocurrido un error");
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
-}
+};
+
 
 export const setPassword = async (token, password) => {
     try {

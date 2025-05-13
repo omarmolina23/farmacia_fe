@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout.jsx";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
@@ -82,7 +82,7 @@ const SuppliersList = () => {
     };
 
     return (
-        <SupplierLayout title="Proveedores">
+        <AdminLayout title="Proveedores">
             <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
                 <SearchBar
                     placeholder="Buscar un proveedor"
@@ -160,7 +160,7 @@ const SuppliersList = () => {
                 setRowsPerPage={setRowsPerPage}
                 rowsOptions={rowsOptions}
             />
-        </SupplierLayout>
+        </AdminLayout>
     );
 };
 

@@ -1,4 +1,6 @@
+import { useAuth } from "../../context/authContext";
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
+import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import { SectionCards } from "../../modules/admin/components/section-cards";
 import { RadialChart } from "../../modules/admin/components/radial-charts";
 import { RadarChartStock } from "../../modules/admin/components/radar-charts";
@@ -6,8 +8,11 @@ import { AreaChartSales } from "../../modules/admin/components/area-charts";
 import { RecentSalesCard } from "../../modules/admin/components/recent-sales-card";
 
 export default function Dashboard() {
+    const { user } = useAuth();
+    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
+
     return (
-        <AdminLayout title="Panel de control">
+        <Layout title="Panel de control">
             <div className="flex flex-1 flex-col bg-white">
                 <div className="@container/main flex flex-1 flex-col gap-2">
                     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -31,6 +36,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </Layout>
     );
 }
