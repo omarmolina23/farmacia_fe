@@ -11,7 +11,29 @@ const ModalRegisterClient = ({
 }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validaciones
+    if (!formData.name || !formData.id || !formData.email || !formData.phone) {
+      toast.error("Todos los campos son obligatorios.");
+      return;
+    }
 
+    if (formData.id.length < 8 || formData.id.length > 12) {
+      toast.error("La cédula debe tener entre 8 y 12 caracteres.");
+      return;
+    }
+
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailPattern.test(formData.email)) {
+      toast.error("Correo electrónico inválido.");
+      return;
+    }
+
+    const phonePattern = /^[0-9]{10}$/;
+    if (!phonePattern.test(formData.phone)) {
+      toast.error("El teléfono debe tener 10 dígitos.");
+      return;
+    }
     const clientData = {
       id: formData.id,
       name: formData.name,

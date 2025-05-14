@@ -213,6 +213,7 @@ const SalesRegister = () => {
     return (
         <Layout title="Registrar Venta">
             <div className="flex flex-col h-screen">
+                {/* Barra superior de búsqueda de productos */}
                 <div className="flex items-center text-sm h-16 px-6">
                     <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
                         <div className="flex w-full md:w-auto gap-3 relative">
@@ -232,7 +233,7 @@ const SalesRegister = () => {
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.name}
+                                            {sug.name} - ${sug.price}
                                         </div>
                                     ))}
                                 </div>
@@ -260,6 +261,7 @@ const SalesRegister = () => {
                     </div>
                 </div>
 
+                {/* Tabla de productos agregados */}
                 <div className="flex-1 overflow-auto max-h-[330px]">
                     <table className="min-w-full text-sm table-fixed">
                         <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
@@ -293,9 +295,12 @@ const SalesRegister = () => {
                     </table>
                 </div>
 
+                <div className="border-t border-gray-300 mt-2"></div>
+
+                {/* Sección cliente y botones finales */}
                 <div className="h-44">
                     <div className="flex items-center text-sm h-16 px-6">
-                        <div className="flex w-full md:w-auto gap-2 relative items-center">
+                        <div className="flex w-full gap-2 relative items-center">
                             <button onClick={() => setShowModal(true)} className="hover:opacity-80 transition">
                                 <IoMdPersonAdd size={30} className="text-[#8B83BA]" />
                             </button>
@@ -305,19 +310,19 @@ const SalesRegister = () => {
                                 placeholder="Buscar cliente"
                             />
                             {sugerenciasClientes.length > 0 && (
-                                <div className="absolute top-full mt-1 left-0 w-full bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
+                                <div className="absolute top-full mt-1 left-0 w-[400px] bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
                                     {sugerenciasClientes.map((sug, i) => (
                                         <div
                                             key={i}
                                             onClick={() => {
                                                 setBuscarCliente(sug.id);
                                                 setNombreCliente(sug.id);
-                                                setClienteSeleccionado(sug); // Guardar objeto cliente
+                                                setClienteSeleccionado(sug);
                                                 setSugerenciasClientes([]);
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.id}
+                                            {sug.id} - {sug.name}
                                         </div>
                                     ))}
                                 </div>
@@ -331,33 +336,68 @@ const SalesRegister = () => {
                             />
                         )}
                     </div>
-                    <div className="flex justify-end items-center gap-4 mt-4 px-6">
-                        <Button
-                            title="Cancelar"
-                            color="bg-[#818180]"
-                            onClick={cancelarVenta}
-                            className="px-6 py-2"
-                        />
-                        <Button
-                            title="Aceptar"
-                            color="bg-[#8B83BA]"
-                            onClick={registrarCompra}
-                            className="px-6 py-2"
-                        />
-                        <div className="w-64 bg-[#D9D9D9] p-4 text-3xl">${precioTotal}</div>
+
+                    <div className="flex justify-between mt-4 px-6">
+                        <div className="w-1/2">
+                            {clienteSeleccionado && (
+                                <div className="bg-white border border-gray-200 rounded-lg shadow p-4">
+                                    <div className="text-sm font-semibold text-gray-700 mb-2">Datos del Cliente:</div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Cédula:</strong></div>
+                                            <div>{clienteSeleccionado.id}</div>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Nombre:</strong></div>
+                                            <div>{clienteSeleccionado.name}</div>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Correo:</strong></div>
+                                            <div>{clienteSeleccionado.email}</div>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Teléfono:</strong></div>
+                                            <div>{clienteSeleccionado.phone}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="w-1/2 flex flex-col justify-between">
+                          <div className="w-[220px] bg-[#D9D9D9] px-6 py-2 text-4xl text-right mt-2 ml-auto rounded">
+                                ${precioTotal.toLocaleString()}
+                            </div>
+                            <div className="flex justify-end gap-4">
+                                <Button
+                                    title="Cancelar"
+                                    color="bg-[#818180]"
+                                    onClick={cancelarVenta}
+                                    className="px-6 py-2"
+                                />
+                                <Button
+                                    title="Aceptar"
+                                    color="bg-[#8B83BA]"
+                                    onClick={registrarCompra}
+                                    className="px-6 py-2"
+                                />
+                            </div>
+                            
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {productToDelete && (
-                <ProductDeleteModal
-                    productToDelete={productToDelete}
-                    deleteProduct={deleteProduct}
-                    onClose={() => setProductToDelete(null)}
-                />
-            )}
+                {productToDelete && (
+                    <ProductDeleteModal
+                        productToDelete={productToDelete}
+                        deleteProduct={deleteProduct}
+                        onClose={() => setProductToDelete(null)}
+                    />
+                )}
+            </div>
         </Layout>
     );
 };
+
 
 export default SalesRegister;
