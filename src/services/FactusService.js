@@ -65,7 +65,18 @@ export const createInvoice = async (invoiceData) => {
 
         return response.data;
     } catch (error) {
-        console.error("Error al crear/validar la factura:", error.response?.data || error.message);
+        const errorData = error.response?.data;
+
+        if (errorData?.data?.errors) {
+            console.error("❌ Errores de validación de Factus:");
+            for (const [field, messages] of Object.entries(errorData.data.errors)) {
+                console.error(`→ ${field}: ${messages.join(", ")}`);
+            }
+        } else {
+            console.error("⚠️ Error general al crear/validar la factura:", errorData || error.message);
+        }
+
         throw error;
     }
 };
+
