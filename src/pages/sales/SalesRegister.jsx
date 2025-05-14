@@ -1,6 +1,7 @@
 import { useAuth } from "../../context/authContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NumberFlow from '@number-flow/react';
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
@@ -365,8 +366,15 @@ const SalesRegister = () => {
                         </div>
 
                         <div className="w-1/2 flex flex-col justify-between">
-                          <div className="w-[220px] bg-[#D9D9D9] px-6 py-2 text-4xl text-right mt-2 ml-auto rounded">
-                                ${precioTotal.toLocaleString()}
+                            <div className="w-[220px] bg-[#D9D9D9] px-6 py-3 text-4xl text-right mt-2 ml-auto rounded-lg shadow-lg flex items-center justify-between mb-6"> {/* Añadido mb-6 para separar los botones */}
+                                <span className="text-2xl text-gray-700 font-semibold">$</span>
+                                <NumberFlow
+                                    value={precioTotal}
+                                    prefix=""
+                                    locales="es-ES"
+                                    duration={3}
+                                    className="text-4xl text-gray-900 font-bold"
+                                />
                             </div>
                             <div className="flex justify-end gap-4">
                                 <Button
@@ -382,8 +390,8 @@ const SalesRegister = () => {
                                     className="px-6 py-2"
                                 />
                             </div>
-                            
                         </div>
+
                     </div>
                 </div>
 
