@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
-import ModalRegiterClient from "../../modules/admin/sales/components/ModalRegiterClient";
+import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
-// import ElectronicInvoice from "../../modules/admin/sales/components/ElectronicInvoice";
+import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
@@ -31,10 +31,11 @@ const SalesRegister = () => {
     const [sugerenciasClientes, setSugerenciasClientes] = useState([]);
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
     const [showModal, setShowModal] = useState(false);
-
+    const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "" });
     const { user } = useAuth();
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
     const Modulo = user?.isAdmin ? "admin" : "employees";
+    const IVA = 0.19;
 
     useEffect(() => {
         const fetchClientes = async () => {
@@ -50,7 +51,7 @@ const SalesRegister = () => {
 
     useEffect(() => {
         const filtrados = buscarCliente.trim().length > 0
-            ? clientes.filter(c => c.cedula.toLowerCase().includes(buscarCliente.toLowerCase()))
+            ? clientes.filter(c => c.id.toLowerCase().includes(buscarCliente.toLowerCase()))
             : [];
         setSugerenciasClientes(filtrados);
     }, [buscarCliente, clientes]);
@@ -59,7 +60,11 @@ const SalesRegister = () => {
         const fetchData = async () => {
             try {
                 const data = await getProductAll();
-                setAllProducts(data);
+                const productosConIVA = data.map(p => ({
+                    ...p,
+                    price: p.price * (1 + IVA)
+                }));
+                setAllProducts(productosConIVA);
             } catch (err) {
                 toast.error("Error loading products");
             }
@@ -86,7 +91,7 @@ const SalesRegister = () => {
             return;
         }
 
-        const stock = productoSeleccionado.batches?.[0]?.quantity || 0;
+        const stock = productoSeleccionado.amount || 0;
         const existe = products.find(p => p.id === productoSeleccionado.id);
 
         if (existe) {
@@ -141,6 +146,11 @@ const SalesRegister = () => {
         navigate(`/${Modulo}/sales/list`);
     };
 
+    const handleChangeCliente = (e) => {
+        const { name, value } = e.target;
+        setFormDataCliente(prev => ({ ...prev, [name]: value }));
+    };
+
     const cancelarProducto = () => {
         const producto = products.find(p => p.id === selectedProductId);
         if (producto) {
@@ -172,7 +182,6 @@ const SalesRegister = () => {
     };
 
     const validarFormulario = () => {
-        /*
         if (products.length === 0) {
             toast.error('Debe agregar al menos un producto');
             return false;
@@ -180,7 +189,7 @@ const SalesRegister = () => {
         if (!clienteSeleccionado) {
             toast.error('Debe seleccionar un cliente');
             return false;
-        }*/
+        }
         return true;
     };
 
@@ -189,10 +198,14 @@ const SalesRegister = () => {
         if (!validarFormulario()) return;
 
         try {
-           // await ElectronicInvoice();
+            await sendElectronicInvoice({
+                cliente: clienteSeleccionado,
+                productos: products
+            });
             toast.success("Factura electrónica generada exitosamente");
             cancelarVenta();
         } catch (error) {
+            console.error(error);
             toast.error("Error al generar la factura electrónica");
         }
     };
@@ -256,7 +269,6 @@ const SalesRegister = () => {
                                 <th className="text-left">Nombre</th>
                                 <th className="text-left">Categoria</th>
                                 <th className="text-left">Proveedor</th>
-                                <th className="text-center">Lote</th>
                                 <th className="text-center">Cantidad</th>
                                 <th className="text-center">Precio Unitario</th>
                                 <th className="text-center">Precio Total</th>
@@ -270,7 +282,6 @@ const SalesRegister = () => {
                                     name={producto.name}
                                     category={producto.category}
                                     supplier={producto.supplier}
-                                    batch={producto.batches?.[0]?.batch_number}
                                     cantidad={producto.cantidad}
                                     price={producto.price}
                                     precioTotal={producto.totalPrice}
@@ -284,39 +295,41 @@ const SalesRegister = () => {
 
                 <div className="h-44">
                     <div className="flex items-center text-sm h-16 px-6">
-                        <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
-                            <div className="flex w-full md:w-auto gap-2 relative items-center">
-                                <button onClick={() => setShowModal(true)} className="hover:opacity-80 transition">
-                                    <IoMdPersonAdd size={30} className="text-[#8B83BA]" />
-                                </button>
-                                <SearchBar
-                                    value={buscarCliente}
-                                    onChange={(e) => setBuscarCliente(e.target.value)}
-                                    placeholder="Buscar cliente"
-                                />
-                                {sugerenciasClientes.length > 0 && (
-                                    <div className="absolute top-full mt-1 left-0 w-full bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
-                                        {sugerenciasClientes.map((sug, i) => (
-                                            <div
-                                                key={i}
-                                                onClick={() => {
-                                                    setBuscarCliente(sug.cedula);
-                                                    setNombreCliente(sug.cedula);
-                                                    setClienteSeleccionado(sug); // Guardar objeto cliente
-                                                    setSugerenciasClientes([]);
-                                                }}
-                                                className="p-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {sug.cedula}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            {showModal && (
-                                <ModalRegiterClient onClose={() => setShowModal(false)} />
+                        <div className="flex w-full md:w-auto gap-2 relative items-center">
+                            <button onClick={() => setShowModal(true)} className="hover:opacity-80 transition">
+                                <IoMdPersonAdd size={30} className="text-[#8B83BA]" />
+                            </button>
+                            <SearchBar
+                                value={buscarCliente}
+                                onChange={(e) => setBuscarCliente(e.target.value)}
+                                placeholder="Buscar cliente"
+                            />
+                            {sugerenciasClientes.length > 0 && (
+                                <div className="absolute top-full mt-1 left-0 w-full bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
+                                    {sugerenciasClientes.map((sug, i) => (
+                                        <div
+                                            key={i}
+                                            onClick={() => {
+                                                setBuscarCliente(sug.id);
+                                                setNombreCliente(sug.id);
+                                                setClienteSeleccionado(sug); // Guardar objeto cliente
+                                                setSugerenciasClientes([]);
+                                            }}
+                                            className="p-2 hover:bg-gray-100 cursor-pointer"
+                                        >
+                                            {sug.id}
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
+                        {showModal && (
+                            <ModalRegisterClient
+                                formData={formDataCliente}
+                                handleChange={handleChangeCliente}
+                                onClose={() => setShowModal(false)}
+                            />
+                        )}
                     </div>
                     <div className="flex justify-end items-center gap-4 mt-4 px-6">
                         <Button

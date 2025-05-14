@@ -3,7 +3,6 @@ const SalesProduct = ({
     name,
     category,
     supplier,
-    batch,
     cantidad,
     price,
     precioTotal,
@@ -37,7 +36,6 @@ const SalesProduct = ({
                 <td className="text-left">{name}</td>
                 <td className="text-left">{category}</td>
                 <td className="text-left">{supplier}</td>
-                <td className="text-center">{batch}</td>
                 <td className="text-center">{cantidad}</td>
                 <td className="text-center">{formatter.format(price)}</td>
                 <td className="text-center">{formatter.format(precioTotal)}</td>

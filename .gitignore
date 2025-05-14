@@ -27,5 +27,7 @@ dist-ssr
 *.sln
 *.sw?
 
+# Json
+**/formato.json
 
 .vercel
