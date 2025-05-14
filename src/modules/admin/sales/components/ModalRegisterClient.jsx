@@ -1,13 +1,55 @@
 import React from "react";
+import { createClient } from "../../../../services/ClientService";
 import TextField from "../../../../components/TextField";
 import Button from "../../../../components/Button";
+import { toast } from "react-hot-toast";
 
 const ModalRegisterClient = ({
-  formData = { name: "", cedula: "", email: "", telefono: "" },
+  formData = { name: "", id: "", email: "", phone: "" },
   handleChange,
-  handleSubmit,
   onClose,
 }) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validaciones
+    if (!formData.name || !formData.id || !formData.email || !formData.phone) {
+      toast.error("Todos los campos son obligatorios.");
+      return;
+    }
+
+    if (formData.id.length < 8 || formData.id.length > 12) {
+      toast.error("La cédula debe tener entre 8 y 12 caracteres.");
+      return;
+    }
+
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailPattern.test(formData.email)) {
+      toast.error("Correo electrónico inválido.");
+      return;
+    }
+
+    const phonePattern = /^[0-9]{10}$/;
+    if (!phonePattern.test(formData.phone)) {
+      toast.error("El teléfono debe tener 10 dígitos.");
+      return;
+    }
+    const clientData = {
+      id: formData.id,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+    };
+
+    try {
+      await createClient(clientData);
+      toast.success("Cliente registrado correctamente");
+      onClose();
+    } catch (error) {
+      toast.error(error.message || "Error al registrar cliente");
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50"
@@ -31,12 +73,12 @@ const ModalRegisterClient = ({
             />
           </div>
           <div className="flex flex-col items-start">
-            <label htmlFor="cedula" className="text-md">Cédula</label>
+            <label htmlFor="id" className="text-md">Cédula</label>
             <TextField
               type="text"
-              id="cedula"
-              name="cedula"
-              value={formData.cedula}
+              id="id"
+              name="id"
+              value={formData.id}
               onChange={handleChange}
               placeholder="Número de cédula"
             />
@@ -53,12 +95,12 @@ const ModalRegisterClient = ({
             />
           </div>
           <div className="flex flex-col items-start">
-            <label htmlFor="telefono" className="text-md">Telefono</label>
+            <label htmlFor="phone" className="text-md">Teléfono</label>
             <TextField
               type="text"
-              id="telefono"
-              name="telefono"
-              value={formData.telefono}
+              id="phone"
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
               placeholder="Número de teléfono"
             />

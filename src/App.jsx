@@ -29,7 +29,6 @@ const BatchRegister = lazy(() => import("./pages/batch/BatchRegister"));
 const UserList = lazy(() => import("./pages/user/UserList"));
 const UserRegister = lazy(() => import("./pages/user/UserRegister"));
 const UserUpdate = lazy(() => import("./pages/user/UserUpdate"));
-const EmployeesHome = lazy(() => import("./pages/employees/EmployeesHome"));
 const ClientHome = lazy(() => import("./pages/clients/ClientHome"));
 
 function App() {
@@ -51,7 +50,7 @@ function App() {
                 <Route path="sales">
                   <Route path="register" element={<SalesRegister />} />
                   <Route path="list" element={<SalesList />} />
-                  <Route path="return:id" element={<SalesReturn />} />
+                  <Route path="return" element={<SalesReturn />} />
                 </Route>
                 <Route path="category">
                   <Route path="register" element={<CategoryRegister />} />
@@ -81,7 +80,14 @@ function App() {
                 </Route>
               </Route>
             </Route>
-            <Route path="/employees/home" element={<EmployeesHome />} />
+            <Route path="/employees">
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="sales">
+                  <Route path="register" element={<SalesRegister />} />
+                  <Route path="list" element={<SalesList />} />
+                  <Route path="return" element={<SalesReturn />} />
+                </Route>
+            </Route>
           </Route>
         </Routes>
       </Suspense>

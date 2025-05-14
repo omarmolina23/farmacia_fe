@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import UserLayout from "../../modules/admin/user/layout/UserLayout.jsx";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import UserTable from "../../modules/admin/user/components/UserTable.jsx";
@@ -99,7 +99,7 @@ const UserList = () => {
   };
 
   return (
-    <UserLayout title="Usuarios">
+    <AdminLayout title="Usuarios">
       <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar placeholder="Buscar un usuario" value={searchQuery} onChange={handleSearch} />
         <Button title="Registrar usuario" color="bg-[#8B83BA]" onClick={handleUserRegister} />
@@ -159,7 +159,7 @@ const UserList = () => {
         setRowsPerPage={setRowsPerPage}
         rowsOptions={rowsOptions}
       />
-    </UserLayout>
+    </AdminLayout>
   );
 };
 

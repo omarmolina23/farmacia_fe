@@ -3,7 +3,6 @@ import { useState } from "react";
 import { FiHome, FiArchive, FiLogOut } from "react-icons/fi";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { LuCircleDollarSign } from "react-icons/lu";
-import { PiCashRegister } from "react-icons/pi";
 import { FaUserAlt, FaUsers } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";
@@ -11,7 +10,7 @@ import { signOut as signOutService } from "../../../services/UserService";
 import { toast } from "react-toastify";
 import { Sidebar } from "../../../components/ui/sidebar";
 
-export function AppSidebar({ ...props }) {
+export function AppSidebarAdmin({ ...props }) {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();

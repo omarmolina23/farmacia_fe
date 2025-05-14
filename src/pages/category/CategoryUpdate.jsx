@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SupplierLayout from "../../modules/admin/supplier/layout/SupplierLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import "react-toastify/dist/ReactToastify.css";
 import { updateCategory } from "../../services/CategoryService";
 import CategoryForm from "../../modules/admin/category/components/CategoryForm";
@@ -70,13 +70,13 @@ export default function CategoryUpdate() {
   };
 
   return (
-    <SupplierLayout title="Editar categoría">
+    <AdminLayout title="Editar categoría">
       <CategoryForm
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
       />
-    </SupplierLayout>
+    </AdminLayout>
   );
 }

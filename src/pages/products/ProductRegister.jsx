@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createProduct as createProductService } from "../../services/ProductService";
-import ProductLayout from "../../modules/admin/product/layout/ProductLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import ProductForm from "../../modules/admin/product/components/ProductForm";
 import { Weight } from "lucide-react";
 
@@ -16,7 +16,6 @@ export default function ProductRegister() {
     status: "ACTIVE",
     categoryId: "",
     supplierId: "",
-    price: "",
     concentration: "",
     activeIngredient: "",
     weight: "",
@@ -107,7 +106,7 @@ export default function ProductRegister() {
   };
 
   return (
-    <ProductLayout title="Registrar producto">
+    <AdminLayout title="Registrar producto">
       <ProductForm
         formData={formData}
         setFormData={setFormData}
@@ -118,6 +117,6 @@ export default function ProductRegister() {
         handleCancel={handleCancel}
         isEditMode={false}
       />
-    </ProductLayout>
+    </AdminLayout>
   );
 }

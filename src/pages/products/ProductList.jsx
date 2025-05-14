@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ProductLayout from "../../modules/admin/product/layout/ProductLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
@@ -106,7 +106,7 @@ const ProductList = () => {
   };
 
   return (
-    <ProductLayout title="Productos">
+    <AdminLayout title="Productos">
       <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar
           placeholder="Buscar un producto"
@@ -240,7 +240,7 @@ const ProductList = () => {
         setRowsPerPage={setRowsPerPage}
         rowsOptions={rowsOptions}
       />
-    </ProductLayout>
+    </AdminLayout>
   );
 };
 

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const SalesTable = ({
     index,
     id,
+    //bill_id,
     fecha,
     cliente,
     vendedor,
@@ -22,7 +23,7 @@ const SalesTable = ({
 
     const handleSalesReturn = () => {
         saveInfo();
-        navigate(`/admin/sales/return/${id}`);
+        navigate(`/admin/sales/return/${id}`); //en realidad, es bill_id
     };
 
     return (
@@ -66,7 +67,6 @@ const SalesTable = ({
                                         <th scope="col" className="text-center">Producto</th>
                                         <th scope="col" className="text-center">Categoría</th>
                                         <th scope="col" className="text-center">Proveedor</th>
-                                        <th scope="col" className="text-center">Lote</th>
                                         <th scope="col" className="text-center">Cantidad</th>
                                         <th scope="col" className="text-center">Total</th>
                                     </tr>
@@ -77,7 +77,6 @@ const SalesTable = ({
                                             <td className="text-center">{producto.nombre}</td>
                                             <td className="text-center">{producto.categoria}</td>
                                             <td className="text-center">{producto.proveedor}</td>
-                                            <td className="text-center">{producto.lote}</td>
                                             <td className="text-center">{producto.cantidad}</td>
                                             <td className="text-center">${producto.precio_total?.toLocaleString()}</td>
                                         </tr>
