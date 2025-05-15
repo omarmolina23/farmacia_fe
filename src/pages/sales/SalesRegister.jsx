@@ -1,5 +1,5 @@
 import { useAuth } from "../../context/authContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from 'socket.io-client';
 import NumberFlow from '@number-flow/react';
@@ -24,6 +24,11 @@ const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 
 const SalesRegister = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
+    const Modulo = user?.isAdmin ? "admin" : "employees";
+    const IVA = 0.19;
+
     const [products, setProducts] = useState([]);
     const [buscar, setBuscar] = useState('');
     const [allProducts, setAllProducts] = useState([]);
@@ -39,87 +44,19 @@ const SalesRegister = () => {
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "" });
-    const { user } = useAuth();
-    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
-    const Modulo = user?.isAdmin ? "admin" : "employees";
-    const IVA = 0.19;
-
-    // WS y sesión
-    const sessionId = useState(crypto.randomUUID());
     const [showQRModal, setShowQRModal] = useState(false);
 
-    /**
-     * socket.on("connect", () => {
-    
 
-  // Unirse a la misma sala
-  socket.emit("join-room", "test-session");
+    // WS y sesión
+    const sessionIdRef = useRef(crypto.randomUUID());
+    const allProductsRef = useRef([]);
 
-  console.log("🖥️ Unida a la sala 'test-session'");
-});
-     */
-    // Conectar WebSocket y unirse a sala
+    // Mantener la ref de allProducts actualizada
     useEffect(() => {
-        const sock = io(SOCKET_SERVER_URL);
+        allProductsRef.current = allProducts;
+    }, [allProducts]);
 
-        sock.on("connect", () => {
-            console.log("🖥️ PC conectada con ID:", sock.id);
-            sock.emit("join-room", sessionId);
-            console.log(`🖥️ Unida a la sala '${sessionId}'`);
-        });
-        sock.on("scan", (productBarcode) => {
-            console.log("🖥️ Producto escaneado recibido:", productBarcode);
-            handleScanResult(productBarcode);
-        });
-        /*
-        return () => {
-            sock.off('scanned');
-            sock.disconnect();
-        };
-
-        */
-    }, [sessionId, allProducts, products]);
-
-    // Función para procesar producto escaneado
-    const handleScanResult = (productId) => {
-        const producto = allProducts.find(p => p.id === productId);
-
-        if (!producto) {
-            toast.error("Producto no encontrado");
-            return;
-        }
-
-        const stock = producto.amount || 0;
-        const existe = products.find(p => p.id === producto.id);
-
-        if (existe) {
-            const nuevaCantidad = Number(existe.cantidad) + 1;
-
-            if (nuevaCantidad > stock) {
-                toast.error('Cantidad excede el stock disponible');
-                return;
-            }
-
-            setProducts(products.map(p =>
-                p.id === producto.id
-                    ? { ...p, cantidad: nuevaCantidad, totalPrice: nuevaCantidad * p.price }
-                    : p
-            ));
-        } else {
-            if (1 > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-
-            setProducts([...products, { ...producto, cantidad: 1, totalPrice: producto.price }]);
-        }
-
-        setBuscar('');
-        setCantidad(1);
-        setSugerencias([]);
-    };
-
-
+    // Obtener clientes
     useEffect(() => {
         const fetchClientes = async () => {
             try {
@@ -132,6 +69,7 @@ const SalesRegister = () => {
         fetchClientes();
     }, []);
 
+    // Sugerencias clientes
     useEffect(() => {
         const filtrados = buscarCliente.trim().length > 0
             ? clientes.filter(c => c.id.toLowerCase().includes(buscarCliente.toLowerCase()))
@@ -139,6 +77,7 @@ const SalesRegister = () => {
         setSugerenciasClientes(filtrados);
     }, [buscarCliente, clientes]);
 
+    // Obtener productos y calcular IVA
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -155,6 +94,7 @@ const SalesRegister = () => {
         fetchData();
     }, []);
 
+    // Sugerencias productos
     useEffect(() => {
         const filtrados = buscar.trim().length > 0
             ? allProducts.filter(p => p.name.toLowerCase().includes(buscar.toLowerCase()))
@@ -162,133 +102,111 @@ const SalesRegister = () => {
         setSugerencias(filtrados);
     }, [buscar, allProducts]);
 
-    useEffect(() => {
-        calcularValorTotal();
-    }, [products]);
-
-    const agregarProducto = () => {
-        const productoSeleccionado = allProducts.find(p => p.name.toLowerCase() === buscar.toLowerCase());
-
-        if (!productoSeleccionado) {
-            toast.error("Producto no encontrado");
-            return;
-        }
-
-        const stock = productoSeleccionado.amount || 0;
-        const existe = products.find(p => p.id === productoSeleccionado.id);
-
-        if (existe) {
-            const nuevaCantidad = Number(existe.cantidad) + Number(cantidad);
-            if (nuevaCantidad > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-            const actualizados = products.map(p => {
-                if (p.id === productoSeleccionado.id) {
-                    return {
-                        ...p,
-                        cantidad: nuevaCantidad,
-                        totalPrice: nuevaCantidad * p.price
-                    };
-                }
-                return p;
-            });
-            setProducts(actualizados);
-        } else {
-            if (cantidad > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-            const nuevo = {
-                ...productoSeleccionado,
-                cantidad,
-                totalPrice: cantidad * productoSeleccionado.price
-            };
-            setProducts([...products, nuevo]);
-        }
-
-        setBuscar('');
-        setCantidad(1);
-        setSugerencias([]);
-    };
-
-    const handleProductSelect = (productId) => {
-        setSelectedProductId(prev => prev === productId ? null : productId);
-    };
-
     const calcularValorTotal = () => {
         const total = products.reduce((sum, p) => sum + p.totalPrice, 0);
         setPrecioTotal(total);
     };
 
+    // Helper unificado para agregar/actualizar productos
+    const addOrUpdateProduct = useCallback((producto, qty = 1) => {
+        const stock = producto.amount || 0;
+        const existe = products.find(p => p.id === producto.id);
+
+        if (existe) {
+            const nuevaCantidad = existe.cantidad + qty;
+            if (nuevaCantidad > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+            setProducts(products.map(p =>
+                p.id === producto.id
+                    ? { ...p, cantidad: nuevaCantidad, totalPrice: nuevaCantidad * p.price }
+                    : p
+            ));
+        } else {
+            if (qty > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+            setProducts([...products, { ...producto, cantidad: qty, totalPrice: qty * producto.price }]);
+        }
+
+        setBuscar('');
+        setCantidad(1);
+        setSugerencias([]);
+    }, [products]);
+
+    // Conexión WebSocket
+    useEffect(() => {
+        const sock = io(SOCKET_SERVER_URL);
+
+        sock.on("connect", () => {
+            sock.emit("join-room", sessionIdRef.current);
+            console.log("Tu sala es:", sessionIdRef.current)
+        });
+
+        sock.on("scan", rawBarcode => {
+            const cleanedId = String(rawBarcode).trim();
+            const producto = allProductsRef.current.find(p => String(p.id).trim() === cleanedId);
+            if (!producto) {
+                toast.error("Producto escaneado no encontrado");
+                return;
+            }
+            addOrUpdateProduct(producto, 1);
+        });
+
+        return () => sock.disconnect();
+    }, [addOrUpdateProduct]);
+
+    const agregarProducto = () => {
+        const nameKey = buscar.trim().toLowerCase();
+        const producto = allProducts.find(p => p.name.toLowerCase() === nameKey);
+        if (!producto) {
+            toast.error("Producto no encontrado");
+            return;
+        }
+        addOrUpdateProduct(producto, cantidad);
+    };
+    
+    useEffect(() => {
+        calcularValorTotal();
+    }, [products]);
+
+    // Resto de handlers...
     const cancelarVenta = () => {
         setProducts([]);
-        setNombreCliente('');
         setClienteSeleccionado(null);
         setBuscarCliente('');
         navigate(`/${Modulo}/sales/list`);
     };
-
-    const handleChangeCliente = (e) => {
-        const { name, value } = e.target;
-        setFormDataCliente(prev => ({ ...prev, [name]: value }));
-    };
-
+    const handleProductSelect = id => setSelectedProductId(prev => prev === id ? null : id);
     const cancelarProducto = () => {
-        const producto = products.find(p => p.id === selectedProductId);
-        if (producto) {
-            setProductToDelete(producto);
-        } else {
-            toast.warn("Seleccione un producto primero");
-        }
+        const prod = products.find(p => p.id === selectedProductId);
+        prod ? setProductToDelete(prod) : toast.warn("Seleccione un producto primero");
     };
-
-    const deleteProduct = (quantityToDelete) => {
-        const updatedProducts = products.map((producto) => {
-            if (producto.id === selectedProductId) {
-                if (producto.cantidad > quantityToDelete) {
-                    return {
-                        ...producto,
-                        cantidad: producto.cantidad - quantityToDelete,
-                        totalPrice: (producto.cantidad - quantityToDelete) * producto.price,
-                    };
-                }
-                return null;
-            }
-            return producto;
-        }).filter(Boolean);
-
-        setProducts(updatedProducts);
+    const deleteProduct = qty => {
+        const updated = products.map(p =>
+            p.id === selectedProductId
+                ? (p.cantidad > qty ? { ...p, cantidad: p.cantidad - qty, totalPrice: (p.cantidad - qty) * p.price } : null)
+                : p
+        ).filter(Boolean);
+        setProducts(updated);
         setProductToDelete(null);
         setSelectedProductId(null);
-        calcularValorTotal();
     };
-
-    const validarFormulario = () => {
-        if (products.length === 0) {
-            toast.error('Debe agregar al menos un producto');
-            return false;
-        }
-        if (!clienteSeleccionado) {
-            toast.error('Debe seleccionar un cliente');
-            return false;
-        }
-        return true;
-    };
-
-    const registrarCompra = async (e) => {
+    const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const validarFormulario = () => products.length > 0 && clienteSeleccionado;
+    const registrarCompra = async e => {
         e.preventDefault();
-        if (!validarFormulario()) return;
-
+        if (!validarFormulario()) {
+            toast.error(products.length === 0 ? 'Debe agregar al menos un producto' : 'Debe seleccionar un cliente');
+            return;
+        }
         try {
-            await sendElectronicInvoice({
-                cliente: clienteSeleccionado,
-                productos: products
-            });
+            await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
             toast.success("Factura electrónica generada exitosamente");
-            cancelarVenta();
-        } catch (error) {
-            console.error(error);
+            navigate(`/${Modulo}/sales/list`);
+        } catch {
             toast.error("Error al generar la factura electrónica");
         }
     };
