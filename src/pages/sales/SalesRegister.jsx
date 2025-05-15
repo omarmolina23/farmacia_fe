@@ -6,6 +6,7 @@ import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
+import ModalQR from "../../modules/admin/sales/components/ModalQR";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
 import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
@@ -37,6 +38,22 @@ const SalesRegister = () => {
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
     const Modulo = user?.isAdmin ? "admin" : "employees";
     const IVA = 0.19;
+    const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
+    const [showQR, setShowQR] = useState(false);
+
+    const abrirQR = () => setShowQR(true);
+
+    useEffect(() => {
+        const onMessage = e => {
+            if (e.origin !== window.location.origin) return;
+            const { sessionId: sid, productId } = e.data;
+            if (sid === sessionId && productId) {
+                handleScanResult(productId);
+            }
+        };
+        window.addEventListener('message', onMessage);
+        return () => window.removeEventListener('message', onMessage);
+    }, [sessionId, allProducts, products]);
 
     useEffect(() => {
         const fetchClientes = async () => {
@@ -193,7 +210,11 @@ const SalesRegister = () => {
         }
         return true;
     };
-
+    const handleOpenQR = () => {
+        const newSessionId = crypto.randomUUID();
+        setSessionId(newSessionId);
+        setShowQR(true);
+    };
     const registrarCompra = async (e) => {
         e.preventDefault();
         if (!validarFormulario()) return;
@@ -214,6 +235,21 @@ const SalesRegister = () => {
     return (
         <Layout title="Registrar Venta">
             <div className="flex flex-col h-screen">
+                <button
+                    onClick={handleOpenQR}
+                    className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                    Mostrar QR
+                </button>
+                {showQR && (
+                    <div
+                        className="fixed inset-0 flex justify-center items-center z-50"
+                        onClick={() => setShowQR(false)}
+                    >
+                        <ModalQR sessionId={sessionId} onClose={() => setShowQR(false)} />
+                    </div>
+                )}
+
                 {/* Barra superior de búsqueda de productos */}
                 <div className="flex items-center text-sm h-16 px-6">
                     <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
