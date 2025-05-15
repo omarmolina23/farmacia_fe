@@ -1,4 +1,4 @@
-import mockAxios from "../config/axiosMock"; 
+// import mockAxios from "../config/axiosMock"; 
 
 function verifyUrl() {
     const apiUrl = import.meta.env.VITE_MOCK_URL;
