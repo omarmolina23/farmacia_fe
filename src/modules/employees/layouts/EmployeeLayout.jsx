@@ -1,11 +1,11 @@
-import { AppSidebarAdmin } from "../components/app-sidebar-admin";
+import { AppSidebarEmployee } from "../components/app-sidebar-employee";
 import { SidebarProvider, SidebarInset } from "../../../components/ui/sidebar";
 import PageHeader from "../../../components/PageHeader";
 
-const AdminLayout = ({ children, title }) => {
+const EmployeesLayout = ({ children, title }) => {
     return (
         <SidebarProvider>
-            <AppSidebarAdmin variant="inset" />
+            <AppSidebarEmployee variant="inset" />
             <SidebarInset className="bg-white">
                 <div className="flex flex-col w-full">
                     <PageHeader title={title} />
@@ -16,4 +16,4 @@ const AdminLayout = ({ children, title }) => {
     );
 };
 
-export default AdminLayout;
+export default EmployeesLayout;

@@ -10,7 +10,7 @@ import {
   searchCategory,
 } from "../../services/CategoryService.js";
 import CategoryTable from "../../modules/admin/category/components/CategoryTable.jsx";
-import CategoryLayout from "../../modules/admin/category/layout/CategoryLayout.jsx";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import FilterStatus from "../../components/FilterStatus.jsx";
 
 const CategoryList = () => {
@@ -99,7 +99,7 @@ const CategoryList = () => {
   };
 
   return (
-    <CategoryLayout title="Categorías">
+    <AdminLayout title="Categorías">
       <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
         <SearchBar
           placeholder="Buscar categoría"
@@ -181,7 +181,7 @@ const CategoryList = () => {
         setRowsPerPage={setRowsPerPage}
         rowsOptions={rowsOptions}
       />
-    </CategoryLayout>
+    </AdminLayout>
   );
 };
 

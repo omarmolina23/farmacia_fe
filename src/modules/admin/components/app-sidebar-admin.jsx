@@ -10,7 +10,7 @@ import { signOut as signOutService } from "../../../services/UserService";
 import { toast } from "react-toastify";
 import { Sidebar } from "../../../components/ui/sidebar";
 
-export function AppSidebar({ ...props }) {
+export function AppSidebarAdmin({ ...props }) {
     const [isInventarioOpen, setIsInventarioOpen] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();

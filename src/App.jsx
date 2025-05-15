@@ -8,18 +8,17 @@ import "./App.css";
 import Catalog from "./pages/clients/catalog/Catalog";
 import Product from "./pages/clients/catalog/Product";
 import ClientsAboutUs from "./pages/clients/ClientsAboutUs";
-
 const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
+const SalesList = lazy(() => import("./pages/sales/SalesList"));
+const ScanPage = lazy(() => import("./pages/sales/ScanPage"));
+const SalesRegister = lazy(() => import("./pages/sales/SalesRegister"));
+const SalesReturn = lazy(() => import("./pages/sales/SalesReturn"));
 const CategoryList = lazy(() => import("./pages/category/CategoryList"));
-const CategoryRegister = lazy(() =>
-  import("./pages/category/CategoryRegister")
-);
+const CategoryRegister = lazy(() => import("./pages/category/CategoryRegister"));
 const CategoryUpdate = lazy(() => import("./pages/category/CategoryUpdate"));
-const SupplierRegister = lazy(() =>
-  import("./pages/supplier/SupplierRegister")
-);
+const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const ProductRegister = lazy(() => import("./pages/products/ProductRegister"));
@@ -31,7 +30,6 @@ const BatchRegister = lazy(() => import("./pages/batch/BatchRegister"));
 const UserList = lazy(() => import("./pages/user/UserList"));
 const UserRegister = lazy(() => import("./pages/user/UserRegister"));
 const UserUpdate = lazy(() => import("./pages/user/UserUpdate"));
-const EmployeesHome = lazy(() => import("./pages/employees/EmployeesHome"));
 const ClientHome = lazy(() => import("./pages/clients/ClientHome"));
 
 function App() {
@@ -45,11 +43,16 @@ function App() {
           <Route path="/catalog/:id" element={<Product />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
+          <Route path="/scan-page/:session" element={<ScanPage />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
               <Route path="/admin">
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="sales">
+                  <Route path="register" element={<SalesRegister />} />
+                  <Route path="list" element={<SalesList />} />
+                  <Route path="return" element={<SalesReturn />} />
+                </Route>
                 <Route path="category">
                   <Route path="register" element={<CategoryRegister />} />
                   <Route path="list" element={<CategoryList />} />
@@ -78,7 +81,14 @@ function App() {
                 </Route>
               </Route>
             </Route>
-            <Route path="/employees/home" element={<EmployeesHome />} />
+            <Route path="/employees">
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="sales">
+                <Route path="register" element={<SalesRegister />} />
+                <Route path="list" element={<SalesList />} />
+                <Route path="return" element={<SalesReturn />} />
+              </Route>
+            </Route>
           </Route>
         </Routes>
       </Suspense>

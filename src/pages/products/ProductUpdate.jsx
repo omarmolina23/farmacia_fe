@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import ProductLayout from "../../modules/admin/product/layout/ProductLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import ProductForm from "../../modules/admin/product/components/ProductForm";
 import Loading from "../../components/Loading";
 import "react-toastify/dist/ReactToastify.css";
@@ -145,7 +145,7 @@ export default function ProductUpdate() {
   };
 
   return (
-    <ProductLayout title="Editar producto">
+    <AdminLayout title="Editar producto">
       {formData && (
         <ProductForm
           formData={formData}
@@ -158,6 +158,6 @@ export default function ProductUpdate() {
           isEditMode={true}
         />
       )}
-    </ProductLayout>
+    </AdminLayout>
   );
 }

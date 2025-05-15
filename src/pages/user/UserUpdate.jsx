@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import UserLayout from "../../modules/admin/user/layout/UserLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import UserForm from "../../modules/admin/user/components/UserForm";
 import Loading from "../../components/Loading";
 import "react-toastify/dist/ReactToastify.css";
@@ -217,7 +217,7 @@ export default function UserUpdate() {
   }
 
   return (
-    <UserLayout title="Editar Usuario">
+    <AdminLayout title="Editar Usuario">
       {formData && (
         <UserForm
           formData={formData}
@@ -227,6 +227,6 @@ export default function UserUpdate() {
           isEditMode={true}
         />
       )}
-    </UserLayout>
+    </AdminLayout>
   );
 }

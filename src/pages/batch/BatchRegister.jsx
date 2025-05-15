@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { createBatch } from "../../services/BatchService";
 import { searchProductByNameOrId } from "../../services/ProductService";
-import BatchLayout from "../../modules/admin/batch/layout/BatchLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import BatchForm from "../../modules/admin/batch/components/BatchForm";
 
 export default function BatchRegister() {
@@ -151,7 +151,7 @@ export default function BatchRegister() {
   }
 
   return (
-    <BatchLayout title="Registrar Lote">
+    <AdminLayout title="Registrar Lote">
       <BatchForm
         formData={formData}
         handleChange={handleChange}
@@ -159,6 +159,6 @@ export default function BatchRegister() {
         handleCancel={handleCancel}
         product={product}
       />
-    </BatchLayout>
+    </AdminLayout>
   );
 }

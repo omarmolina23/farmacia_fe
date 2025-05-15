@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createCategory } from "../../services/CategoryService";
-import CategoryLayout from "../../modules/admin/category/layout/CategoryLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import CategoryForm from "../../modules/admin/category/components/CategoryForm";
 
 export default function CategoryRegister() {
@@ -56,13 +56,13 @@ export default function CategoryRegister() {
   };
 
   return (
-    <CategoryLayout title="Crear categoría">
+    <AdminLayout title="Crear categoría">
       <CategoryForm
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
       />
-    </CategoryLayout>
+    </AdminLayout>
   );
 }

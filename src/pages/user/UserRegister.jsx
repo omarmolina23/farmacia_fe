@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { signUp } from "../../services/UserService";
-import UserLayout from "../../modules/admin/user/layout/UserLayout";
+import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import UserForm from "../../modules/admin/user/components/UserForm";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -187,7 +187,7 @@ export default function UserRegister() {
   };
 
   return (
-    <UserLayout title="Registrar usuario">
+    <AdminLayout title="Registrar usuario">
       <UserForm
         formData={formData}
         handleChange={handleChange}
@@ -195,6 +195,6 @@ export default function UserRegister() {
         handleCancel={handleCancel}
         isEditMode={false}
       />
-    </UserLayout>
+    </AdminLayout>
   );
 }

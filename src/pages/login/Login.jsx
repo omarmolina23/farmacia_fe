@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
+import { getAccessToken, refreshAccessToken } from "../../services/FactusService"
 import { useNavigate } from "react-router-dom";
 import { login as loginService } from "../../services/UserService";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import PasswordField from "../../components/PasswordField";
 import Button from "../../components/Button";
 import AuthSidebar from "../../components/AuthSidebar";
 import ModalResetPassword from "./ModalResetPassword";
+
 
 const Login = () => {
   const [userData, setUserData] = useState({
@@ -50,7 +51,16 @@ const Login = () => {
         isAdmin: response.isAdmin,
         status: response.status,
       });
+
       toast.success("Inicio de sesión exitoso");
+
+      try {
+        await getAccessToken();
+      } catch (factusError) {
+        console.error("Error al autenticar con Factus:", factusError);
+        toast.warning("No se pudo obtener token de Factus");
+      }
+
       navigate(response.isAdmin ? "/admin/dashboard" : "/employees/dashboard");
     } catch (error) {
       toast.error(error.message);
