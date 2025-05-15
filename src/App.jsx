@@ -12,7 +12,7 @@ const Login = lazy(() => import("./pages/login/Login"));
 const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
 const SalesList = lazy(() => import("./pages/sales/SalesList"));
-const ScanPage  = lazy(() => import("./pages/sales/ScanPage"));
+const ScanPage = lazy(() => import("./pages/sales/ScanPage"));
 const SalesRegister = lazy(() => import("./pages/sales/SalesRegister"));
 const SalesReturn = lazy(() => import("./pages/sales/SalesReturn"));
 const CategoryList = lazy(() => import("./pages/category/CategoryList"));
@@ -43,8 +43,7 @@ function App() {
           <Route path="/catalog/:id" element={<Product />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/scan-page" element={<ScanPage />} />
-
+          <Route path="/scan-page/:session" element={<ScanPage />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
               <Route path="/admin">
@@ -83,12 +82,12 @@ function App() {
               </Route>
             </Route>
             <Route path="/employees">
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="sales">
-                  <Route path="register" element={<SalesRegister />} />
-                  <Route path="list" element={<SalesList />} />
-                  <Route path="return" element={<SalesReturn />} />
-                </Route>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="sales">
+                <Route path="register" element={<SalesRegister />} />
+                <Route path="list" element={<SalesList />} />
+                <Route path="return" element={<SalesReturn />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

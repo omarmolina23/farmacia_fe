@@ -1,13 +1,14 @@
 import { useAuth } from "../../context/authContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { io } from 'socket.io-client';
 import NumberFlow from '@number-flow/react';
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
-import ModalQR from "../../modules/admin/sales/components/ModalQR";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
+import ModalQR from "../../modules/admin/sales/components/ModalQR";
 import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
@@ -15,7 +16,11 @@ import { toast } from "react-toastify";
 import { getProductAll } from "../../services/SalesService";
 import { getClientAll } from "../../services/ClientService";
 import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
+import { RiQrScan2Line } from "react-icons/ri";
+import { MdOutlineDelete } from "react-icons/md";
 import 'react-toastify/dist/ReactToastify.css';
+
+const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 
 const SalesRegister = () => {
     const navigate = useNavigate();
@@ -38,22 +43,82 @@ const SalesRegister = () => {
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
     const Modulo = user?.isAdmin ? "admin" : "employees";
     const IVA = 0.19;
-    const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
-    const [showQR, setShowQR] = useState(false);
 
-    const abrirQR = () => setShowQR(true);
+    // WS y sesión
+    const sessionId = useState(crypto.randomUUID());
+    const [showQRModal, setShowQRModal] = useState(false);
 
+    /**
+     * socket.on("connect", () => {
+    
+
+  // Unirse a la misma sala
+  socket.emit("join-room", "test-session");
+
+  console.log("🖥️ Unida a la sala 'test-session'");
+});
+     */
+    // Conectar WebSocket y unirse a sala
     useEffect(() => {
-        const onMessage = e => {
-            if (e.origin !== window.location.origin) return;
-            const { sessionId: sid, productId } = e.data;
-            if (sid === sessionId && productId) {
-                handleScanResult(productId);
-            }
+        const sock = io(SOCKET_SERVER_URL);
+
+        sock.on("connect", () => {
+            console.log("🖥️ PC conectada con ID:", sock.id);
+            sock.emit("join-room", sessionId);
+            console.log(`🖥️ Unida a la sala '${sessionId}'`);
+        });
+        sock.on("scan", (productBarcode) => {
+            console.log("🖥️ Producto escaneado recibido:", productBarcode);
+            handleScanResult(productBarcode);
+        });
+        /*
+        return () => {
+            sock.off('scanned');
+            sock.disconnect();
         };
-        window.addEventListener('message', onMessage);
-        return () => window.removeEventListener('message', onMessage);
+
+        */
     }, [sessionId, allProducts, products]);
+
+    // Función para procesar producto escaneado
+    const handleScanResult = (productId) => {
+        const producto = allProducts.find(p => p.id === productId);
+
+        if (!producto) {
+            toast.error("Producto no encontrado");
+            return;
+        }
+
+        const stock = producto.amount || 0;
+        const existe = products.find(p => p.id === producto.id);
+
+        if (existe) {
+            const nuevaCantidad = Number(existe.cantidad) + 1;
+
+            if (nuevaCantidad > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+
+            setProducts(products.map(p =>
+                p.id === producto.id
+                    ? { ...p, cantidad: nuevaCantidad, totalPrice: nuevaCantidad * p.price }
+                    : p
+            ));
+        } else {
+            if (1 > stock) {
+                toast.error("Cantidad excede el stock disponible");
+                return;
+            }
+
+            setProducts([...products, { ...producto, cantidad: 1, totalPrice: producto.price }]);
+        }
+
+        setBuscar('');
+        setCantidad(1);
+        setSugerencias([]);
+    };
+
 
     useEffect(() => {
         const fetchClientes = async () => {
@@ -210,11 +275,7 @@ const SalesRegister = () => {
         }
         return true;
     };
-    const handleOpenQR = () => {
-        const newSessionId = crypto.randomUUID();
-        setSessionId(newSessionId);
-        setShowQR(true);
-    };
+
     const registrarCompra = async (e) => {
         e.preventDefault();
         if (!validarFormulario()) return;
@@ -235,21 +296,6 @@ const SalesRegister = () => {
     return (
         <Layout title="Registrar Venta">
             <div className="flex flex-col h-screen">
-                <button
-                    onClick={handleOpenQR}
-                    className="px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                    Mostrar QR
-                </button>
-                {showQR && (
-                    <div
-                        className="fixed inset-0 flex justify-center items-center z-50"
-                        onClick={() => setShowQR(false)}
-                    >
-                        <ModalQR sessionId={sessionId} onClose={() => setShowQR(false)} />
-                    </div>
-                )}
-
                 {/* Barra superior de búsqueda de productos */}
                 <div className="flex items-center text-sm h-16 px-6">
                     <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
@@ -288,13 +334,30 @@ const SalesRegister = () => {
                                     <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
                                 </button>
                             </div>
+                            <button onClick={cancelarProducto}
+                            >
+
+                                <MdOutlineDelete size={30} className="text-[#cd3535]" />
+
+                            </button>
                         </div>
-                        <Button
-                            title="Cancelar Producto"
-                            color="bg-[#818180]"
-                            onClick={cancelarProducto}
-                            className="w-full h-full"
-                        />
+                        <div className="px-6 py-4">
+                            <button
+                                onClick={() => setShowQRModal(true)}
+                                className="text-2xl text-gray-700 hover:text-blue-600 transition-colors"
+                            >
+                                <RiQrScan2Line />
+                            </button>
+                        </div>
+                        {showQRModal && (
+                            <div className="fixed inset-0 flex items-center justify-center">
+                                <ModalQR
+                                    open={showQRModal}
+                                    sessionId={sessionId}
+                                    onClose={() => setShowQRModal(false)}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 
