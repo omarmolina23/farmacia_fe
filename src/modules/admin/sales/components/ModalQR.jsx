@@ -1,14 +1,14 @@
 import React from "react";
 import QRCode from "react-qr-code";
 
-const ModalQR = ({ sessionId, onClose }) => {
+const ModalQR = ({ sessionIdRef, onClose }) => {
     return (
         <div
             className="bg-white p-6 border-4 rounded-lg shadow-lg w-96 text-center"
             onClick={(e) => e.stopPropagation()}
         >
             <QRCode
-                value={`${window.location.origin}/scan-page/${sessionId}`}
+                value={`${window.location.origin}/scan-page/${sessionIdRef.current}`}
                 size={160}
                 className="mx-auto mb-4"
             />
