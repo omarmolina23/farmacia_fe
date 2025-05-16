@@ -271,7 +271,7 @@ const SalesRegister = () => {
                             <div className="fixed inset-0 flex items-center justify-center">
                                 <ModalQR
                                     open={showQRModal}
-                                    sessionId={sessionId}
+                                    sessionIdRef={sessionIdRef}
                                     onClose={() => setShowQRModal(false)}
                                 />
                             </div>
