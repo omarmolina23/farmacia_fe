@@ -10,6 +10,18 @@ export const getSalesAll = async () => {
     try {   
         verifyUrl();
         const response = await mockAxios.get("/sales");
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+};
+
+/*
+
+export const getProductAll = async () => {
+    try {   
+        verifyUrl();
+        const response = await mockAxios.get("/product/for-sale");
         console.log("response", response);
         return response.data;
     } catch (error) {
@@ -17,13 +29,4 @@ export const getSalesAll = async () => {
     }
 };
 
-export const getProductAll = async () => {
-    try {   
-        verifyUrl();
-        const response = await mockAxios.get("/product");
-        console.log("response", response);
-        return response.data;
-    } catch (error) {
-        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
-    }
-};
+*/

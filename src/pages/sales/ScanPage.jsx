@@ -1,8 +1,7 @@
 import { Html5Qrcode } from 'html5-qrcode';
-import { getProductAll } from "../../services/SalesService";
+import { getProductAll } from "../../services/ProductService";
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;

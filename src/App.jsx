@@ -51,7 +51,7 @@ function App() {
                 <Route path="sales">
                   <Route path="register" element={<SalesRegister />} />
                   <Route path="list" element={<SalesList />} />
-                  <Route path="return" element={<SalesReturn />} />
+                  <Route path="return:bill_id" element={<SalesReturn />} />
                 </Route>
                 <Route path="category">
                   <Route path="register" element={<CategoryRegister />} />

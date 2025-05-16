@@ -59,7 +59,6 @@ export const createInvoice = async (invoiceData) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
-                // Authorization ya se gestiona automáticamente por el interceptor
             }
         });
 
@@ -79,4 +78,41 @@ export const createInvoice = async (invoiceData) => {
         throw error;
     }
 };
+
+export const createCreditNote = async (creditNoteData) => {
+    try {
+        const response = await factusAxios.post('/v1/credit-notes/validate', creditNoteData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        const status = error.response?.status;
+        const errorData = error.response?.data;
+
+        if (status === 422 && errorData?.errors) {
+            console.error("❌ Errores de validación de Factus:");
+            for (const [field, messages] of Object.entries(errorData.errors)) {
+                console.error(`→ ${field}: ${messages.join(", ")}`);
+            }
+
+            // Puedes retornar un objeto con los errores para mostrar en UI si lo deseas
+            throw new Error("Errores de validación. Revisa los campos y vuelve a intentar.");
+        }
+
+        if (status === 409 && Array.isArray(errorData?.errors)) {
+            const conflictMsg = errorData.errors.map(e => e.message).join(" | ");
+            console.error(`⚠️ Conflicto al crear nota crédito: ${conflictMsg}`);
+            throw new Error(`Conflicto: ${conflictMsg}`);
+        }
+
+        // Otros errores
+        console.error("⚠️ Error general al crear/validar la nota crédito:", errorData || error.message);
+        throw new Error("Ocurrió un error inesperado al validar la nota crédito.");
+    }
+};
+
 
