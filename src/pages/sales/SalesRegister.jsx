@@ -234,7 +234,7 @@ const SalesRegister = () => {
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.name} - ${sug.price}
+                                            {sug.name} - ${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sug.price)}
                                         </div>
                                     ))}
                                 </div>
