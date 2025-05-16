@@ -9,11 +9,11 @@ import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
 import ModalQR from "../../modules/admin/sales/components/ModalQR";
-import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/sendElectronicInvoice";
+import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/electronic_invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
-import { getProductAll } from "../../services/SalesService";
+import { getProductForSale } from "../../services/ProductService";
 import { getClientAll } from "../../services/ClientService";
 import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
 import { RiQrScan2Line } from "react-icons/ri";
@@ -48,7 +48,8 @@ const SalesRegister = () => {
 
 
     // WS y sesión
-    const sessionIdRef = useRef(crypto.randomUUID());
+    const sessionIdRef = localStorage.getItem("sessionId");
+
     const allProductsRef = useRef([]);
 
     // Mantener la ref de allProducts actualizada
@@ -81,7 +82,8 @@ const SalesRegister = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getProductAll();
+                const data = await getProductForSale();
+                console.log("Prorductos: ", data);
                 const productosConIVA = data.map(p => ({
                     ...p,
                     price: p.price * (1 + IVA)
@@ -109,7 +111,7 @@ const SalesRegister = () => {
 
     // Helper unificado para agregar/actualizar productos
     const addOrUpdateProduct = useCallback((producto, qty = 1) => {
-        const stock = producto.amount || 0;
+        const stock = producto.totalAmount || 0;
         const existe = products.find(p => p.id === producto.id);
 
         if (existe) {
@@ -139,10 +141,8 @@ const SalesRegister = () => {
     // Conexión WebSocket
     useEffect(() => {
         const sock = io(SOCKET_SERVER_URL);
-
         sock.on("connect", () => {
             sock.emit("join-room", sessionIdRef.current);
-            console.log("Tu sala es:", sessionIdRef.current)
         });
 
         sock.on("scan", rawBarcode => {
@@ -167,7 +167,7 @@ const SalesRegister = () => {
         }
         addOrUpdateProduct(producto, cantidad);
     };
-    
+
     useEffect(() => {
         calcularValorTotal();
     }, [products]);
@@ -267,15 +267,6 @@ const SalesRegister = () => {
                                 <RiQrScan2Line />
                             </button>
                         </div>
-                        {showQRModal && (
-                            <div className="fixed inset-0 flex items-center justify-center">
-                                <ModalQR
-                                    open={showQRModal}
-                                    sessionIdRef={sessionIdRef}
-                                    onClose={() => setShowQRModal(false)}
-                                />
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -417,6 +408,13 @@ const SalesRegister = () => {
                         productToDelete={productToDelete}
                         deleteProduct={deleteProduct}
                         onClose={() => setProductToDelete(null)}
+                    />
+                )}
+                {showQRModal && (
+                    <ModalQR
+                        open={showQRModal}
+                        sessionIdRef={sessionIdRef}
+                        onClose={() => setShowQRModal(false)}
                     />
                 )}
             </div>
