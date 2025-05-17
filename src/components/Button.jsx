@@ -12,7 +12,7 @@ const Button = ({
     <button
       type={type}
       onClick={onClick}
-      className={`${color} ${textColor} flex items-center gap-2 font-semibold py-1.5 px-4 sm:px-8 md:px-10 lg:px-12 rounded-lg text-sm sm:text-base md:text-lg transition-all duration-300 ease-in-out hover:bg-opacity-80 focus:ring-2 focus:ring-gray-300 shadow-md active:scale-95`}
+      className={`${color} ${textColor} inline-flex items-center justify-center gap-2 font-semibold py-2 px-6 rounded-lg text-sm sm:text-base md:text-lg transition-all duration-300 ease-in-out hover:bg-opacity-80 focus:ring-2 focus:ring-gray-300 shadow-md active:scale-95`}
       aria-label={title}
     >
       {icon && <span className="text-[#8B83BA] text-xl">{icon}</span>}

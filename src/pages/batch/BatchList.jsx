@@ -118,7 +118,8 @@ const BatchList = () => {
             <tr className="h-9">
               <th className="pl-4">#</th>
               <th className="pl-4">Número lote</th>
-              <th className="pl-4">Cantidad</th>
+              <th className="pl-4">Cantidad comprada</th>
+              <th className="pl-4">Cantidad disponible</th>
               <th className="pl-4">Valor compra</th>
               <th className="pl-4">Fecha de entrada</th>
               <th className="pl-4">Fecha de vencimiento</th>

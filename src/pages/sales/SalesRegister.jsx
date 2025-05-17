@@ -1,24 +1,34 @@
 import { useAuth } from "../../context/authContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { io } from 'socket.io-client';
 import NumberFlow from '@number-flow/react';
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
-import ModalQR from "../../modules/admin/sales/components/ModalQR";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
-import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/sendElectronicInvoice";
+import ModalQR from "../../modules/admin/sales/components/ModalQR";
+import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/electronic_invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
-import { getProductAll } from "../../services/SalesService";
+import { getProductForSale } from "../../services/ProductService";
 import { getClientAll } from "../../services/ClientService";
 import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
+import { RiQrScan2Line } from "react-icons/ri";
+import { MdOutlineDelete } from "react-icons/md";
 import 'react-toastify/dist/ReactToastify.css';
+
+const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 
 const SalesRegister = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
+    const Modulo = user?.isAdmin ? "admin" : "employees";
+    const IVA = 0.19;
+
     const [products, setProducts] = useState([]);
     const [buscar, setBuscar] = useState('');
     const [allProducts, setAllProducts] = useState([]);
@@ -34,27 +44,20 @@ const SalesRegister = () => {
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "" });
-    const { user } = useAuth();
-    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
-    const Modulo = user?.isAdmin ? "admin" : "employees";
-    const IVA = 0.19;
-    const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
-    const [showQR, setShowQR] = useState(false);
+    const [showQRModal, setShowQRModal] = useState(false);
 
-    const abrirQR = () => setShowQR(true);
 
+    // WS y sesión
+    const sessionIdRef = localStorage.getItem("sessionId");
+
+    const allProductsRef = useRef([]);
+
+    // Mantener la ref de allProducts actualizada
     useEffect(() => {
-        const onMessage = e => {
-            if (e.origin !== window.location.origin) return;
-            const { sessionId: sid, productId } = e.data;
-            if (sid === sessionId && productId) {
-                handleScanResult(productId);
-            }
-        };
-        window.addEventListener('message', onMessage);
-        return () => window.removeEventListener('message', onMessage);
-    }, [sessionId, allProducts, products]);
+        allProductsRef.current = allProducts;
+    }, [allProducts]);
 
+    // Obtener clientes
     useEffect(() => {
         const fetchClientes = async () => {
             try {
@@ -67,6 +70,7 @@ const SalesRegister = () => {
         fetchClientes();
     }, []);
 
+    // Sugerencias clientes
     useEffect(() => {
         const filtrados = buscarCliente.trim().length > 0
             ? clientes.filter(c => c.id.toLowerCase().includes(buscarCliente.toLowerCase()))
@@ -74,10 +78,12 @@ const SalesRegister = () => {
         setSugerenciasClientes(filtrados);
     }, [buscarCliente, clientes]);
 
+    // Obtener productos y calcular IVA
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getProductAll();
+                const data = await getProductForSale();
+                console.log("Prorductos: ", data);
                 const productosConIVA = data.map(p => ({
                     ...p,
                     price: p.price * (1 + IVA)
@@ -90,6 +96,7 @@ const SalesRegister = () => {
         fetchData();
     }, []);
 
+    // Sugerencias productos
     useEffect(() => {
         const filtrados = buscar.trim().length > 0
             ? allProducts.filter(p => p.name.toLowerCase().includes(buscar.toLowerCase()))
@@ -97,137 +104,109 @@ const SalesRegister = () => {
         setSugerencias(filtrados);
     }, [buscar, allProducts]);
 
-    useEffect(() => {
-        calcularValorTotal();
-    }, [products]);
-
-    const agregarProducto = () => {
-        const productoSeleccionado = allProducts.find(p => p.name.toLowerCase() === buscar.toLowerCase());
-
-        if (!productoSeleccionado) {
-            toast.error("Producto no encontrado");
-            return;
-        }
-
-        const stock = productoSeleccionado.amount || 0;
-        const existe = products.find(p => p.id === productoSeleccionado.id);
-
-        if (existe) {
-            const nuevaCantidad = Number(existe.cantidad) + Number(cantidad);
-            if (nuevaCantidad > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-            const actualizados = products.map(p => {
-                if (p.id === productoSeleccionado.id) {
-                    return {
-                        ...p,
-                        cantidad: nuevaCantidad,
-                        totalPrice: nuevaCantidad * p.price
-                    };
-                }
-                return p;
-            });
-            setProducts(actualizados);
-        } else {
-            if (cantidad > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-            const nuevo = {
-                ...productoSeleccionado,
-                cantidad,
-                totalPrice: cantidad * productoSeleccionado.price
-            };
-            setProducts([...products, nuevo]);
-        }
-
-        setBuscar('');
-        setCantidad(1);
-        setSugerencias([]);
-    };
-
-    const handleProductSelect = (productId) => {
-        setSelectedProductId(prev => prev === productId ? null : productId);
-    };
-
     const calcularValorTotal = () => {
         const total = products.reduce((sum, p) => sum + p.totalPrice, 0);
         setPrecioTotal(total);
     };
 
+    // Helper unificado para agregar/actualizar productos
+    const addOrUpdateProduct = useCallback((producto, qty = 1) => {
+        const stock = producto.totalAmount || 0;
+        const existe = products.find(p => p.id === producto.id);
+
+        if (existe) {
+            const nuevaCantidad = existe.cantidad + qty;
+            if (nuevaCantidad > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+            setProducts(products.map(p =>
+                p.id === producto.id
+                    ? { ...p, cantidad: nuevaCantidad, totalPrice: nuevaCantidad * p.price }
+                    : p
+            ));
+        } else {
+            if (qty > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+            setProducts([...products, { ...producto, cantidad: qty, totalPrice: qty * producto.price }]);
+        }
+
+        setBuscar('');
+        setCantidad(1);
+        setSugerencias([]);
+    }, [products]);
+
+    // Conexión WebSocket
+    useEffect(() => {
+        const sock = io(SOCKET_SERVER_URL);
+        sock.on("connect", () => {
+            sock.emit("join-room", sessionIdRef.current);
+        });
+
+        sock.on("scan", rawBarcode => {
+            const cleanedId = String(rawBarcode).trim();
+            const producto = allProductsRef.current.find(p => String(p.id).trim() === cleanedId);
+            if (!producto) {
+                toast.error("Producto escaneado no encontrado");
+                return;
+            }
+            addOrUpdateProduct(producto, 1);
+        });
+
+        return () => sock.disconnect();
+    }, [addOrUpdateProduct]);
+
+    const agregarProducto = () => {
+        const nameKey = buscar.trim().toLowerCase();
+        const producto = allProducts.find(p => p.name.toLowerCase() === nameKey);
+        if (!producto) {
+            toast.error("Producto no encontrado");
+            return;
+        }
+        addOrUpdateProduct(producto, cantidad);
+    };
+
+    useEffect(() => {
+        calcularValorTotal();
+    }, [products]);
+
+    // Resto de handlers...
     const cancelarVenta = () => {
         setProducts([]);
-        setNombreCliente('');
         setClienteSeleccionado(null);
         setBuscarCliente('');
         navigate(`/${Modulo}/sales/list`);
     };
-
-    const handleChangeCliente = (e) => {
-        const { name, value } = e.target;
-        setFormDataCliente(prev => ({ ...prev, [name]: value }));
-    };
-
+    const handleProductSelect = id => setSelectedProductId(prev => prev === id ? null : id);
     const cancelarProducto = () => {
-        const producto = products.find(p => p.id === selectedProductId);
-        if (producto) {
-            setProductToDelete(producto);
-        } else {
-            toast.warn("Seleccione un producto primero");
-        }
+        const prod = products.find(p => p.id === selectedProductId);
+        prod ? setProductToDelete(prod) : toast.warn("Seleccione un producto primero");
     };
-
-    const deleteProduct = (quantityToDelete) => {
-        const updatedProducts = products.map((producto) => {
-            if (producto.id === selectedProductId) {
-                if (producto.cantidad > quantityToDelete) {
-                    return {
-                        ...producto,
-                        cantidad: producto.cantidad - quantityToDelete,
-                        totalPrice: (producto.cantidad - quantityToDelete) * producto.price,
-                    };
-                }
-                return null;
-            }
-            return producto;
-        }).filter(Boolean);
-
-        setProducts(updatedProducts);
+    const deleteProduct = qty => {
+        const updated = products.map(p =>
+            p.id === selectedProductId
+                ? (p.cantidad > qty ? { ...p, cantidad: p.cantidad - qty, totalPrice: (p.cantidad - qty) * p.price } : null)
+                : p
+        ).filter(Boolean);
+        setProducts(updated);
         setProductToDelete(null);
         setSelectedProductId(null);
-        calcularValorTotal();
     };
-
-    const validarFormulario = () => {
-        if (products.length === 0) {
-            toast.error('Debe agregar al menos un producto');
-            return false;
-        }
-        if (!clienteSeleccionado) {
-            toast.error('Debe seleccionar un cliente');
-            return false;
-        }
-        return true;
-    };
-    const handleOpenQR = () => {
-        const newSessionId = crypto.randomUUID();
-        setSessionId(newSessionId);
-        setShowQR(true);
-    };
-    const registrarCompra = async (e) => {
+    const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const validarFormulario = () => products.length > 0 && clienteSeleccionado;
+    const registrarCompra = async e => {
         e.preventDefault();
-        if (!validarFormulario()) return;
-
+        if (!validarFormulario()) {
+            toast.error(products.length === 0 ? 'Debe agregar al menos un producto' : 'Debe seleccionar un cliente');
+            return;
+        }
         try {
-            await sendElectronicInvoice({
-                cliente: clienteSeleccionado,
-                productos: products
-            });
+            await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
             toast.success("Factura electrónica generada exitosamente");
-            cancelarVenta();
-        } catch (error) {
-            console.error(error);
+            navigate(`/${Modulo}/sales/list`);
+        } catch {
             toast.error("Error al generar la factura electrónica");
         }
     };
@@ -235,21 +214,6 @@ const SalesRegister = () => {
     return (
         <Layout title="Registrar Venta">
             <div className="flex flex-col h-screen">
-                <button
-                    onClick={handleOpenQR}
-                    className="px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                    Mostrar QR
-                </button>
-                {showQR && (
-                    <div
-                        className="fixed inset-0 flex justify-center items-center z-50"
-                        onClick={() => setShowQR(false)}
-                    >
-                        <ModalQR sessionId={sessionId} onClose={() => setShowQR(false)} />
-                    </div>
-                )}
-
                 {/* Barra superior de búsqueda de productos */}
                 <div className="flex items-center text-sm h-16 px-6">
                     <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
@@ -270,7 +234,7 @@ const SalesRegister = () => {
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.name} - ${sug.price}
+                                            {sug.name} - ${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sug.price)}
                                         </div>
                                     ))}
                                 </div>
@@ -288,13 +252,21 @@ const SalesRegister = () => {
                                     <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
                                 </button>
                             </div>
+                            <button onClick={cancelarProducto}
+                            >
+
+                                <MdOutlineDelete size={30} className="text-[#cd3535]" />
+
+                            </button>
                         </div>
-                        <Button
-                            title="Cancelar Producto"
-                            color="bg-[#818180]"
-                            onClick={cancelarProducto}
-                            className="w-full h-full"
-                        />
+                        <div className="px-6 py-4">
+                            <button
+                                onClick={() => setShowQRModal(true)}
+                                className="text-2xl text-gray-700 hover:text-blue-600 transition-colors"
+                            >
+                                <RiQrScan2Line />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -436,6 +408,13 @@ const SalesRegister = () => {
                         productToDelete={productToDelete}
                         deleteProduct={deleteProduct}
                         onClose={() => setProductToDelete(null)}
+                    />
+                )}
+                {showQRModal && (
+                    <ModalQR
+                        open={showQRModal}
+                        sessionIdRef={sessionIdRef}
+                        onClose={() => setShowQRModal(false)}
                     />
                 )}
             </div>
