@@ -1,11 +1,14 @@
 import { IoIosArrowDropright, IoIosArrowDropdown } from 'react-icons/io';
+import { sendCreditNote } from './invoice/credit_note/sendCreditNote';
 import { BsArrowReturnRight } from "react-icons/bs";
+import { toast } from 'react-toastify';
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const SalesTable = ({
     index,
     id,
-    //bill_id,
+    bill_id,
     fecha,
     cliente,
     vendedor,
@@ -14,6 +17,7 @@ const SalesTable = ({
     isExpanded,
     onToggleExpand,
 }) => {
+    const IVA = 0.19;
     const navigate = useNavigate();
 
     const saveInfo = () => {
@@ -21,9 +25,41 @@ const SalesTable = ({
         localStorage.setItem("salesData", JSON.stringify(salesData));
     };
 
+    // llamar dos funciones sendCreditNote y cambiarStatus venta
+
     const handleSalesReturn = () => {
-        saveInfo();
-        navigate(`/admin/sales/return/${id}`); //en realidad, es bill_id
+
+        Swal.fire({
+            customClass: {
+                popup: "swal2-show",
+                confirmButton: "bg-[#8B83BB] text-black",
+                cancelButton: "bg-[#FFFFFF] text-black",
+                icon: "text-mb mx-auto",
+                title: "!font-semibold !mt-2 !text-gray-900 !text-mb !mx-auto",
+                text: "!font-medium !text-gray-500 !text-mb !mx-auto",
+            },
+            title: `¿Devolver venta con referencia: ${id}'?`,
+            text: "Esta acción cambiará el estado del producto",
+            icon: "warning",
+            showCancelButton: true,
+            iconColor: "#000000",
+            confirmButtonText: `Sí, devolver.`,
+            cancelButtonText: "No, cancelar",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    saveInfo();
+                    sendCreditNote({ bill_id: bill_id, reference_code: id, productos });
+                    navigate(`/admin/sales/return/${id}`);
+                    toast.success(`NotaCrédito creada con éxito.`);
+                    refreshList();
+                } catch (error) {
+                    toast.error(
+                        `Error al crear la NotaCrédito`
+                    );
+                }
+            }
+        });
     };
 
     return (
@@ -42,7 +78,7 @@ const SalesTable = ({
                 </td>
                 <td className="text-left pl-6">{index + 1}</td>
                 <td>{fecha}</td>
-                <td>{cliente}</td>
+                <td>{cliente.name}</td>
                 <td>{vendedor}</td>
                 <td>${total?.toLocaleString()}</td>
                 <td className="pl-4 align-middle">
@@ -68,6 +104,7 @@ const SalesTable = ({
                                         <th scope="col" className="text-center">Categoría</th>
                                         <th scope="col" className="text-center">Proveedor</th>
                                         <th scope="col" className="text-center">Cantidad</th>
+                                        <th scope="col" className="text-center">Precio unitario</th>
                                         <th scope="col" className="text-center">Total</th>
                                     </tr>
                                 </thead>
@@ -78,7 +115,20 @@ const SalesTable = ({
                                             <td className="text-center">{producto.categoria}</td>
                                             <td className="text-center">{producto.proveedor}</td>
                                             <td className="text-center">{producto.cantidad}</td>
-                                            <td className="text-center">${producto.precio_total?.toLocaleString()}</td>
+                                            <td className="text-center">
+                                                ${new Intl.NumberFormat('es-CO', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }).format(producto.precio * (1 + IVA))}
+                                            </td>
+
+                                            <td className="text-center">
+                                                ${new Intl.NumberFormat('es-CO', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }).format(producto.precio * producto.cantidad * (1 + IVA))}
+                                            </td>
+
                                         </tr>
                                     ))}
                                 </tbody>
