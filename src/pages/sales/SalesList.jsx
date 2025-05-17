@@ -236,7 +236,7 @@ const SalesList = () => {
                                 key={sale.id}
                                 index={(currentPage - 1) * rowsPerPage + index}
                                 id={sale.id}
-                                // bill_id={sale.bill_id}
+                                bill_id={sale.bill_id}
                                 fecha={sale.fecha}
                                 cliente={sale.cliente}
                                 vendedor={sale.vendedor}

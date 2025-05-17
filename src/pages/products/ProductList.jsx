@@ -7,7 +7,6 @@ import ProductTable from "../../modules/admin/product/components/ProductTable";
 import {
   getProductAll,
   searchProductByName,
-  searchProductByNameOrId,
 } from "../../services/ProductService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";

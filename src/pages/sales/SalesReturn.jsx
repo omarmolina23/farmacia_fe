@@ -1,12 +1,12 @@
 import { useAuth } from "../../context/authContext";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { io } from 'socket.io-client';
 import NumberFlow from '@number-flow/react';
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
-import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
+import { getSalesId } from "../../services/SalesService";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
 import ModalQR from "../../modules/admin/sales/components/ModalQR";
 import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/electronic_invoice/sendElectronicInvoice";
@@ -14,8 +14,7 @@ import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
 import { getProductForSale } from "../../services/ProductService";
-import { getClientAll } from "../../services/ClientService";
-import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { RiQrScan2Line } from "react-icons/ri";
 import { MdOutlineDelete } from "react-icons/md";
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,7 +22,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 
 const SalesReturn = () => {
-    const { bill_id } = useParams();
+    const { sales_reference_id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
@@ -38,13 +37,7 @@ const SalesReturn = () => {
     const [precioTotal, setPrecioTotal] = useState('');
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [productToDelete, setProductToDelete] = useState(null);
-    const [nombreCliente, setNombreCliente] = useState('');
-    const [clientes, setClientes] = useState([]);
-    const [buscarCliente, setBuscarCliente] = useState('');
-    const [sugerenciasClientes, setSugerenciasClientes] = useState([]);
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "" });
     const [showQRModal, setShowQRModal] = useState(false);
 
 
@@ -57,27 +50,6 @@ const SalesReturn = () => {
     useEffect(() => {
         allProductsRef.current = allProducts;
     }, [allProducts]);
-
-    // Obtener clientes
-    useEffect(() => {
-        const fetchClientes = async () => {
-            try {
-                const data = await getClientAll();
-                setClientes(data);
-            } catch (err) {
-                toast.error("Error cargando clientes");
-            }
-        };
-        fetchClientes();
-    }, []);
-
-    // Sugerencias clientes
-    useEffect(() => {
-        const filtrados = buscarCliente.trim().length > 0
-            ? clientes.filter(c => c.id.toLowerCase().includes(buscarCliente.toLowerCase()))
-            : [];
-        setSugerenciasClientes(filtrados);
-    }, [buscarCliente, clientes]);
 
     // Obtener productos y calcular IVA
     useEffect(() => {
@@ -159,6 +131,37 @@ const SalesReturn = () => {
         return () => sock.disconnect();
     }, [addOrUpdateProduct]);
 
+    useEffect(() => {
+        const saleBack = async () => {
+            try {
+                const [venta] = await getSalesId(sales_reference_id);
+
+                if (venta?.cliente) {
+                    setClienteSeleccionado(venta.cliente);
+                }
+
+                if (venta?.productos) {
+                    const productosConvertidos = venta.productos.map(p => {
+                        const precioConIVA = p.price * (1 + IVA);
+                        return {
+                            ...p,
+                            price: precioConIVA,
+                            totalPrice: precioConIVA * p.cantidad,
+                        };
+                    });
+
+                    setProducts(productosConvertidos);
+                }
+
+            } catch (error) {
+                toast.error("Error al cargar datos de la venta simulada");
+                console.error(error);
+            }
+        };
+        saleBack();
+    }, [sales_reference_id]);
+
+
     const agregarProducto = () => {
         const nameKey = buscar.trim().toLowerCase();
         const producto = allProducts.find(p => p.name.toLowerCase() === nameKey);
@@ -195,7 +198,6 @@ const SalesReturn = () => {
         setProductToDelete(null);
         setSelectedProductId(null);
     };
-    const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
     const validarFormulario = () => products.length > 0 && clienteSeleccionado;
     const registrarCompra = async e => {
         e.preventDefault();
@@ -204,7 +206,7 @@ const SalesReturn = () => {
             return;
         }
         try {
-            await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
+            await sendElectronicInvoice({ cliente: sales.cliente, productos: products });
             toast.success("Factura electrónica generada exitosamente");
             navigate(`/${Modulo}/sales/list`);
         } catch {
@@ -235,7 +237,7 @@ const SalesReturn = () => {
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.name} - ${sug.price}
+                                            {sug.name} - ${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sug.price)}
                                         </div>
                                     ))}
                                 </div>
@@ -307,51 +309,13 @@ const SalesReturn = () => {
 
                 <div className="border-t border-gray-300 mt-2"></div>
 
-                {/* Sección cliente y botones finales */}
                 <div className="h-44">
-                    <div className="flex items-center text-sm h-16 px-6">
-                        <div className="flex w-full gap-2 relative items-center">
-                            <button onClick={() => setShowModal(true)} className="hover:opacity-80 transition">
-                                <IoMdPersonAdd size={30} className="text-[#8B83BA]" />
-                            </button>
-                            <SearchBar
-                                value={buscarCliente}
-                                onChange={(e) => setBuscarCliente(e.target.value)}
-                                placeholder="Buscar cliente"
-                            />
-                            {sugerenciasClientes.length > 0 && (
-                                <div className="absolute top-full mt-1 left-0 w-[400px] bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
-                                    {sugerenciasClientes.map((sug, i) => (
-                                        <div
-                                            key={i}
-                                            onClick={() => {
-                                                setBuscarCliente(sug.id);
-                                                setNombreCliente(sug.id);
-                                                setClienteSeleccionado(sug);
-                                                setSugerenciasClientes([]);
-                                            }}
-                                            className="p-2 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                            {sug.id} - {sug.name}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        {showModal && (
-                            <ModalRegisterClient
-                                formData={formDataCliente}
-                                handleChange={handleChangeCliente}
-                                onClose={() => setShowModal(false)}
-                            />
-                        )}
-                    </div>
-
                     <div className="flex justify-between mt-4 px-6">
-                        <div className="w-1/2">
-                            {clienteSeleccionado && (
+                        {clienteSeleccionado && (
+
+                            <div className="w-1/2">
                                 <div className="bg-white border border-gray-200 rounded-lg shadow p-4">
-                                    <div className="text-sm font-semibold text-gray-700 mb-2">Datos del Cliente:</div>
+                                    <div className="text-sm font-semibold text-gray-700 mb-2">Datos del Cliente</div>
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm text-gray-600">
                                             <div><strong>Cédula:</strong></div>
@@ -371,9 +335,8 @@ const SalesReturn = () => {
                                         </div>
                                     </div>
                                 </div>
-                            )}
-                        </div>
-
+                            </div>
+                        )}
                         <div className="w-1/2 flex flex-col justify-between">
                             <div className="w-[220px] bg-[#D9D9D9] px-6 py-3 text-4xl text-right mt-2 ml-auto rounded-lg shadow-lg flex items-center justify-between mb-6"> {/* Añadido mb-6 para separar los botones */}
                                 <span className="text-2xl text-gray-700 font-semibold">$</span>
