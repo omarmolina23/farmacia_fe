@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from 'socket.io-client';
 import NumberFlow from '@number-flow/react';
+import LoadingOverlay from "../../components/LoadingOverlay"
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
@@ -28,8 +29,7 @@ const SalesRegister = () => {
     const { user } = useAuth();
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
     const Modulo = user?.isAdmin ? "admin" : "employees";
-    const IVA = 0.19;
-
+    const [isLoading, setIsLoading] = useState(false);
     const [products, setProducts] = useState([]);
     const [buscar, setBuscar] = useState('');
     const [allProducts, setAllProducts] = useState([]);
@@ -82,14 +82,14 @@ const SalesRegister = () => {
         setSugerenciasClientes(filtrados);
     }, [buscarCliente, clientes]);
 
-    // Obtener productos y calcular IVA
+    // Obtener productos 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const data = await getProductForSale();
                 const productos = data.map(p => ({
                     ...p,
-                    price: p.price 
+                    price: p.price
                 }));
                 setAllProducts(productos);
             } catch (err) {
@@ -206,6 +206,7 @@ const SalesRegister = () => {
             return;
         }
         try {
+            setIsLoading(true);
             const productsToSend = products.map(p => ({
                 productId: p.id,
                 amount: p.cantidad,
@@ -227,6 +228,8 @@ const SalesRegister = () => {
             navigate(`/${Modulo}/sales/list`);
         } catch (error) {
             toast.error(error.message || "Error al registrar la venta");
+        } finally {
+            setIsLoading(false); // Ocultar Loading
         }
     };
 
@@ -294,9 +297,10 @@ const SalesRegister = () => {
                     <table className="min-w-full text-sm table-fixed">
                         <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
                             <tr className="h-9">
-                                <th className="text-center">N°</th>
-                                <th className="text-center">Nombre</th>
-                                <th className="text-center">Categoria</th>
+                                <th></th>
+                                <th>N°</th>
+                                <th className="text-left">Nombre</th>
+                                <th className="text-left">Categoria</th>
                                 <th className="text-center">Proveedor</th>
                                 <th className="text-center">Cantidad</th>
                                 <th className="text-center">Precio Unitario</th>
@@ -316,6 +320,7 @@ const SalesRegister = () => {
                                     precioTotal={producto.totalPrice}
                                     isSelected={selectedProductId === producto.id}
                                     onProductSelect={() => handleProductSelect(producto.id)}
+                                    showCheckbox={true}
                                 />
                             ))}
                         </tbody>
@@ -436,6 +441,7 @@ const SalesRegister = () => {
                     />
                 )}
             </div>
+            {isLoading && <LoadingOverlay />}
         </Layout>
     );
 };

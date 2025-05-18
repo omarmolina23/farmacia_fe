@@ -1,16 +1,12 @@
 import { IoIosArrowDropright, IoIosArrowDropdown } from 'react-icons/io';
-import { sendCreditNote } from './invoice/credit_note/sendCreditNote';
 import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { returnSale } from '../../../../services/SalesService';
 
 const SalesTable = ({
     index,
     id,
-    bill_id,
-    reference_code,
     fecha,
     cliente,
     vendedor,
@@ -22,72 +18,13 @@ const SalesTable = ({
 }) => {
     const navigate = useNavigate();
 
-    console.log("productos", productos);
-
-    const saveInfo = () => {
-        if (productos.length > 0) {
-            const first = productos[0].products;
-            localStorage.setItem("supplier", first.supplier.name);
-            localStorage.setItem("category", first.category.name);
-        }
-    };
-
     // llamar dos funciones sendCreditNote y cambiarStatus venta
 
     const handleSalesReturn = () => {
-
-        Swal.fire({
-            customClass: {
-                popup: "swal2-show",
-                confirmButton: "bg-[#8B83BB] text-black",
-                cancelButton: "bg-[#FFFFFF] text-black",
-                icon: "text-mb mx-auto",
-                title: "!font-semibold !mt-2 !text-gray-900 !text-mb !mx-auto",
-                text: "!font-medium !text-gray-500 !text-mb !mx-auto",
-            },
-            title: `¿Devolver venta con referencia: ${id}'?`,
-            text: "Esta acción cambiará el estado del producto",
-            icon: "warning",
-            showCancelButton: true,
-            iconColor: "#000000",
-            confirmButtonText: `Sí, devolver.`,
-            cancelButtonText: "No, cancelar",
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    saveInfo();
-                    
-                    const productsToReturn = productos.map((product) => ({
-                        id: product.id,
-                        nombre: product.products.name,
-                        cantidad: product.amount,
-                        precio: product.products.price,
-                    }));
-
-                    const response = await sendCreditNote({ bill_id: bill_id, reference_code: id, productos: productsToReturn });
-
-                    await returnSale(id, {
-                        number_credit_note: response.data.credit_note.reference_code,
-                    })
-    
-                    navigate(`/admin/sales/list`);
-                    toast.success(`Devolución realizada con éxito.`);
-                    //refreshList();
-                    navigate(`/admin/sales/return/${id}`);
-                    toast.success(`NotaCrédito creada con éxito.`);
-                    refreshList();
-                } catch (error) {
-                    console.error(error);
-                    toast.error(
-                        error.message || "Error al devolver la venta",
-                    );
-                    toast.error(`Error al crear la NotaCrédito`);
-                }
-            }
-        });
+        navigate(`/admin/sales/return/${id}`);
     };
 
-    return (
+    return (    
         <>
             <tr className="text-left h-10 border-b bg-gray-50">
                 <td
@@ -114,7 +51,7 @@ const SalesTable = ({
                         {repaid ? (
                             <span className="text-[#181818]">Devuelto</span>
                         ) : (
-                            <><BsArrowReturnRight size={16}  className="text-[#181818]" /><span className="hidden 
+                            <><BsArrowReturnRight size={16} className="text-[#181818]" /><span className="hidden 
                             md:inline">Devolver</span></>
                         )}
                     </div>

@@ -18,9 +18,18 @@ export const createSale = async (sale) =>{
     }
 }
 
+export const returnSale = async (sale_id, sale) => {
+    try {   
+        const response = await axios.patch(`/sales/return/${sale_id}`, sale);
+        console.log("Respuesta de la API:", response);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+};
+
 export const getSalesId = async (id) => {
     try {   
-        verifyUrl();
         const response = await axios.get(`/sales/${id}`);
         return response.data;
     } catch (error) {
