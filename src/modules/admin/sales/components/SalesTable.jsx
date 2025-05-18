@@ -1,7 +1,6 @@
 import { IoIosArrowDropright, IoIosArrowDropdown } from 'react-icons/io';
 import { BsArrowReturnRight } from "react-icons/bs";
-import { toast } from 'react-toastify';
-import Swal from "sweetalert2";
+import { BsCheckCircle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
 const SalesTable = ({
@@ -24,7 +23,7 @@ const SalesTable = ({
         navigate(`/admin/sales/return/${id}`);
     };
 
-    return (    
+    return (
         <>
             <tr className="text-left h-10 border-b bg-gray-50">
                 <td
@@ -44,18 +43,22 @@ const SalesTable = ({
                 <td>{vendedor}</td>
                 <td>${total?.toLocaleString()}</td>
                 <td className="pl-4 align-middle">
-                    <div
-                        className="flex items-center gap-1 cursor-pointer hover:bg-[#be90d4f2] w-fit px-[6px] py-[2px] rounded-sm"
-                        onClick={repaid ? null : handleSalesReturn}
-                    >
-                        {repaid ? (
+                    {repaid ? (
+                        <div className="flex items-center gap-1 px-[6px] py-[2px] rounded-sm select-none cursor-default">
+                            <BsCheckCircle size={16} className="text-green-600" />
                             <span className="text-[#181818]">Devuelto</span>
-                        ) : (
-                            <><BsArrowReturnRight size={16} className="text-[#181818]" /><span className="hidden 
-                            md:inline">Devolver</span></>
-                        )}
-                    </div>
+                        </div>
+                    ) : (
+                        <div
+                            className="flex items-center gap-1 cursor-pointer hover:bg-[#be90d4f2] w-fit px-[6px] py-[2px] rounded-sm"
+                            onClick={handleSalesReturn}
+                        >
+                            <BsArrowReturnRight size={16} className="text-[#181818]" />
+                            <span className="hidden md:inline">Devolver</span>
+                        </div>
+                    )}
                 </td>
+
 
             </tr>
 

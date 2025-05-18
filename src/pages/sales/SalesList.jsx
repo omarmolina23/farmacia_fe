@@ -9,6 +9,7 @@ import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout";
 import SalesTable from "../../modules/admin/sales/components/SalesTable";
 import FilterModal from "../../modules/admin/sales/components/FilterModal";
 import { getSalesAll } from "../../services/SalesService";
+import FilterRepaid from "../../components/FilterRepaid";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -23,6 +24,7 @@ const SalesList = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [hoverColumn, setHoverColumn] = useState(null);
   const [expandedSaleId, setExpandedSaleId] = useState(null);
+  const [filterStatus, setFilterStatus] = useState(false);
   const rowsOptions = [10, 15, 20, 25, 30, 50];
   const navigate = useNavigate();
 
@@ -30,9 +32,20 @@ const SalesList = () => {
   const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
   const Modulo = user?.isAdmin ? "admin" : "employees";
 
+  const applyStatusFilter = (repaidValue, salesList = allSales) => {
+    const filtered = salesList.filter(sale => sale.repaid === repaidValue);
+    setSales(filtered);
+  };
+
+
   useEffect(() => {
     fetchSales();
   }, []);
+
+  useEffect(() => {
+    applyStatusFilter(filterStatus);
+  }, [filterStatus, allSales]);
+
 
   const fetchSales = () => {
     getSalesAll()
@@ -40,6 +53,7 @@ const SalesList = () => {
         if (Array.isArray(data)) {
           setSales(data);
           setAllSales(data);
+          applyStatusFilter(filterStatus, data);
         } else {
           toast.error("Respuesta inesperada del servidor");
         }
@@ -54,11 +68,11 @@ const SalesList = () => {
   };
 
   const handleToggleExpand = (saleId) => {
-  setExpandedSaleId((prevId) => {
+    setExpandedSaleId((prevId) => {
 
-    return prevId === saleId ? null : saleId;
-  });
-};
+      return prevId === saleId ? null : saleId;
+    });
+  };
 
 
   const handleSearch = (e) => {
@@ -66,17 +80,19 @@ const SalesList = () => {
     setSearchQuery(query);
 
     if (query.trim() === "") {
-      setSales(allSales);
+      applyStatusFilter(filterStatus);
       return;
     }
 
     const filtered = allSales.filter(
-      (sale) =>
-        sale.cliente.toLowerCase().includes(query) ||
-        sale.vendedor.toLowerCase().includes(query)
+      sale =>
+        (sale.cliente.toLowerCase().includes(query) || sale.vendedor.toLowerCase().includes(query)) &&
+        sale.repaid === filterStatus
     );
+
     setSales(filtered);
   };
+
 
   const handleApplyFilter = (filter) => {
     if (!filter) {
@@ -146,6 +162,7 @@ const SalesList = () => {
             Filtro
           </button>
         </div>
+
         <Button
           title="Registrar Venta"
           color="bg-[#8B83BA]"
@@ -154,13 +171,18 @@ const SalesList = () => {
         />
       </div>
 
+
       {isFilterOpen && (
         <FilterModal
           onClose={() => setIsFilterOpen(false)}
           onApply={handleApplyFilter}
         />
       )}
-      <div className="w-full bg-[#D0F25E] p-5 flex gap-4 flex-wrap justify-start"></div>
+      <FilterRepaid
+        mode="sales"
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+      />
       <div className="w-full overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="p-5 bg-[#95A09D] text-left">
