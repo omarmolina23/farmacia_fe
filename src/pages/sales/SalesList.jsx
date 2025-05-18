@@ -38,7 +38,6 @@ const SalesList = () => {
     getSalesAll()
       .then((data) => {
         if (Array.isArray(data)) {
-          console.log("data", data);
           setSales(data);
           setAllSales(data);
         } else {
@@ -55,8 +54,12 @@ const SalesList = () => {
   };
 
   const handleToggleExpand = (saleId) => {
-    setExpandedSaleId((prevId) => (prevId === saleId ? null : saleId));
-  };
+  setExpandedSaleId((prevId) => {
+
+    return prevId === saleId ? null : saleId;
+  });
+};
+
 
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
@@ -240,6 +243,7 @@ const SalesList = () => {
                 index={(currentPage - 1) * rowsPerPage + index}
                 id={sale.id}
                 bill_id={sale.bill_id}
+                reference_code={sale.reference_code}
                 fecha={new Date(sale.date).toLocaleString("es-CO", {
                   day: "2-digit",
                   month: "2-digit",
@@ -253,6 +257,7 @@ const SalesList = () => {
                 vendedor={sale.employeeName}
                 total={sale.total}
                 productos={sale.products}
+                repaid={sale.repaid}
                 isExpanded={expandedSaleId === sale.id}
                 onToggleExpand={handleToggleExpand}
               />

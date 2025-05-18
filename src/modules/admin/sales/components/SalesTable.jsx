@@ -4,20 +4,25 @@ import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { returnSale } from '../../../../services/SalesService';
 
 const SalesTable = ({
     index,
     id,
     bill_id,
+    reference_code,
     fecha,
     cliente,
     vendedor,
     total,
     productos = [],
     isExpanded,
+    repaid,
     onToggleExpand,
 }) => {
     const navigate = useNavigate();
+
+    console.log("productos", productos);
 
     const saveInfo = () => {
         if (productos.length > 0) {
@@ -51,10 +56,31 @@ const SalesTable = ({
             if (result.isConfirmed) {
                 try {
                     saveInfo();
+                    
+                    const productsToReturn = productos.map((product) => ({
+                        id: product.id,
+                        nombre: product.products.name,
+                        cantidad: product.amount,
+                        precio: product.products.price,
+                    }));
+
+                    const response = await sendCreditNote({ bill_id: bill_id, reference_code: id, productos: productsToReturn });
+
+                    await returnSale(id, {
+                        number_credit_note: response.data.credit_note.reference_code,
+                    })
+    
+                    navigate(`/admin/sales/list`);
+                    toast.success(`Devolución realizada con éxito.`);
+                    //refreshList();
                     navigate(`/admin/sales/return/${id}`);
                     toast.success(`NotaCrédito creada con éxito.`);
                     refreshList();
                 } catch (error) {
+                    console.error(error);
+                    toast.error(
+                        error.message || "Error al devolver la venta",
+                    );
                     toast.error(`Error al crear la NotaCrédito`);
                 }
             }
@@ -83,10 +109,14 @@ const SalesTable = ({
                 <td className="pl-4 align-middle">
                     <div
                         className="flex items-center gap-1 cursor-pointer hover:bg-[#be90d4f2] w-fit px-[6px] py-[2px] rounded-sm"
-                        onClick={handleSalesReturn}
+                        onClick={repaid ? null : handleSalesReturn}
                     >
-                        <BsArrowReturnRight size={16} className="text-[#181818]" />
-                        <span className="hidden md:inline">Devolver</span>
+                        {repaid ? (
+                            <span className="text-[#181818]">Devuelto</span>
+                        ) : (
+                            <><BsArrowReturnRight size={16}  className="text-[#181818]" /><span className="hidden 
+                            md:inline">Devolver</span></>
+                        )}
                     </div>
                 </td>
 

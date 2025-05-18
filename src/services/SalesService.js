@@ -1,12 +1,5 @@
 import axios from "../config/axios";
 
-function verifyUrl() {
-    const apiUrl = import.meta.env.VITE_MOCK_URL;
-    if(!apiUrl) {
-        throw new Error();
-    }
-}
-
 export const getSalesAll = async () => {
     try {   
         const response = await axios.get("/sales"); 
@@ -21,7 +14,6 @@ export const createSale = async (sale) =>{
         const response = await axios.post("/sales", sale);
         return response.data;
     } catch (error) {
-        console.error("error", error);
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 }
