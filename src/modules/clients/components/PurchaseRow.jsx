@@ -36,8 +36,8 @@ const PurchaseRow = ({
         <td>{parseCurrency(purchase.total)}</td>
 
         <td>
-          <div className="flex justify-center">
-            <button onClick={() => handleShowPdf(purchase.id)}>
+          <div className="flex justify-center cursor-pointer">
+            <button className="cursor-pointer" onClick={() => handleShowPdf(purchase.id)}>
               <ReceiptIcon />
             </button>
           </div>
