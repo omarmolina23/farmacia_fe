@@ -8,7 +8,7 @@ import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout";
 import SalesTable from "../../modules/admin/sales/components/SalesTable";
 import FilterModal from "../../modules/admin/sales/components/FilterModal";
-import { getSalesAll } from "../../services/SalesService";
+import { getSalesAll, getSalesFiltered } from "../../services/SalesService";
 import FilterRepaid from "../../components/FilterRepaid";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
+  const [dateFilter, setDateFilter] = useState({ startDate: null, endDate: null });
   const [allSales, setAllSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,21 +48,34 @@ const SalesList = () => {
   }, [filterStatus, allSales]);
 
 
-  const fetchSales = () => {
-    getSalesAll()
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setSales(data);
-          setAllSales(data);
-          applyStatusFilter(filterStatus, data);
-        } else {
-          toast.error("Respuesta inesperada del servidor");
-        }
-      })
-      .catch(() => {
-        toast.error("Error al obtener ventas");
+  const fetchSales = async (filters = {}) => {
+    try {
+      const data = await getSalesFiltered({
+        startdate: filters.startDate,
+        enddate: filters.endDate,
+        // repaid: filters.repaid,
       });
+
+      console.log("Datos recibidos del endpoint:", data);
+      if (Array.isArray(data)) {
+        setAllSales(data);
+        setSales(data);
+      } else {
+        toast.error("Respuesta inesperada del servidor");
+      }
+    } catch {
+      toast.error("Error al obtener ventas");
+    }
   };
+  useEffect(() => {
+    fetchSales({
+      startDate: dateFilter.startDate,
+      endDate: dateFilter.endDate,
+      // repaid: filterStatus,
+    });
+  }, [filterStatus, dateFilter]);
+
+
 
   const handleSaleRegister = () => {
     navigate(`/${Modulo}/sales/register`);
@@ -96,18 +110,12 @@ const SalesList = () => {
 
   const handleApplyFilter = (filter) => {
     if (!filter) {
-      setSales(allSales);
+      setDateFilter({ startDate: null, endDate: null });
       return;
     }
 
     const { startDate, endDate } = filter;
-
-    const filtered = allSales.filter((sale) => {
-      const saleDate = new Date(sale.fecha);
-      return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
-    });
-
-    setSales(filtered);
+    setDateFilter({ startDate, endDate });
   };
 
   const handleSort = (key) => {
