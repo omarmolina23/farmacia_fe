@@ -8,7 +8,8 @@ import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout";
 import SalesTable from "../../modules/admin/sales/components/SalesTable";
 import FilterModal from "../../modules/admin/sales/components/FilterModal";
-import { getSalesAll } from "../../services/SalesService";
+import { getSalesAll, getSalesFiltered } from "../../services/SalesService";
+import FilterRepaid from "../../components/FilterRepaid";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -16,6 +17,7 @@ import { toast } from "react-toastify";
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
+  const [dateFilter, setDateFilter] = useState({ startDate: null, endDate: null });
   const [allSales, setAllSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,6 +25,7 @@ const SalesList = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [hoverColumn, setHoverColumn] = useState(null);
   const [expandedSaleId, setExpandedSaleId] = useState(null);
+  const [filterStatus, setFilterStatus] = useState(false);
   const rowsOptions = [10, 15, 20, 25, 30, 50];
   const navigate = useNavigate();
 
@@ -30,35 +33,60 @@ const SalesList = () => {
   const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
   const Modulo = user?.isAdmin ? "admin" : "employees";
 
+  const applyStatusFilter = (repaidValue, salesList = allSales) => {
+    const filtered = salesList.filter(sale => sale.repaid === repaidValue);
+    setSales(filtered);
+  };
+
+
   useEffect(() => {
     fetchSales();
   }, []);
 
-  const fetchSales = () => {
-    getSalesAll()
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setSales(data);
-          setAllSales(data);
-        } else {
-          toast.error("Respuesta inesperada del servidor");
-        }
-      })
-      .catch(() => {
-        toast.error("Error al obtener ventas");
+  useEffect(() => {
+    applyStatusFilter(filterStatus);
+  }, [filterStatus, allSales]);
+
+
+  const fetchSales = async (filters = {}) => {
+    try {
+      const data = await getSalesFiltered({
+        startdate: filters.startDate,
+        enddate: filters.endDate,
+        // repaid: filters.repaid,
       });
+
+      console.log("Datos recibidos del endpoint:", data);
+      if (Array.isArray(data)) {
+        setAllSales(data);
+        setSales(data);
+      } else {
+        toast.error("Respuesta inesperada del servidor");
+      }
+    } catch {
+      toast.error("Error al obtener ventas");
+    }
   };
+  useEffect(() => {
+    fetchSales({
+      startDate: dateFilter.startDate,
+      endDate: dateFilter.endDate,
+      // repaid: filterStatus,
+    });
+  }, [filterStatus, dateFilter]);
+
+
 
   const handleSaleRegister = () => {
     navigate(`/${Modulo}/sales/register`);
   };
 
   const handleToggleExpand = (saleId) => {
-  setExpandedSaleId((prevId) => {
+    setExpandedSaleId((prevId) => {
 
-    return prevId === saleId ? null : saleId;
-  });
-};
+      return prevId === saleId ? null : saleId;
+    });
+  };
 
 
   const handleSearch = (e) => {
@@ -66,32 +94,28 @@ const SalesList = () => {
     setSearchQuery(query);
 
     if (query.trim() === "") {
-      setSales(allSales);
+      applyStatusFilter(filterStatus);
       return;
     }
 
     const filtered = allSales.filter(
-      (sale) =>
-        sale.cliente.toLowerCase().includes(query) ||
-        sale.vendedor.toLowerCase().includes(query)
+      sale =>
+        (sale.cliente.toLowerCase().includes(query) || sale.vendedor.toLowerCase().includes(query)) &&
+        sale.repaid === filterStatus
     );
+
     setSales(filtered);
   };
 
+
   const handleApplyFilter = (filter) => {
     if (!filter) {
-      setSales(allSales);
+      setDateFilter({ startDate: null, endDate: null });
       return;
     }
 
     const { startDate, endDate } = filter;
-
-    const filtered = allSales.filter((sale) => {
-      const saleDate = new Date(sale.fecha);
-      return saleDate >= new Date(startDate) && saleDate <= new Date(endDate);
-    });
-
-    setSales(filtered);
+    setDateFilter({ startDate, endDate });
   };
 
   const handleSort = (key) => {
@@ -103,25 +127,34 @@ const SalesList = () => {
   };
 
   const sortedSales = [...sales].sort((a, b) => {
-    if (sortConfig.key) {
-      const valueA = a[sortConfig.key];
-      const valueB = b[sortConfig.key];
+    if (!sortConfig.key) return 0;
 
-      if (sortConfig.key === "total") {
-        return sortConfig.direction === "asc"
-          ? valueA - valueB
-          : valueB - valueA;
-      }
+    let valueA = a[sortConfig.key];
+    let valueB = b[sortConfig.key];
 
-      const strA = valueA?.toString().toLowerCase() || "";
-      const strB = valueB?.toString().toLowerCase() || "";
-
+    if (sortConfig.key === "total") {
       return sortConfig.direction === "asc"
-        ? strA.localeCompare(strB)
-        : strB.localeCompare(strA);
+        ? valueA - valueB
+        : valueB - valueA;
     }
-    return 0;
+
+    if (sortConfig.key === "fecha") {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortConfig.direction === "asc"
+        ? dateA - dateB
+        : dateB - dateA;
+    }
+
+    // Para cliente y vendedor y otros strings
+    const strA = (valueA || "").toString().toLowerCase();
+    const strB = (valueB || "").toString().toLowerCase();
+
+    return sortConfig.direction === "asc"
+      ? strA.localeCompare(strB)
+      : strB.localeCompare(strA);
   });
+
 
   const paginatedSales = sortedSales.slice(
     (currentPage - 1) * rowsPerPage,
@@ -146,6 +179,7 @@ const SalesList = () => {
             Filtro
           </button>
         </div>
+
         <Button
           title="Registrar Venta"
           color="bg-[#8B83BA]"
@@ -154,13 +188,18 @@ const SalesList = () => {
         />
       </div>
 
+
       {isFilterOpen && (
         <FilterModal
           onClose={() => setIsFilterOpen(false)}
           onApply={handleApplyFilter}
         />
       )}
-      <div className="w-full bg-[#D0F25E] p-5 flex gap-4 flex-wrap justify-start"></div>
+      <FilterRepaid
+        mode="sales"
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+      />
       <div className="w-full overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="p-5 bg-[#95A09D] text-left">

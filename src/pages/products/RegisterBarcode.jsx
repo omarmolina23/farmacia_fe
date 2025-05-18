@@ -1,28 +1,20 @@
 import { Html5Qrcode } from 'html5-qrcode';
-import { getProductAll } from '../../services/ProductService';
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 
-export default function ScanPage() {
+export default function RegisterBarcode() {
     const { session } = useParams();
     const scannerRef = useRef(null);
-    const [isScanning, setIsScanning] = useState(false);    
+    const [isScanning, setIsScanning] = useState(false);
     const [sock, setSocket] = useState(null);
-    const [products, setProducts] = useState([]);
-    const [productFound, setProductFound] = useState(null);
 
-    useEffect(() => {
-        getProductAll()
-            .then(data => setProducts(data))
-            .catch(err => console.error('❌ Error al cargar productos:', err));
-    }, []);
+
 
     useEffect(() => {
         const socket = io(SOCKET_SERVER_URL, { reconnectionAttempts: 5 });
@@ -59,7 +51,6 @@ export default function ScanPage() {
 
     const startScanner = async () => {
         if (!sock) return;
-        console.log(products);
         if (!scannerRef.current) scannerRef.current = new Html5Qrcode('reader');
         try {
             await scannerRef.current.start(
@@ -78,22 +69,13 @@ export default function ScanPage() {
                     }
 
                     // 3) Buscamos en tu lista de productos por ese ID
-                    const found = products.find(p => String(p.barcode) === barcodeId);
 
-                    if (found) {
-                        setProductFound(found);
-                        console.log("nombre:", found.name)
-                        
-                        sock.emit('scan', {
-                            sessionId: session,
-                            productBarcode: found.id,
-                        });
-                        playBeep();
-                        closeSession();
-                    } else {
-                        setProductFound(null);
-                    }
+                    sock.emit('scan', {
+                        sessionId: session,
+                        productBarcode: barcodeId,
+                    });
 
+                    playBeep();
                     pauseScanner();
                 },
                 error => console.warn('⚠️ Error de escaneo:', error)
@@ -140,24 +122,6 @@ export default function ScanPage() {
                         <div id="reader" className="w-full aspect-video bg-white border rounded shadow" />
                     </CardContent>
                 </Card>
-
-                {productFound && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Producto escaneado</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
-                                <div><strong>ID:</strong> {productFound.id}</div>
-                                <div><strong>Nombre:</strong> {productFound.name}</div>
-                                <div><strong>Categoría:</strong> {productFound.category}</div>
-                                <div><strong>Proveedor:</strong> {productFound.supplier}</div>
-                                <div><strong>Precio:</strong> ${productFound.price}</div>
-                                <div><strong>Cantidad:</strong> <Badge variant="secondary">{productFound.amount}</Badge></div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
             </main>
         </div>
     );

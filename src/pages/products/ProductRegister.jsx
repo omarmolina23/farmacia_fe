@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createProduct as createProductService } from "../../services/ProductService";
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import ProductForm from "../../modules/admin/product/components/ProductForm";
-import { Weight } from "lucide-react";
 
 export default function ProductRegister() {
   const navigate = useNavigate();
@@ -18,6 +17,7 @@ export default function ProductRegister() {
     supplierId: "",
     concentration: "",
     activeIngredient: "",
+    barcode: "",
     weight: "",
     volume: "",
     ProductTag: [],

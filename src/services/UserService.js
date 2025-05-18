@@ -29,6 +29,7 @@ export const signOut = async () => {
         localStorage.removeItem('factus_refresh_token');
 
         localStorage.removeItem("sessionId");
+        localStorage.removeItem("barcode");
 
         await axios.post('auth/sign-out');
     }

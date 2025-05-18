@@ -32,6 +32,7 @@ export default function ProductUpdate() {
           categoryId: response[0].categoryId ?? "",
           supplierId: response[0].supplierId ?? "",
           price: response[0].price ?? "",
+          barcode: response[0].barcode?? "",
           concentration: response[0].concentration ?? "",
           activeIngredient: response[0].activeIngredient ?? "",
           weight: response[0].weight ?? "",

@@ -1,12 +1,4 @@
-import mockAxios from "../config/axiosMock";
 import axios from "../config/axios";
-
-function verifyUrl() {
-    const apiUrl = import.meta.env.VITE_MOCK_URL;
-    if (!apiUrl) {
-        throw new Error();
-    }
-}
 
 export const getSalesAll = async () => {
     try {
@@ -35,15 +27,33 @@ export const returnSale = async (sale_id, sale) => {
     }
 };
 
-export const getSalesId = async (sales_reference_id) => {
+export const getSalesId = async (id) => {
     try {
-        verifyUrl();
-        const response = await mockAxios.get(`/return/${sales_reference_id}`);
+        const response = await axios.get(`/sales/${id}`);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
     }
 };
+
+export const getSalesFiltered = async ({ startdate, enddate } = {}) => {
+    try {
+        const params = new URLSearchParams();
+
+        if (startdate) params.append("startdate", startdate);
+        if (enddate) params.append("enddate", enddate);
+
+        const queryString = params.toString() ? `?${params.toString()}` : "";
+
+        const response = await axios.get(`/sales${queryString}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || "Error al obtener las ventas filtradas"
+        );
+    }
+};
+
 
 export const getSalesUser = async (user_id) => {
     try {
