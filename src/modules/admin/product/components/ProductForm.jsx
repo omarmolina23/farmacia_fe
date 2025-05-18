@@ -406,7 +406,7 @@ const ProductForm = ({
       {showQRModal && (
         <ModalQR
           open={showQRModal}
-          sessionIdRef={sesionIdProduct}
+          sessionIdRef={sessionIdRef}
           onClose={() => setShowQRModal(false)}
         />
       )}
