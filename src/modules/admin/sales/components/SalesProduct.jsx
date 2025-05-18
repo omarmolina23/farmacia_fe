@@ -13,7 +13,7 @@ const SalesProduct = ({
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 2
+        minimumFractionDigits: 3
     });
 
     // Devuelvo un array de <tr> en lugar de fragmento
