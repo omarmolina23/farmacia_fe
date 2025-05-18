@@ -21,7 +21,6 @@ export const createSale = async (sale) => {
 export const returnSale = async (sale_id, sale) => {
     try {
         const response = await axios.patch(`/sales/return/${sale_id}`, sale);
-        console.log("Respuesta de la API:", response);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
@@ -54,3 +53,24 @@ export const getSalesFiltered = async ({ startdate, enddate } = {}) => {
         );
     }
 };
+
+
+export const getSalesUser = async (user_id) => {
+    try {
+        const response = await axios.get(`/sales/user/${user_id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+}
+
+export const generatePdf = async (sale_id) => {
+    try {
+        const response = await axios.get(`/sales/pdf/${sale_id}`, {
+            responseType: "blob",
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+}
