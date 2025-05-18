@@ -1,19 +1,34 @@
 import { useAuth } from "../../context/authContext";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { io } from 'socket.io-client';
+import NumberFlow from '@number-flow/react';
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
+import { getSalesId } from "../../services/SalesService";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
+import ModalQR from "../../modules/admin/sales/components/ModalQR";
+import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/electronic_invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
-import { getProductAll } from "../../services/SalesService";
+import { getProductForSale } from "../../services/ProductService";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { RiQrScan2Line } from "react-icons/ri";
+import { MdOutlineDelete } from "react-icons/md";
 import 'react-toastify/dist/ReactToastify.css';
 
+const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
+
 const SalesReturn = () => {
+    const { sales_reference_id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
+    const Modulo = user?.isAdmin ? "admin" : "employees";
+    const IVA = 0.19;
+
     const [products, setProducts] = useState([]);
     const [buscar, setBuscar] = useState('');
     const [allProducts, setAllProducts] = useState([]);
@@ -22,16 +37,31 @@ const SalesReturn = () => {
     const [precioTotal, setPrecioTotal] = useState('');
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [productToDelete, setProductToDelete] = useState(null);
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+    const [showQRModal, setShowQRModal] = useState(false);
 
-    const { user } = useAuth();
-    const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
-    const Modulo = user?.isAdmin ? "admin" : "employees";
 
+    // WS y sesión
+    const sessionIdRef = localStorage.getItem("sessionId");
+
+    const allProductsRef = useRef([]);
+
+    // Mantener la ref de allProducts actualizada
+    useEffect(() => {
+        allProductsRef.current = allProducts;
+    }, [allProducts]);
+
+    // Obtener productos y calcular IVA
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getProductAll();
-                setAllProducts(data);
+                const data = await getProductForSale();
+                console.log("Prorductos: ", data);
+                const productosConIVA = data.map(p => ({
+                    ...p,
+                    price: p.price * (1 + IVA)
+                }));
+                setAllProducts(productosConIVA);
             } catch (err) {
                 toast.error("Error loading products");
             }
@@ -39,6 +69,7 @@ const SalesReturn = () => {
         fetchData();
     }, []);
 
+    // Sugerencias productos
     useEffect(() => {
         const filtrados = buscar.trim().length > 0
             ? allProducts.filter(p => p.name.toLowerCase().includes(buscar.toLowerCase()))
@@ -46,121 +77,147 @@ const SalesReturn = () => {
         setSugerencias(filtrados);
     }, [buscar, allProducts]);
 
-    useEffect(() => {
-        calcularValorTotal();
-    }, [products]);
-
-    const agregarProducto = () => {
-        const productoSeleccionado = allProducts.find(p => p.name.toLowerCase() === buscar.toLowerCase());
-
-        if (!productoSeleccionado) {
-            toast.error("Producto no encontrado");
-            return;
-        }
-
-        const stock = productoSeleccionado.batches?.[0]?.quantity || 0;
-
-        const existe = products.find(p => p.id === productoSeleccionado.id);
-        if (existe) {
-            const nuevaCantidad = Number(existe.cantidad) + Number(cantidad);
-            if (nuevaCantidad > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-
-            const actualizados = products.map(p => {
-                if (p.id === productoSeleccionado.id) {
-                    return {
-                        ...p,
-                        cantidad: nuevaCantidad,
-                        totalPrice: nuevaCantidad * p.price
-                    };
-                }
-                return p;
-            });
-            setProducts(actualizados);
-        } else {
-            if (cantidad > stock) {
-                toast.error("Cantidad excede el stock disponible");
-                return;
-            }
-
-            const nuevo = {
-                ...productoSeleccionado,
-                cantidad,
-                totalPrice: cantidad * productoSeleccionado.price
-            };
-            setProducts([...products, nuevo]);
-        }
-
-        setBuscar('');
-        setCantidad(1);
-        setSugerencias([]);
-    };
-
-    const handleProductSelect = (productId) => {
-        setSelectedProductId(prev => prev === productId ? null : productId);
-    };
-
     const calcularValorTotal = () => {
         const total = products.reduce((sum, p) => sum + p.totalPrice, 0);
         setPrecioTotal(total);
     };
 
+    // Helper unificado para agregar/actualizar productos
+    const addOrUpdateProduct = useCallback((producto, qty = 1) => {
+        const stock = producto.totalAmount || 0;
+        const existe = products.find(p => p.id === producto.id);
+
+        if (existe) {
+            const nuevaCantidad = existe.cantidad + qty;
+            if (nuevaCantidad > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+            setProducts(products.map(p =>
+                p.id === producto.id
+                    ? { ...p, cantidad: nuevaCantidad, totalPrice: nuevaCantidad * p.price }
+                    : p
+            ));
+        } else {
+            if (qty > stock) {
+                toast.error('Cantidad excede el stock disponible');
+                return;
+            }
+            setProducts([...products, { ...producto, cantidad: qty, totalPrice: qty * producto.price }]);
+        }
+
+        setBuscar('');
+        setCantidad(1);
+        setSugerencias([]);
+    }, [products]);
+
+    // Conexión WebSocket
+    useEffect(() => {
+        const sock = io(SOCKET_SERVER_URL);
+        sock.on("connect", () => {
+            sock.emit("join-room", sessionIdRef.current);
+        });
+
+        sock.on("scan", rawBarcode => {
+            const cleanedId = String(rawBarcode).trim();
+            const producto = allProductsRef.current.find(p => String(p.id).trim() === cleanedId);
+            if (!producto) {
+                toast.error("Producto escaneado no encontrado");
+                return;
+            }
+            addOrUpdateProduct(producto, 1);
+        });
+
+        return () => sock.disconnect();
+    }, [addOrUpdateProduct]);
+
+    useEffect(() => {
+        const saleBack = async () => {
+            try {
+                const [venta] = await getSalesId(sales_reference_id);
+
+                if (venta?.cliente) {
+                    setClienteSeleccionado(venta.cliente);
+                }
+
+                if (venta?.productos) {
+                    const productosConvertidos = venta.productos.map(p => {
+                        const precioConIVA = p.price * (1 + IVA);
+                        return {
+                            ...p,
+                            price: precioConIVA,
+                            totalPrice: precioConIVA * p.cantidad,
+                        };
+                    });
+
+                    setProducts(productosConvertidos);
+                }
+
+            } catch (error) {
+                toast.error("Error al cargar datos de la venta simulada");
+                console.error(error);
+            }
+        };
+        saleBack();
+    }, [sales_reference_id]);
+
+
+    const agregarProducto = () => {
+        const nameKey = buscar.trim().toLowerCase();
+        const producto = allProducts.find(p => p.name.toLowerCase() === nameKey);
+        if (!producto) {
+            toast.error("Producto no encontrado");
+            return;
+        }
+        addOrUpdateProduct(producto, cantidad);
+    };
+
+    useEffect(() => {
+        calcularValorTotal();
+    }, [products]);
+
+    // Resto de handlers...
     const cancelarVenta = () => {
         setProducts([]);
-        navigate(`/${Modulo}/sales/register`);
+        setClienteSeleccionado(null);
+        setBuscarCliente('');
+        navigate(`/${Modulo}/sales/list`);
     };
-
+    const handleProductSelect = id => setSelectedProductId(prev => prev === id ? null : id);
     const cancelarProducto = () => {
-        const producto = products.find(p => p.id === selectedProductId);
-        if (producto) {
-            setProductToDelete(producto);
-        } else {
-            toast.warn("Seleccione un producto primero");
-        }
+        const prod = products.find(p => p.id === selectedProductId);
+        prod ? setProductToDelete(prod) : toast.warn("Seleccione un producto primero");
     };
-
-    const deleteProduct = (quantityToDelete) => {
-        const updatedProducts = products.map((producto) => {
-            if (producto.id === selectedProductId) {
-                if (producto.cantidad > quantityToDelete) {
-                    return {
-                        ...producto,
-                        cantidad: producto.cantidad - quantityToDelete,
-                        totalPrice: (producto.cantidad - quantityToDelete) * producto.price,
-                    };
-                }
-                return null;
-            }
-            return producto;
-        }).filter(Boolean);
-
-        setProducts(updatedProducts);
+    const deleteProduct = qty => {
+        const updated = products.map(p =>
+            p.id === selectedProductId
+                ? (p.cantidad > qty ? { ...p, cantidad: p.cantidad - qty, totalPrice: (p.cantidad - qty) * p.price } : null)
+                : p
+        ).filter(Boolean);
+        setProducts(updated);
         setProductToDelete(null);
         setSelectedProductId(null);
-        calcularValorTotal();
     };
-
-    const validarFormulario = () => {
-        if (products.length === 0) {
-            toast.error('Debe agregar al menos un producto');
-            return false;
-        }
-        return true;
-    };
-
-    const registrarCompra = (e) => {
+    const validarFormulario = () => products.length > 0 && clienteSeleccionado;
+    const registrarCompra = async e => {
         e.preventDefault();
-        if (validarFormulario()) {
-            toast.success('Venta registrada (simulado)');
-            cancelarVenta();
+        if (!validarFormulario()) {
+            toast.error(products.length === 0 ? 'Debe agregar al menos un producto' : 'Debe seleccionar un cliente');
+            return;
+        }
+        try {
+            await sendElectronicInvoice({ cliente: sales.cliente, productos: products });
+            toast.success("Factura electrónica generada exitosamente");
+            navigate(`/${Modulo}/sales/list`);
+        } catch {
+            toast.error("Error al generar la factura electrónica");
         }
     };
 
     return (
-        <Layout title="Devolver Venta">
+        <Layout title="Registrar Venta">
             <div className="flex flex-col h-screen">
+                {/* Barra superior de búsqueda de productos */}
                 <div className="flex items-center text-sm h-16 px-6">
                     <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
                         <div className="flex w-full md:w-auto gap-3 relative">
@@ -180,7 +237,7 @@ const SalesReturn = () => {
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.name}
+                                            {sug.name} - ${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sug.price)}
                                         </div>
                                     ))}
                                 </div>
@@ -198,26 +255,34 @@ const SalesReturn = () => {
                                     <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
                                 </button>
                             </div>
+                            <button onClick={cancelarProducto}
+                            >
+
+                                <MdOutlineDelete size={30} className="text-[#cd3535]" />
+
+                            </button>
                         </div>
-                        <Button
-                            title="Cancelar Producto"
-                            color="bg-[#818180]"
-                            onClick={cancelarProducto}
-                            className="w-full h-full"
-                        />
+                        <div className="px-6 py-4">
+                            <button
+                                onClick={() => setShowQRModal(true)}
+                                className="text-2xl text-gray-700 hover:text-blue-600 transition-colors"
+                            >
+                                <RiQrScan2Line />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
+                {/* Tabla de productos agregados */}
                 <div className="flex-1 overflow-auto max-h-[330px]">
                     <table className="min-w-full text-sm table-fixed">
                         <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
                             <tr className="h-9">
-                                <th ></th>
+                                <th></th>
                                 <th>N°</th>
                                 <th className="text-left">Nombre</th>
                                 <th className="text-left">Categoria</th>
                                 <th className="text-left">Proveedor</th>
-                                <th className="text-center">Lote</th>
                                 <th className="text-center">Cantidad</th>
                                 <th className="text-center">Precio Unitario</th>
                                 <th className="text-center">Precio Total</th>
@@ -231,7 +296,6 @@ const SalesReturn = () => {
                                     name={producto.name}
                                     category={producto.category}
                                     supplier={producto.supplier}
-                                    batch={producto.batches?.[0]?.batch_number}
                                     cantidad={producto.cantidad}
                                     price={producto.price}
                                     precioTotal={producto.totalPrice}
@@ -243,36 +307,84 @@ const SalesReturn = () => {
                     </table>
                 </div>
 
+                <div className="border-t border-gray-300 mt-2"></div>
+
                 <div className="h-44">
-                    <div className="flex items-center text-sm h-16 px-6">
-                    </div>
-                    <div className="flex justify-end items-center gap-4 mt-4 px-6">
-                        <Button
-                            title="Cancelar"
-                            color="bg-[#818180]"
-                            onClick={cancelarVenta}
-                            className="px-6 py-2"
-                        />
-                        <Button
-                            title="Devolver"
-                            color="bg-[#8B83BA]"
-                            onClick={registrarCompra}
-                            className="px-6 py-2"
-                        />
-                        <div className="w-64 bg-[#D9D9D9] p-4 text-3xl">${precioTotal}</div>
+                    <div className="flex justify-between mt-4 px-6">
+                        {clienteSeleccionado && (
+
+                            <div className="w-1/2">
+                                <div className="bg-white border border-gray-200 rounded-lg shadow p-4">
+                                    <div className="text-sm font-semibold text-gray-700 mb-2">Datos del Cliente</div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Cédula:</strong></div>
+                                            <div>{clienteSeleccionado.id}</div>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Nombre:</strong></div>
+                                            <div>{clienteSeleccionado.name}</div>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Correo:</strong></div>
+                                            <div>{clienteSeleccionado.email}</div>
+                                        </div>
+                                        <div className="flex justify-between text-sm text-gray-600">
+                                            <div><strong>Teléfono:</strong></div>
+                                            <div>{clienteSeleccionado.phone}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div className="w-1/2 flex flex-col justify-between">
+                            <div className="w-[220px] bg-[#D9D9D9] px-6 py-3 text-4xl text-right mt-2 ml-auto rounded-lg shadow-lg flex items-center justify-between mb-6"> {/* Añadido mb-6 para separar los botones */}
+                                <span className="text-2xl text-gray-700 font-semibold">$</span>
+                                <NumberFlow
+                                    value={precioTotal}
+                                    prefix=""
+                                    locales="es-ES"
+                                    duration={3}
+                                    className="text-4xl text-gray-900 font-bold"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-4">
+                                <Button
+                                    title="Cancelar"
+                                    color="bg-[#818180]"
+                                    onClick={cancelarVenta}
+                                    className="px-6 py-2"
+                                />
+                                <Button
+                                    title="Aceptar"
+                                    color="bg-[#8B83BA]"
+                                    onClick={registrarCompra}
+                                    className="px-6 py-2"
+                                />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-            {productToDelete && (
-                <ProductDeleteModal
-                    productToDelete={productToDelete}
-                    deleteProduct={deleteProduct}
-                    onClose={() => setProductToDelete(null)}
-                />
-            )}
+                {productToDelete && (
+                    <ProductDeleteModal
+                        productToDelete={productToDelete}
+                        deleteProduct={deleteProduct}
+                        onClose={() => setProductToDelete(null)}
+                    />
+                )}
+                {showQRModal && (
+                    <ModalQR
+                        open={showQRModal}
+                        sessionIdRef={sessionIdRef}
+                        onClose={() => setShowQRModal(false)}
+                    />
+                )}
+            </div>
         </Layout>
     );
 };
+
 
 export default SalesReturn;

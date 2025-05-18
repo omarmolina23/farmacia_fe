@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
-import { getAccessToken, refreshAccessToken } from "../../services/FactusService"
+import { getAccessToken } from "../../services/FactusService"
 import { useNavigate } from "react-router-dom";
 import { login as loginService } from "../../services/UserService";
 import { toast } from "react-toastify";
@@ -54,10 +54,12 @@ const Login = () => {
 
       toast.success("Inicio de sesión exitoso");
 
+      const sessionIdRef = crypto.randomUUID();
+      localStorage.setItem("sessionId", sessionIdRef);
+
       try {
         await getAccessToken();
       } catch (factusError) {
-        console.error("Error al autenticar con Factus:", factusError);
         toast.warning("No se pudo obtener token de Factus");
       }
 

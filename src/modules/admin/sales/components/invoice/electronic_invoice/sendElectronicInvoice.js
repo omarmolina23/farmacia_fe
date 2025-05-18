@@ -1,4 +1,4 @@
-import { createInvoice } from "../../../../../services/FactusService";
+import { createInvoice } from "../../../../../../services/FactusService";
 import { buildInvoiceData } from "./generateInvoiceData";
 
 /**

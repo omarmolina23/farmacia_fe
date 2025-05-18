@@ -9,10 +9,10 @@ export const createClient = async (client) => {
     }
 };
 
+
 export const getClientAll = async () => {
     try {
         const response = await axios.get("/client");
-        console.log("response", response);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");

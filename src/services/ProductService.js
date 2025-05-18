@@ -45,7 +45,6 @@ export const searchProductByName = async (query) => {
 }
 
 export const updateProduct = async (id, productData) => {
-    console.log("productData", productData);
     try {
         const response = await axios.patch(`/product/${id}`, productData, {
             headers: {
@@ -78,3 +77,13 @@ export const filterProduct = async (params) => {
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 }
+
+export const getProductForSale = async () => {
+    try {   
+        const response = await axios.get("/product/for-sale");
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+}
+

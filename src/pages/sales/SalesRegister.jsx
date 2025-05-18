@@ -9,12 +9,13 @@ import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
 import ModalQR from "../../modules/admin/sales/components/ModalQR";
-import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/sendElectronicInvoice";
+import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/electronic_invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
-import { getProductAll } from "../../services/SalesService";
+import { getProductForSale } from "../../services/ProductService";
 import { getClientAll } from "../../services/ClientService";
+import { createSale } from "../../services/SalesService";
 import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
 import { RiQrScan2Line } from "react-icons/ri";
 import { MdOutlineDelete } from "react-icons/md";
@@ -47,8 +48,12 @@ const SalesRegister = () => {
     const [showQRModal, setShowQRModal] = useState(false);
 
 
+    // Employee
+    const employee = JSON.parse(localStorage.getItem("user"));
+
     // WS y sesión
-    const sessionIdRef = useRef(crypto.randomUUID());
+    const sessionIdRef = localStorage.getItem("sessionId");
+
     const allProductsRef = useRef([]);
 
     // Mantener la ref de allProducts actualizada
@@ -81,14 +86,14 @@ const SalesRegister = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getProductAll();
-                const productosConIVA = data.map(p => ({
+                const data = await getProductForSale();
+                const productos = data.map(p => ({
                     ...p,
-                    price: p.price * (1 + IVA)
+                    price: p.price 
                 }));
-                setAllProducts(productosConIVA);
+                setAllProducts(productos);
             } catch (err) {
-                toast.error("Error loading products");
+                toast.error("Error cargando productos");
             }
         };
         fetchData();
@@ -109,7 +114,7 @@ const SalesRegister = () => {
 
     // Helper unificado para agregar/actualizar productos
     const addOrUpdateProduct = useCallback((producto, qty = 1) => {
-        const stock = producto.amount || 0;
+        const stock = producto.totalAmount || 0;
         const existe = products.find(p => p.id === producto.id);
 
         if (existe) {
@@ -139,10 +144,8 @@ const SalesRegister = () => {
     // Conexión WebSocket
     useEffect(() => {
         const sock = io(SOCKET_SERVER_URL);
-
         sock.on("connect", () => {
             sock.emit("join-room", sessionIdRef.current);
-            console.log("Tu sala es:", sessionIdRef.current)
         });
 
         sock.on("scan", rawBarcode => {
@@ -167,7 +170,7 @@ const SalesRegister = () => {
         }
         addOrUpdateProduct(producto, cantidad);
     };
-    
+
     useEffect(() => {
         calcularValorTotal();
     }, [products]);
@@ -203,11 +206,27 @@ const SalesRegister = () => {
             return;
         }
         try {
-            await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
-            toast.success("Factura electrónica generada exitosamente");
+            const productsToSend = products.map(p => ({
+                productId: p.id,
+                amount: p.cantidad,
+            }));
+
+            const responseEInvoice = await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
+
+            await createSale({
+                clientId: clienteSeleccionado.id,
+                employeeName: employee.name,
+                products: productsToSend,
+                bill_id: responseEInvoice.data.bill.id,
+                number_e_invoice: responseEInvoice.data.bill.reference_code,
+                cufe: responseEInvoice.data.bill.cufe,
+                qr_image: responseEInvoice.data.bill.qr_image,
+            });
+
+            toast.success("Factura generada exitosamente");
             navigate(`/${Modulo}/sales/list`);
-        } catch {
-            toast.error("Error al generar la factura electrónica");
+        } catch (error) {
+            toast.error(error.message || "Error al registrar la venta");
         }
     };
 
@@ -234,7 +253,7 @@ const SalesRegister = () => {
                                             }}
                                             className="p-2 hover:bg-gray-100 cursor-pointer"
                                         >
-                                            {sug.name} - ${sug.price}
+                                            {sug.name} - ${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sug.price)}
                                         </div>
                                     ))}
                                 </div>
@@ -267,15 +286,6 @@ const SalesRegister = () => {
                                 <RiQrScan2Line />
                             </button>
                         </div>
-                        {showQRModal && (
-                            <div className="fixed inset-0 flex items-center justify-center">
-                                <ModalQR
-                                    open={showQRModal}
-                                    sessionIdRef={sessionIdRef}
-                                    onClose={() => setShowQRModal(false)}
-                                />
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -284,11 +294,10 @@ const SalesRegister = () => {
                     <table className="min-w-full text-sm table-fixed">
                         <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
                             <tr className="h-9">
-                                <th></th>
-                                <th>N°</th>
-                                <th className="text-left">Nombre</th>
-                                <th className="text-left">Categoria</th>
-                                <th className="text-left">Proveedor</th>
+                                <th className="text-center">N°</th>
+                                <th className="text-center">Nombre</th>
+                                <th className="text-center">Categoria</th>
+                                <th className="text-center">Proveedor</th>
                                 <th className="text-center">Cantidad</th>
                                 <th className="text-center">Precio Unitario</th>
                                 <th className="text-center">Precio Total</th>
@@ -417,6 +426,13 @@ const SalesRegister = () => {
                         productToDelete={productToDelete}
                         deleteProduct={deleteProduct}
                         onClose={() => setProductToDelete(null)}
+                    />
+                )}
+                {showQRModal && (
+                    <ModalQR
+                        open={showQRModal}
+                        sessionIdRef={sessionIdRef}
+                        onClose={() => setShowQRModal(false)}
                     />
                 )}
             </div>

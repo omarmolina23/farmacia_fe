@@ -28,6 +28,8 @@ export const signOut = async () => {
         localStorage.removeItem('factus_access_token');
         localStorage.removeItem('factus_refresh_token');
 
+        localStorage.removeItem("sessionId");
+
         await axios.post('auth/sign-out');
     }
     catch (error) {
