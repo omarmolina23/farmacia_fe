@@ -121,7 +121,7 @@ const SalesReturn = () => {
             });
 
             await returnSale(sale.id, {
-                number_credit_note: response.data.credit_note.reference_code
+                number_credit_note: response.credit_note.number
             });
 
             toast.success("Nota Crédito generada exitosamente.");

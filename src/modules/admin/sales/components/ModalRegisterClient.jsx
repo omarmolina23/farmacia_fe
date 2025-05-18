@@ -8,11 +8,12 @@ const ModalRegisterClient = ({
   formData = { name: "", id: "", email: "", phone: "" },
   handleChange,
   onClose,
+  refreshClients,
 }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validaciones
+
+    // Validaciones personalizadas
     if (!formData.name || !formData.id || !formData.email || !formData.phone) {
       toast.error("Todos los campos son obligatorios.");
       return;
@@ -34,6 +35,7 @@ const ModalRegisterClient = ({
       toast.error("El teléfono debe tener 10 dígitos.");
       return;
     }
+
     const clientData = {
       id: formData.id,
       name: formData.name,
@@ -44,21 +46,37 @@ const ModalRegisterClient = ({
     try {
       await createClient(clientData);
       toast.success("Cliente registrado correctamente");
+
+      if (refreshClients) {
+        await refreshClients();
+      }
+
       onClose();
     } catch (error) {
-      toast.error(error.message || "Error al registrar cliente");
+      toast.error(error?.message || "Error al registrar cliente");
     }
   };
 
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white border p-6 rounded-lg shadow-lg w-96"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="relative bg-white border p-6 rounded-lg shadow-lg w-96">
+        {/* Botón de cerrar en la esquina superior derecha */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+          aria-label="Cerrar modal"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <h2 className="text-lg font-semibold mb-4">Datos del cliente</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div className="flex flex-col items-start">
@@ -70,6 +88,7 @@ const ModalRegisterClient = ({
               value={formData.name}
               onChange={handleChange}
               placeholder="Nombre completo"
+              required
             />
           </div>
           <div className="flex flex-col items-start">
@@ -81,6 +100,7 @@ const ModalRegisterClient = ({
               value={formData.id}
               onChange={handleChange}
               placeholder="Número de cédula"
+              required
             />
           </div>
           <div className="flex flex-col items-start">
@@ -92,6 +112,7 @@ const ModalRegisterClient = ({
               value={formData.email}
               onChange={handleChange}
               placeholder="Correo electrónico"
+              required
             />
           </div>
           <div className="flex flex-col items-start">
@@ -103,6 +124,7 @@ const ModalRegisterClient = ({
               value={formData.phone}
               onChange={handleChange}
               placeholder="Número de teléfono"
+              required
             />
           </div>
 

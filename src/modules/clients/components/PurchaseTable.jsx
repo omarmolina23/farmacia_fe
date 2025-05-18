@@ -96,7 +96,7 @@ export default function PurchaseTable({ purchases }) {
 
   return (
     <div>
-      <table className="min-w-full text-sm">
+      <table className="min-w-full text-sm rounded-lg overflow-hidden">
         <thead className="p-5 bg-[#95A09D] text-left">
           <tr className="h-9">
             <th className="pl-5"></th>

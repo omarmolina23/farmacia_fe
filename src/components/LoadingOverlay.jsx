@@ -46,7 +46,7 @@ const LoadingOverlay = () => {
     return (
         <div
             ref={overlayRef}
-            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none bg-white/60"
         >
             <div
                 ref={boxRef}
