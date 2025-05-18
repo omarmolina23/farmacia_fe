@@ -119,25 +119,34 @@ const SalesList = () => {
   };
 
   const sortedSales = [...sales].sort((a, b) => {
-    if (sortConfig.key) {
-      const valueA = a[sortConfig.key];
-      const valueB = b[sortConfig.key];
+    if (!sortConfig.key) return 0;
 
-      if (sortConfig.key === "total") {
-        return sortConfig.direction === "asc"
-          ? valueA - valueB
-          : valueB - valueA;
-      }
+    let valueA = a[sortConfig.key];
+    let valueB = b[sortConfig.key];
 
-      const strA = valueA?.toString().toLowerCase() || "";
-      const strB = valueB?.toString().toLowerCase() || "";
-
+    if (sortConfig.key === "total") {
       return sortConfig.direction === "asc"
-        ? strA.localeCompare(strB)
-        : strB.localeCompare(strA);
+        ? valueA - valueB
+        : valueB - valueA;
     }
-    return 0;
+
+    if (sortConfig.key === "fecha") {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortConfig.direction === "asc"
+        ? dateA - dateB
+        : dateB - dateA;
+    }
+
+    // Para cliente y vendedor y otros strings
+    const strA = (valueA || "").toString().toLowerCase();
+    const strB = (valueB || "").toString().toLowerCase();
+
+    return sortConfig.direction === "asc"
+      ? strA.localeCompare(strB)
+      : strB.localeCompare(strA);
   });
+
 
   const paginatedSales = sortedSales.slice(
     (currentPage - 1) * rowsPerPage,
