@@ -13,7 +13,7 @@ const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 export default function ScanPage() {
     const { session } = useParams();
     const scannerRef = useRef(null);
-    const [isScanning, setIsScanning] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);    
     const [sock, setSocket] = useState(null);
     const [products, setProducts] = useState([]);
     const [productFound, setProductFound] = useState(null);
@@ -59,6 +59,7 @@ export default function ScanPage() {
 
     const startScanner = async () => {
         if (!sock) return;
+        console.log(products);
         if (!scannerRef.current) scannerRef.current = new Html5Qrcode('reader');
         try {
             await scannerRef.current.start(
@@ -77,15 +78,18 @@ export default function ScanPage() {
                     }
 
                     // 3) Buscamos en tu lista de productos por ese ID
-                    const found = products.find(p => String(p.id) === barcodeId);
+                    const found = products.find(p => String(p.barcode) === barcodeId);
 
                     if (found) {
                         setProductFound(found);
-                        playBeep();
+                        console.log("nombre:", found.name)
+                        
                         sock.emit('scan', {
                             sessionId: session,
                             productBarcode: found.id,
                         });
+                        playBeep();
+                        closeSession();
                     } else {
                         setProductFound(null);
                     }

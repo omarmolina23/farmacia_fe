@@ -1,26 +1,20 @@
 import { Html5Qrcode } from 'html5-qrcode';
-import { getProductAll } from '../../services/ProductService';
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
 
-export default function ScanPage() {
+export default function RegisterBarcode() {
     const { session } = useParams();
     const scannerRef = useRef(null);
     const [isScanning, setIsScanning] = useState(false);
     const [sock, setSocket] = useState(null);
 
-    useEffect(() => {
-        getProductAll()
-            .then(data => setProducts(data))
-            .catch(err => console.error('❌ Error al cargar productos:', err));
-    }, []);
+
 
     useEffect(() => {
         const socket = io(SOCKET_SERVER_URL, { reconnectionAttempts: 5 });
@@ -75,19 +69,13 @@ export default function ScanPage() {
                     }
 
                     // 3) Buscamos en tu lista de productos por ese ID
-                    const found = products.find(p => String(p.id) === barcodeId);
 
-                    if (found) {
-                        setProductFound(found);
-                        playBeep();
-                        sock.emit('scan', {
-                            sessionId: session,
-                            productBarcode: found.id,
-                        });
-                    } else {
-                        setProductFound(null);
-                    }
+                    sock.emit('scan', {
+                        sessionId: session,
+                        productBarcode: barcodeId,
+                    });
 
+                    playBeep();
                     pauseScanner();
                 },
                 error => console.warn('⚠️ Error de escaneo:', error)

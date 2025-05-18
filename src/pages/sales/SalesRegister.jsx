@@ -53,6 +53,7 @@ const SalesRegister = () => {
 
     // WS y sesión
     const sessionIdRef = localStorage.getItem("sessionId");
+    console.log("sesion inical", sessionIdRef)
 
     const allProductsRef = useRef([]);
 
@@ -145,21 +146,19 @@ const SalesRegister = () => {
     useEffect(() => {
         const sock = io(SOCKET_SERVER_URL);
         sock.on("connect", () => {
-            sock.emit("join-room", sessionIdRef.current);
+            sock.emit("join-room", sessionIdRef);
+            console.log("como se conecta", sessionIdRef)
         });
 
-        sock.on("scan", rawBarcode => {
-            const cleanedId = String(rawBarcode).trim();
-            const producto = allProductsRef.current.find(p => String(p.id).trim() === cleanedId);
-            if (!producto) {
-                toast.error("Producto escaneado no encontrado");
-                return;
-            }
+        sock.on("scan", productBarcode => {
+            console.log("producto:", productBarcode)
+            const producto = allProductsRef.current.find(p => String(p.id).trim() === productBarcode);
             addOrUpdateProduct(producto, 1);
         });
 
-        return () => sock.disconnect();
+        // return () => sock.disconnect();
     }, [addOrUpdateProduct]);
+
 
     const agregarProducto = () => {
         const nameKey = buscar.trim().toLowerCase();

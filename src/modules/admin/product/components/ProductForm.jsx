@@ -35,7 +35,9 @@ const ProductForm = ({
   const [existingImages, setExistingImages] = useState([]);
 
   const [showQRModal, setShowQRModal] = useState(false);
-  const sesionIdProduct = localStorage.getItem("barcode");
+  // WS y sesión
+  const sessionIdRef = localStorage.getItem("barcode");
+  console.log("barcode inicial:", sessionIdRef)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -175,26 +177,23 @@ const ProductForm = ({
     handleChangeTags(value);
     setSelectedTags(value);
   };
+
   useEffect(() => {
     const sock = io(SOCKET_SERVER_URL);
-
     sock.on("connect", () => {
-      sock.emit("join-room", sesionIdProduct.current);
+      sock.emit("join-room", sessionIdRef);
+      console.log("como se conecta", sessionIdRef)
     });
 
-    sock.on("scan", barcodeId => {
-      const cleanBarcode = String(barcodeId).trim();
-      // Aquí actualizas tu formData:
-      setFormData(fd => ({
-        ...fd,
-        barcode: cleanBarcode
+    sock.on("scan", productBarcode => {
+      console.log("Código escaneado recibido:", productBarcode);
+      setFormData(prev => ({
+        ...prev,
+        barcode: productBarcode,
       }));
-      // Opcionalmente cerramos el modal:
-      setShowQRModal(false);
     });
-
-    return () => sock.disconnect();
-  }, [setFormData]);
+    //return () => sock.disconnect();
+  }, []);
 
   return (
     <>
