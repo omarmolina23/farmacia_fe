@@ -18,7 +18,7 @@ export default function ClientHeaderItems() {
       ),
     },
     {
-      url: "#",
+      url: "/purchases",
       content: (
         <>
           <ShoppingBasketIcon /> Mis Compras
