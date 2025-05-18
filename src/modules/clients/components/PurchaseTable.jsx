@@ -2,7 +2,10 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import PurchaseRow from "./PurchaseRow";
 import { useState } from "react";
 import { useEffect } from "react";
+import { generatePdf } from "../../../services/SalesService";
+import { getSalesUser } from "../../../services/SalesService";
 import Pagination from "../../../components/Pagination";
+import { toast } from "react-toastify";
 
 export default function PurchaseTable({ purchases }) {
   const [calculatedPurchases, setCalculatedPurchases] = useState([]);
@@ -19,18 +22,14 @@ export default function PurchaseTable({ purchases }) {
   useEffect(() => {
     setCalculatedPurchases(
       purchases.map((purchase) => {
-        const cantidad = purchase.productos
-          .map((producto) => producto.cantidad)
-          .reduce((total, value) => total + value);
-
-        const total = purchase.productos
-          .map((producto) => producto.cantidad * producto.price)
-          .reduce((total, value) => total + value);
-
         return {
           ...purchase,
-          cantidad,
-          total,
+          amount_final: Number(
+            purchase.products.reduce(
+              (acc, producto) => acc + producto.amount,
+              0
+            )
+          ),
         };
       })
     );
@@ -42,6 +41,18 @@ export default function PurchaseTable({ purchases }) {
     );
   }
 
+  const handleShowPdf = async (id) => {
+    try {
+      const blob = await generatePdf(id);
+
+      const pdfBlob = new Blob([blob], { type: "application/pdf" });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl, "_blank");
+    } catch (error) {
+      toast.error(error.message || "Error al generar el PDF");
+    }
+  };
+
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -51,24 +62,31 @@ export default function PurchaseTable({ purchases }) {
   };
 
   const sortedPurchases = [...calculatedPurchases].sort((a, b) => {
-    if (sortConfig.key) {
-      const valueA = a[sortConfig.key];
-      const valueB = b[sortConfig.key];
+    if (!sortConfig.key) return 0;
 
-      if (sortConfig.key === "total") {
-        return sortConfig.direction === "asc"
-          ? valueA - valueB
-          : valueB - valueA;
-      }
+    const valueA = a[sortConfig.key];
+    const valueB = b[sortConfig.key];
 
-      const strA = valueA?.toString().toLowerCase() || "";
-      const strB = valueB?.toString().toLowerCase() || "";
+    // Detectar si ambos valores son números (o pueden ser convertidos a número)
+    const isNumeric =
+      !isNaN(parseFloat(valueA)) &&
+      isFinite(valueA) &&
+      !isNaN(parseFloat(valueB)) &&
+      isFinite(valueB);
 
+    if (isNumeric) {
       return sortConfig.direction === "asc"
-        ? strA.localeCompare(strB)
-        : strB.localeCompare(strA);
+        ? parseFloat(valueA) - parseFloat(valueB)
+        : parseFloat(valueB) - parseFloat(valueA);
     }
-    return 0;
+
+    // Ordenamiento alfabético para strings
+    const strA = valueA?.toString().toLowerCase() || "";
+    const strB = valueB?.toString().toLowerCase() || "";
+
+    return sortConfig.direction === "asc"
+      ? strA.localeCompare(strB)
+      : strB.localeCompare(strA);
   });
 
   const paginatedPurchases = sortedPurchases.slice(
@@ -85,11 +103,11 @@ export default function PurchaseTable({ purchases }) {
             <th className="pl-5">Nº Venta</th>
             <th
               className="cursor-pointer pl-2"
-              onClick={() => handleSort("fecha")}
+              onClick={() => handleSort("date")}
             >
               <div className="flex items-center gap-2">
                 Fecha
-                {sortConfig.key === "fecha" &&
+                {sortConfig.key === "date" &&
                   (sortConfig.direction === "asc" ? (
                     <IoIosArrowUp />
                   ) : (
@@ -99,11 +117,11 @@ export default function PurchaseTable({ purchases }) {
             </th>
             <th
               className="cursor-pointer pl-2"
-              onClick={() => handleSort("cantidad")}
+              onClick={() => handleSort("amount_final")}
             >
               <div className="flex items-center gap-2">
                 Cantidad
-                {sortConfig.key === "cantidad" &&
+                {sortConfig.key === "amount_final" &&
                   (sortConfig.direction === "asc" ? (
                     <IoIosArrowUp />
                   ) : (
@@ -129,16 +147,21 @@ export default function PurchaseTable({ purchases }) {
           </tr>
         </thead>
         <tbody>
-          {paginatedPurchases.map((purchase, i) => (
-            <PurchaseRow
-              key={purchase.id}
-              purchase={purchase}
-              isExpanded={expandedItems[i]}
-              onToggleExpand={() => {
-                toggleExpand(i);
-              }}
-            />
-          ))}
+          {paginatedPurchases.map(
+            (purchase, i) => (
+              (
+                <PurchaseRow
+                  key={purchase.id}
+                  purchase={purchase}
+                  isExpanded={expandedItems[i]}
+                  onToggleExpand={() => {
+                    toggleExpand(i);
+                  }}
+                  handleShowPdf={handleShowPdf}
+                />
+              )
+            )
+          )}
         </tbody>
       </table>
 
