@@ -196,6 +196,19 @@ const SalesRegister = () => {
         setProductToDelete(null);
         setSelectedProductId(null);
     };
+    const fetchClientes = async () => {
+        try {
+            const data = await getClientAll();
+            setClientes(data);
+        } catch (err) {
+            toast.error("Error cargando clientes");
+        }
+    };
+
+    useEffect(() => {
+        fetchClientes();
+    }, []);
+
     const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
     const validarFormulario = () => products.length > 0 && clienteSeleccionado;
     const registrarCompra = async e => {
@@ -364,6 +377,7 @@ const SalesRegister = () => {
                                 formData={formDataCliente}
                                 handleChange={handleChangeCliente}
                                 onClose={() => setShowModal(false)}
+                                refreshClients={fetchClientes}
                             />
                         )}
                     </div>
