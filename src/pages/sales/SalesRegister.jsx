@@ -15,6 +15,7 @@ import Button from "../../components/Button";
 import { toast } from "react-toastify";
 import { getProductForSale } from "../../services/ProductService";
 import { getClientAll } from "../../services/ClientService";
+import { createSale } from "../../services/SalesService";
 import { IoMdPersonAdd, IoIosAddCircleOutline } from "react-icons/io";
 import { RiQrScan2Line } from "react-icons/ri";
 import { MdOutlineDelete } from "react-icons/md";
@@ -46,6 +47,9 @@ const SalesRegister = () => {
     const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "" });
     const [showQRModal, setShowQRModal] = useState(false);
 
+
+    // Employee
+    const employee = JSON.parse(localStorage.getItem("user"));
 
     // WS y sesión
     const sessionIdRef = localStorage.getItem("sessionId");
@@ -83,12 +87,11 @@ const SalesRegister = () => {
         const fetchData = async () => {
             try {
                 const data = await getProductForSale();
-                console.log("Prorductos: ", data);
-                const productosConIVA = data.map(p => ({
+                const productos = data.map(p => ({
                     ...p,
-                    price: p.price * (1 + IVA)
+                    price: p.price 
                 }));
-                setAllProducts(productosConIVA);
+                setAllProducts(productos);
             } catch (err) {
                 toast.error("Error loading products");
             }
@@ -203,10 +206,30 @@ const SalesRegister = () => {
             return;
         }
         try {
-            await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
+
+            //console.log("products", products);
+            const productsToSend = products.map(p => ({
+                productId: p.id,
+                amount: p.cantidad,
+            }));
+
+            const responseEInvoice = await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
+
+            console.log("responseEInvoice", responseEInvoice);
+            await createSale({
+                clientId: clienteSeleccionado.id,
+                employeeName: employee.name,
+                products: productsToSend,
+                bill_id: responseEInvoice.data.bill.id,
+                number_e_invoice: responseEInvoice.data.bill.reference_code,
+                cufe: responseEInvoice.data.bill.cufe,
+                qr_image: responseEInvoice.data.bill.qr_image,
+            });
+
+           
             toast.success("Factura electrónica generada exitosamente");
             navigate(`/${Modulo}/sales/list`);
-        } catch {
+        } catch (error) {
             toast.error("Error al generar la factura electrónica");
         }
     };

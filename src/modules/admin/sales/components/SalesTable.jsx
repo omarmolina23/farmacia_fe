@@ -111,22 +111,22 @@ const SalesTable = ({
                                 <tbody>
                                     {productos.map((producto, i) => (
                                         <tr key={producto.id} className="border-t text-gray-700">
-                                            <td className="text-center">{producto.nombre}</td>
-                                            <td className="text-center">{producto.categoria}</td>
-                                            <td className="text-center">{producto.proveedor}</td>
-                                            <td className="text-center">{producto.cantidad}</td>
+                                            <td className="text-center">{producto.products.name}</td>
+                                            <td className="text-center">{producto.products.category.name}</td>
+                                            <td className="text-center">{producto.products.supplier.name}</td>
+                                            <td className="text-center">{producto.amount}</td>
                                             <td className="text-center">
                                                 ${new Intl.NumberFormat('es-CO', {
                                                     minimumFractionDigits: 2,
                                                     maximumFractionDigits: 2
-                                                }).format(producto.precio * (1 + IVA))}
+                                                }).format(producto.products.price)}
                                             </td>
 
                                             <td className="text-center">
                                                 ${new Intl.NumberFormat('es-CO', {
                                                     minimumFractionDigits: 2,
                                                     maximumFractionDigits: 2
-                                                }).format(producto.precio * producto.cantidad * (1 + IVA))}
+                                                }).format(producto.products.price * producto.amount)}
                                             </td>
 
                                         </tr>
