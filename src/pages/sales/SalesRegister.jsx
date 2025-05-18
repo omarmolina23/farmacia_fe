@@ -93,7 +93,7 @@ const SalesRegister = () => {
                 }));
                 setAllProducts(productos);
             } catch (err) {
-                toast.error("Error loading products");
+                toast.error("Error cargando productos");
             }
         };
         fetchData();
@@ -206,8 +206,6 @@ const SalesRegister = () => {
             return;
         }
         try {
-
-            //console.log("products", products);
             const productsToSend = products.map(p => ({
                 productId: p.id,
                 amount: p.cantidad,
@@ -215,7 +213,6 @@ const SalesRegister = () => {
 
             const responseEInvoice = await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
 
-            console.log("responseEInvoice", responseEInvoice);
             await createSale({
                 clientId: clienteSeleccionado.id,
                 employeeName: employee.name,
@@ -226,11 +223,10 @@ const SalesRegister = () => {
                 qr_image: responseEInvoice.data.bill.qr_image,
             });
 
-           
-            toast.success("Factura electrónica generada exitosamente");
+            toast.success("Factura generada exitosamente");
             navigate(`/${Modulo}/sales/list`);
         } catch (error) {
-            toast.error("Error al generar la factura electrónica");
+            toast.error(error.message || "Error al registrar la venta");
         }
     };
 

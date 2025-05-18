@@ -22,10 +22,19 @@ export const createSale = async (sale) =>{
         const response = await axios.post("/sales", sale);
         return response.data;
     } catch (error) {
-        console.error("error", error);
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 }
+
+export const returnSale = async (sale_id, sale) => {
+    try {   
+        const response = await axios.patch(`/sales/return/${sale_id}`, sale);
+        console.log("Respuesta de la API:", response);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+};
 
 export const getSalesId = async (sales_reference_id) => {
     try {   
