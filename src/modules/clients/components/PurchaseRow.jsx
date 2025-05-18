@@ -1,6 +1,6 @@
 import { IoIosArrowDropright, IoIosArrowDropdown } from "react-icons/io";
 import { parseCurrency } from "../../../lib/utils";
-import { ReceiptIcon } from "lucide-react";
+import { FaFileInvoice } from "react-icons/fa6";
 
 const PurchaseRow = ({
   purchase,
@@ -38,7 +38,7 @@ const PurchaseRow = ({
         <td>
           <div className="flex justify-center cursor-pointer">
             <button className="cursor-pointer" onClick={() => handleShowPdf(purchase.id)}>
-              <ReceiptIcon />
+              <FaFileInvoice size={22} color="#6B7280"/>
             </button>
           </div>
         </td>
