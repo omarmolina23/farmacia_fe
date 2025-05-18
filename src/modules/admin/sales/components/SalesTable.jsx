@@ -23,8 +23,6 @@ const SalesTable = ({
     const IVA = 0.19;
     const navigate = useNavigate();
 
-    console.log("productos", productos);
-
     const saveInfo = () => {
         const salesData = {};
         localStorage.setItem("salesData", JSON.stringify(salesData));

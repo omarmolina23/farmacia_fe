@@ -1,23 +1,23 @@
-import mockAxios from "../config/axiosMock"; 
+import mockAxios from "../config/axiosMock";
 import axios from "../config/axios";
 
 function verifyUrl() {
     const apiUrl = import.meta.env.VITE_MOCK_URL;
-    if(!apiUrl) {
+    if (!apiUrl) {
         throw new Error();
     }
 }
 
 export const getSalesAll = async () => {
-    try {   
-        const response = await axios.get("/sales"); 
+    try {
+        const response = await axios.get("/sales");
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
     }
 };
 
-export const createSale = async (sale) =>{
+export const createSale = async (sale) => {
     try {
         const response = await axios.post("/sales", sale);
         return response.data;
@@ -27,9 +27,8 @@ export const createSale = async (sale) =>{
 }
 
 export const returnSale = async (sale_id, sale) => {
-    try {   
+    try {
         const response = await axios.patch(`/sales/return/${sale_id}`, sale);
-        console.log("Respuesta de la API:", response);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
@@ -37,7 +36,7 @@ export const returnSale = async (sale_id, sale) => {
 };
 
 export const getSalesId = async (sales_reference_id) => {
-    try {   
+    try {
         verifyUrl();
         const response = await mockAxios.get(`/return/${sales_reference_id}`);
         return response.data;
@@ -45,3 +44,23 @@ export const getSalesId = async (sales_reference_id) => {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
     }
 };
+
+export const getSalesUser = async (user_id) => {
+    try {
+        const response = await axios.get(`/sales/user/${user_id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+}
+
+export const generatePdf = async (sale_id) => {
+    try {
+        const response = await axios.get(`/sales/pdf/${sale_id}`, {
+            responseType: "blob",
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+}
