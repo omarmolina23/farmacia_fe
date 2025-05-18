@@ -18,6 +18,7 @@ export default function ProductRegister() {
     supplierId: "",
     concentration: "",
     activeIngredient: "",
+    barcode: "",
     weight: "",
     volume: "",
     ProductTag: [],

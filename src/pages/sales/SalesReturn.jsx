@@ -134,24 +134,28 @@ const SalesReturn = () => {
     useEffect(() => {
         const saleBack = async () => {
             try {
-                const [venta] = await getSalesId(sales_reference_id);
+                const sale = await getSalesId(sales_reference_id);
+                console.log("venta es:", sale)
 
-                if (venta?.cliente) {
-                    setClienteSeleccionado(venta.cliente);
+                
+                if (sale?.client) {
+                    console.log("cliente es:", sale.client)
+                    setClienteSeleccionado(sale.client);
                 }
 
-                if (venta?.productos) {
-                    const productosConvertidos = venta.productos.map(p => {
-                        const precioConIVA = p.price * (1 + IVA);
+                if (sale?.products) {
+                    const productosConvertidos = sale.products.map(p => {
+                        const precioConIVA = p.products.price * (1 + IVA);
                         return {
                             ...p,
                             price: precioConIVA,
-                            totalPrice: precioConIVA * p.cantidad,
+                            totalPrice: precioConIVA * p.amount,
                         };
                     });
 
                     setProducts(productosConvertidos);
                 }
+                    
 
             } catch (error) {
                 toast.error("Error al cargar datos de la venta simulada");
@@ -176,7 +180,6 @@ const SalesReturn = () => {
         calcularValorTotal();
     }, [products]);
 
-    // Resto de handlers...
     const cancelarVenta = () => {
         setProducts([]);
         setClienteSeleccionado(null);
@@ -206,10 +209,28 @@ const SalesReturn = () => {
             return;
         }
         try {
-            await sendElectronicInvoice({ cliente: sales.cliente, productos: products });
+
+            //console.log("products", products);
+            const productsToSend = products.map(p => ({
+                productId: p.id,
+                amount: p.cantidad,
+            }));
+
+            const responseEInvoice = await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
+
+            await createSale({
+                clientId: clienteSeleccionado.id,
+                employeeName: employee.name,
+                products: productsToSend,
+                bill_id: responseEInvoice.data.bill.id,
+                number_e_invoice: responseEInvoice.data.bill.reference_code,
+                cufe: responseEInvoice.data.bill.cufe,
+                qr_image: responseEInvoice.data.bill.qr_image,
+            });
+
             toast.success("Factura electrónica generada exitosamente");
             navigate(`/${Modulo}/sales/list`);
-        } catch {
+        } catch (error) {
             toast.error("Error al generar la factura electrónica");
         }
     };
@@ -292,15 +313,15 @@ const SalesReturn = () => {
                             {products.map((producto, index) => (
                                 <SalesProduct
                                     numeroProducto={index + 1}
-                                    key={producto.id}
-                                    name={producto.name}
-                                    category={producto.category}
-                                    supplier={producto.supplier}
-                                    cantidad={producto.cantidad}
-                                    price={producto.price}
+                                    key={producto.products.id}
+                                    name={producto.products.name}
+                                    category={producto.products.categoryId}
+                                    supplier={producto.products.supplierId}
+                                    cantidad={producto.amount}
+                                    price={producto.products.price}
                                     precioTotal={producto.totalPrice}
-                                    isSelected={selectedProductId === producto.id}
-                                    onProductSelect={() => handleProductSelect(producto.id)}
+                                    isSelected={selectedProductId === producto.products.id}
+                                    onProductSelect={() => handleProductSelect(producto.products.id)}
                                 />
                             ))}
                         </tbody>

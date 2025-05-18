@@ -17,12 +17,14 @@ const SalesTable = ({
     isExpanded,
     onToggleExpand,
 }) => {
-    const IVA = 0.19;
     const navigate = useNavigate();
 
     const saveInfo = () => {
-        const salesData = {};
-        localStorage.setItem("salesData", JSON.stringify(salesData));
+        if (productos.length > 0) {
+            const first = productos[0].products;
+            localStorage.setItem("supplier", first.supplier.name);
+            localStorage.setItem("category", first.category.name);
+        }
     };
 
     // llamar dos funciones sendCreditNote y cambiarStatus venta
@@ -49,14 +51,11 @@ const SalesTable = ({
             if (result.isConfirmed) {
                 try {
                     saveInfo();
-                    sendCreditNote({ bill_id: bill_id, reference_code: id, productos });
                     navigate(`/admin/sales/return/${id}`);
                     toast.success(`NotaCrédito creada con éxito.`);
                     refreshList();
                 } catch (error) {
-                    toast.error(
-                        `Error al crear la NotaCrédito`
-                    );
+                    toast.error(`Error al crear la NotaCrédito`);
                 }
             }
         });

@@ -1,4 +1,3 @@
-import mockAxios from "../config/axiosMock"; 
 import axios from "../config/axios";
 
 function verifyUrl() {
@@ -27,10 +26,10 @@ export const createSale = async (sale) =>{
     }
 }
 
-export const getSalesId = async (sales_reference_id) => {
+export const getSalesId = async (id) => {
     try {   
         verifyUrl();
-        const response = await mockAxios.get(`/return/${sales_reference_id}`);
+        const response = await axios.get(`/sales/${id}`);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");

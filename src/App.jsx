@@ -13,6 +13,7 @@ const ResetPassword = lazy(() => import("./pages/login/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
 const SalesList = lazy(() => import("./pages/sales/SalesList"));
 const ScanPage = lazy(() => import("./pages/sales/ScanPage"));
+const RegisterBarcode = lazy(() => import("./pages/products/RegisterBarcode"));
 const SalesRegister = lazy(() => import("./pages/sales/SalesRegister"));
 const SalesReturn = lazy(() => import("./pages/sales/SalesReturn"));
 const CategoryList = lazy(() => import("./pages/category/CategoryList"));
@@ -44,6 +45,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/scan-page/:session" element={<ScanPage />} />
+          <Route path="/register-barcode/:session" element={<RegisterBarcode />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
               <Route path="/admin">

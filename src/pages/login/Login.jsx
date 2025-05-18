@@ -57,6 +57,9 @@ const Login = () => {
       const sessionIdRef = crypto.randomUUID();
       localStorage.setItem("sessionId", sessionIdRef);
 
+      const barcode = crypto.randomUUID();
+      localStorage.setItem("barcode", barcode);
+
       try {
         await getAccessToken();
       } catch (factusError) {

@@ -15,8 +15,6 @@ export default function ScanPage() {
     const scannerRef = useRef(null);
     const [isScanning, setIsScanning] = useState(false);
     const [sock, setSocket] = useState(null);
-    const [products, setProducts] = useState([]);
-    const [productFound, setProductFound] = useState(null);
 
     useEffect(() => {
         getProductAll()
@@ -136,24 +134,6 @@ export default function ScanPage() {
                         <div id="reader" className="w-full aspect-video bg-white border rounded shadow" />
                     </CardContent>
                 </Card>
-
-                {productFound && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Producto escaneado</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
-                                <div><strong>ID:</strong> {productFound.id}</div>
-                                <div><strong>Nombre:</strong> {productFound.name}</div>
-                                <div><strong>Categoría:</strong> {productFound.category}</div>
-                                <div><strong>Proveedor:</strong> {productFound.supplier}</div>
-                                <div><strong>Precio:</strong> ${productFound.price}</div>
-                                <div><strong>Cantidad:</strong> <Badge variant="secondary">{productFound.amount}</Badge></div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
             </main>
         </div>
     );
