@@ -17,7 +17,8 @@ import { toast } from "react-toastify";
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
-  const [dateFilter, setDateFilter] = useState({ startDate: null, endDate: null, repaid: false });
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
+  console.log(today)
   const [allSales, setAllSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,16 +33,12 @@ const SalesList = () => {
   const { user } = useAuth();
   const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
   const Modulo = user?.isAdmin ? "admin" : "employees";
-
+  const [dateFilter, setDateFilter] = useState({ startDate: today, endDate: today, repaid: false, });
   const applyStatusFilter = (repaidValue, salesList = allSales) => {
     const filtered = salesList.filter(sale => sale.repaid === repaidValue);
     setSales(filtered);
   };
 
-
-  useEffect(() => {
-    fetchSales();
-  }, []);
 
   useEffect(() => {
     applyStatusFilter(filterStatus);
@@ -67,6 +64,10 @@ const SalesList = () => {
       toast.error("Error al obtener ventas");
     }
   };
+
+
+
+
   useEffect(() => {
     fetchSales({
       startDate: dateFilter.startDate,
@@ -74,6 +75,7 @@ const SalesList = () => {
       repaid: filterStatus,
     });
   }, [filterStatus, dateFilter]);
+
 
 
 
@@ -115,7 +117,7 @@ const SalesList = () => {
     }
 
     const { startDate, endDate, repaid } = filter;
-    setDateFilter({ startDate, endDate , repaid});
+    setDateFilter({ startDate, endDate, repaid });
   };
 
   const handleSort = (key) => {
