@@ -37,7 +37,7 @@ export default function UserUpdate() {
         }
 
         setFormData({
-          id: user.name ?? "",
+          id: user.id ?? "",
           name: user.name ?? "",
           phone: user.phone ?? "",
           email: user.email ?? "",
