@@ -36,16 +36,17 @@ export const getSalesId = async (id) => {
     }
 };
 
-export const getSalesFiltered = async ({ startdate, enddate } = {}) => {
+export const getSalesFiltered = async ({ startDate, endDate, repaid } = {}) => {
     try {
         const params = new URLSearchParams();
 
-        if (startdate) params.append("startdate", startdate);
-        if (enddate) params.append("enddate", enddate);
+        if (startDate) params.append("startDate", startDate);
+        if (endDate) params.append("endDate", endDate);
+        if(repaid) params.append("repaid", repaid);
 
         const queryString = params.toString() ? `?${params.toString()}` : "";
 
-        const response = await axios.get(`/sales${queryString}`);
+        const response = await axios.get(`/sales/date-range${queryString}`);
         return response.data;
     } catch (error) {
         throw new Error(

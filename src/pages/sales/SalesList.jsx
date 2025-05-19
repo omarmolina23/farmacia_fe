@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
-  const [dateFilter, setDateFilter] = useState({ startDate: null, endDate: null });
+  const [dateFilter, setDateFilter] = useState({ startDate: null, endDate: null, repaid: false });
   const [allSales, setAllSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,9 +51,9 @@ const SalesList = () => {
   const fetchSales = async (filters = {}) => {
     try {
       const data = await getSalesFiltered({
-        startdate: filters.startDate,
-        enddate: filters.endDate,
-        // repaid: filters.repaid,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        repaid: filters.repaid,
       });
 
       console.log("Datos recibidos del endpoint:", data);
@@ -71,7 +71,7 @@ const SalesList = () => {
     fetchSales({
       startDate: dateFilter.startDate,
       endDate: dateFilter.endDate,
-      // repaid: filterStatus,
+      repaid: filterStatus,
     });
   }, [filterStatus, dateFilter]);
 
@@ -110,12 +110,12 @@ const SalesList = () => {
 
   const handleApplyFilter = (filter) => {
     if (!filter) {
-      setDateFilter({ startDate: null, endDate: null });
+      setDateFilter({ startDate: null, endDate: null, repaid: false });
       return;
     }
 
-    const { startDate, endDate } = filter;
-    setDateFilter({ startDate, endDate });
+    const { startDate, endDate, repaid } = filter;
+    setDateFilter({ startDate, endDate , repaid});
   };
 
   const handleSort = (key) => {
