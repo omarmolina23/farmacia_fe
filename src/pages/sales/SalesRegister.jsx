@@ -29,7 +29,6 @@ const SalesRegister = () => {
     const { user } = useAuth();
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
     const Modulo = user?.isAdmin ? "admin" : "employees";
-    const [isLoading, setIsLoading] = useState(false);
     const [products, setProducts] = useState([]);
     const [buscar, setBuscar] = useState('');
     const [allProducts, setAllProducts] = useState([]);
@@ -46,14 +45,13 @@ const SalesRegister = () => {
     const [showModal, setShowModal] = useState(false);
     const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "" });
     const [showQRModal, setShowQRModal] = useState(false);
-
+    const [status, setStatus] = useState("idle");
 
     // Employee
     const employee = JSON.parse(localStorage.getItem("user"));
 
     // WS y sesión
     const sessionIdRef = localStorage.getItem("sessionId");
-    console.log("sesion inical", sessionIdRef)
 
     const allProductsRef = useRef([]);
 
@@ -147,11 +145,9 @@ const SalesRegister = () => {
         const sock = io(SOCKET_SERVER_URL);
         sock.on("connect", () => {
             sock.emit("join-room", sessionIdRef);
-            console.log("como se conecta", sessionIdRef)
         });
 
         sock.on("scan", productBarcode => {
-            console.log("producto:", productBarcode)
             const producto = allProductsRef.current.find(p => String(p.id).trim() === productBarcode);
             addOrUpdateProduct(producto, 1);
         });
@@ -218,7 +214,7 @@ const SalesRegister = () => {
             return;
         }
         try {
-            setIsLoading(true);
+            setStatus("loading");
             const productsToSend = products.map(p => ({
                 productId: p.id,
                 amount: p.cantidad,
@@ -235,14 +231,15 @@ const SalesRegister = () => {
                 cufe: responseEInvoice.data.bill.cufe,
                 qr_image: responseEInvoice.data.bill.qr_image,
             });
-
-            toast.success("Factura generada exitosamente");
-            navigate(`/${Modulo}/sales/list`);
+            setStatus("success");
+            setTimeout(() => {
+                setStatus("idle");
+                navigate(`/${Modulo}/sales/list`);
+            }, 2000);
         } catch (error) {
             toast.error(error.message || "Error al registrar la venta");
-        } finally {
-            setIsLoading(false); // Ocultar Loading
-        }
+            setStatus("idle");
+        } 
     };
 
     return (
@@ -454,7 +451,9 @@ const SalesRegister = () => {
                     />
                 )}
             </div>
-            {isLoading && <LoadingOverlay />}
+            {(status === "loading" || status === "success") && (
+                <LoadingOverlay status={status} />
+            )}
         </Layout>
     );
 };

@@ -19,7 +19,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const SalesReturn = () => {
     const { sales_reference_id } = useParams();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
     const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
     const Modulo = user?.isAdmin ? "admin" : "employees";
@@ -28,6 +27,7 @@ const SalesReturn = () => {
     const [precioTotal, setPrecioTotal] = useState('');
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+    const [status, setStatus] = useState("idle");
 
     const calcularValorTotal = () => {
         const total = products.reduce((sum, p) => sum + p.totalPrice, 0);
@@ -57,7 +57,6 @@ const SalesReturn = () => {
 
             } catch (error) {
                 toast.error("Error al cargar datos de la venta simulada");
-                console.error(error);
             }
         };
         saleBack();
@@ -97,7 +96,7 @@ const SalesReturn = () => {
         if (!result.isConfirmed) return;
 
         try {
-            setIsLoading(true);
+            setStatus("loading");
 
             if (!sale) {
                 toast.error("No se encontró la información de la venta");
@@ -121,13 +120,14 @@ const SalesReturn = () => {
                 number_credit_note: response.credit_note.number
             });
 
-            toast.success("Nota Crédito generada exitosamente.");
-            navigate(`/${Modulo}/sales/list`);
+            setStatus("success");
+            setTimeout(() => {
+                setStatus("idle");
+                navigate(`/${Modulo}/sales/list`);
+            }, 2000);
         } catch (error) {
             toast.error("Error al generar la nota crédito");
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+            setStatus("idle");
         }
     };
 
@@ -246,7 +246,9 @@ const SalesReturn = () => {
                     </div>
                 </div>
             </div>
-            {isLoading && <LoadingOverlay />}
+            {(status === "loading" || status === "success") && (
+                <LoadingOverlay status={status} />
+            )}
         </Layout>
     );
 };
