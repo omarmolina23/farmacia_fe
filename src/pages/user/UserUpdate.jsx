@@ -37,7 +37,6 @@ export default function UserUpdate() {
         }
 
         setFormData({
-          id: user.id ?? "",
           name: user.name ?? "",
           phone: user.phone ?? "",
           email: user.email ?? "",
@@ -137,7 +136,6 @@ export default function UserUpdate() {
     if (!validateForm()) return;
 
     const userData = {
-      id: formData.id,
       name: formData.name,
       phone: formData.phone,
       email: formData.email,
