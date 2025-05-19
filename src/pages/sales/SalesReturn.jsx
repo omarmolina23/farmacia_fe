@@ -69,9 +69,6 @@ const SalesReturn = () => {
     }, [products]);
 
     const cancelarDevolucion = () => {
-        setProducts([]);
-        setClienteSeleccionado(null);
-        setBuscarCliente('');
         navigate(`/${Modulo}/sales/list`);
     };
     const handleProductSelect = id => setSelectedProductId(prev => prev === id ? null : id);

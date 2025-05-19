@@ -1,4 +1,4 @@
-// import mockAxios from "../config/axiosMock"; 
+import axios from "../config/axios";
 
 function verifyUrl() {
     const apiUrl = import.meta.env.VITE_MOCK_URL;
@@ -9,7 +9,7 @@ function verifyUrl() {
 export const getDailyStatus = async () => {
     try {   
         verifyUrl();
-        const response = await mockAxios.get("/daily-status");
+        const response = await axios.get("/dashboard/daily-status");
         console.log("response", response);
         return response.data;
     } catch (error) {
@@ -20,7 +20,7 @@ export const getDailyStatus = async () => {
 export const getMinimumStock = async () => {
     try {
         verifyUrl();
-        const response = await mockAxios.get("/minimum-stock");
+        const response = await axios.get("/dashboard/minimum-stock");
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el stock mínimo");
@@ -30,7 +30,7 @@ export const getMinimumStock = async () => {
 export const getProductsSold = async () => {
     try {
         verifyUrl();
-        const response = await mockAxios.get("/products-sold");
+        const response = await axios.get("/dashboard/products-sold");
         return response.data;
     } catch (error) {
         throw new Error(
@@ -42,7 +42,7 @@ export const getProductsSold = async () => {
 export const getRecentSales = async () => {
     try {
         verifyUrl();
-        const response = await mockAxios.get("/recent-sales");
+        const response = await axios.get("/dashboard/recent-sales");
         return response.data;
     } catch (error) {
         throw new Error(
@@ -54,7 +54,7 @@ export const getRecentSales = async () => {
 export const getSalesByCategory = async () => {
     try {
         verifyUrl();
-        const response = await mockAxios.get("/sales-category");
+        const response = await axios.get("/dashboard/sales-category");
         return response.data;
     } catch (error) {
         throw new Error(
@@ -66,7 +66,7 @@ export const getSalesByCategory = async () => {
 export const getProfitByCategory = async () => {
     try {
         verifyUrl();
-        const response = await mockAxios.get("/profit-category");
+        const response = await axios.get("/dashboard/profit-category");
         return response.data;
     } catch (error) {
         throw new Error(

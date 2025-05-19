@@ -17,7 +17,8 @@ import { toast } from "react-toastify";
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
-  const [dateFilter, setDateFilter] = useState({ startDate: null, endDate: null });
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
+  console.log(today)
   const [allSales, setAllSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,16 +33,12 @@ const SalesList = () => {
   const { user } = useAuth();
   const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
   const Modulo = user?.isAdmin ? "admin" : "employees";
-
+  const [dateFilter, setDateFilter] = useState({ startDate: today, endDate: today, repaid: false, });
   const applyStatusFilter = (repaidValue, salesList = allSales) => {
     const filtered = salesList.filter(sale => sale.repaid === repaidValue);
     setSales(filtered);
   };
 
-
-  useEffect(() => {
-    fetchSales();
-  }, []);
 
   useEffect(() => {
     applyStatusFilter(filterStatus);
@@ -51,9 +48,9 @@ const SalesList = () => {
   const fetchSales = async (filters = {}) => {
     try {
       const data = await getSalesFiltered({
-        startdate: filters.startDate,
-        enddate: filters.endDate,
-        // repaid: filters.repaid,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        repaid: filters.repaid,
       });
 
       console.log("Datos recibidos del endpoint:", data);
@@ -67,13 +64,18 @@ const SalesList = () => {
       toast.error("Error al obtener ventas");
     }
   };
+
+
+
+
   useEffect(() => {
     fetchSales({
       startDate: dateFilter.startDate,
       endDate: dateFilter.endDate,
-      // repaid: filterStatus,
+      repaid: filterStatus,
     });
   }, [filterStatus, dateFilter]);
+
 
 
 
@@ -110,12 +112,12 @@ const SalesList = () => {
 
   const handleApplyFilter = (filter) => {
     if (!filter) {
-      setDateFilter({ startDate: null, endDate: null });
+      setDateFilter({ startDate: null, endDate: null, repaid: false });
       return;
     }
 
-    const { startDate, endDate } = filter;
-    setDateFilter({ startDate, endDate });
+    const { startDate, endDate, repaid } = filter;
+    setDateFilter({ startDate, endDate, repaid });
   };
 
   const handleSort = (key) => {
