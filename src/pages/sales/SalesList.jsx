@@ -93,6 +93,7 @@ const SalesList = () => {
 
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
+
     setSearchQuery(query);
 
     if (query.trim() === "") {
@@ -102,7 +103,7 @@ const SalesList = () => {
 
     const filtered = allSales.filter(
       sale =>
-        (sale.cliente.toLowerCase().includes(query) || sale.vendedor.toLowerCase().includes(query)) &&
+        (sale.client.name.toLowerCase().includes(query) || sale.employeeName.toLowerCase().includes(query)) &&
         sale.repaid === filterStatus
     );
 

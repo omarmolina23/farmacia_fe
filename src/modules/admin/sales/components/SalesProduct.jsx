@@ -35,10 +35,10 @@ const SalesProduct = ({
                 </td>
                 : <td className="px-2" />
             }
-            <td>{numeroProducto}</td>
-            <td className="text-left">{name}</td>
-            <td className="text-left">{category}</td>
-            <td className="text-left">{supplier}</td>
+            <td className="text-center">{numeroProducto}</td>
+            <td className="text-center">{name}</td>
+            <td className="text-center">{category}</td>
+            <td className="text-center">{supplier}</td>
             <td className="text-center">{cantidad}</td>
             <td className="text-center">{formatter.format(price)}</td>
             <td className="text-center">{formatter.format(precioTotal)}</td>

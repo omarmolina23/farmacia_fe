@@ -310,9 +310,9 @@ const SalesRegister = () => {
                         <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
                             <tr className="h-9">
                                 <th></th>
-                                <th>N°</th>
-                                <th className="text-left">Nombre</th>
-                                <th className="text-left">Categoria</th>
+                                <th className="text-center">N°</th>
+                                <th className="text-center">Nombre</th>
+                                <th className="text-center">Categoria</th>
                                 <th className="text-center">Proveedor</th>
                                 <th className="text-center">Cantidad</th>
                                 <th className="text-center">Precio Unitario</th>

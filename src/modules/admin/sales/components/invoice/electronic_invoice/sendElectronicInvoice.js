@@ -11,11 +11,8 @@ import { buildInvoiceData } from "./generateInvoiceData";
  */
 export async function sendElectronicInvoice({ ventaId, cliente, productos }) {
     const facturaData = buildInvoiceData({ ventaId, cliente, productos });
-    console.log("Factura lista para enviar:", JSON.stringify(facturaData, null, 2));
-
     try {
         const response = await createInvoice(facturaData);
-        console.log("Respuesta Factus:", response);
         return response;
     } catch (error) {
         if (error.response) {
