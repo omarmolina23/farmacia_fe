@@ -109,13 +109,12 @@ export const searchUser = async (query) => {
 export const updateUser = async (id, updateData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.patch(`/users/${id}`, updateData, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        console.log(updateData);
+        const response = await axios.patch(`/users/${id}`, updateData);
+        console.log("Hola", response);
         return response.data;
     } catch (error) {
+        console.log(error);
         throw new Error(error.response?.data?.message || 'Error al desactivar el usuario');
     }
 };
