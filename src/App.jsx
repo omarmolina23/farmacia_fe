@@ -18,13 +18,9 @@ const RegisterBarcode = lazy(() => import("./pages/products/RegisterBarcode"));
 const SalesRegister = lazy(() => import("./pages/sales/SalesRegister"));
 const SalesReturn = lazy(() => import("./pages/sales/SalesReturn"));
 const CategoryList = lazy(() => import("./pages/category/CategoryList"));
-const CategoryRegister = lazy(() =>
-  import("./pages/category/CategoryRegister")
-);
+const CategoryRegister = lazy(() => import("./pages/category/CategoryRegister"));
 const CategoryUpdate = lazy(() => import("./pages/category/CategoryUpdate"));
-const SupplierRegister = lazy(() =>
-  import("./pages/supplier/SupplierRegister")
-);
+const SupplierRegister = lazy(() => import("./pages/supplier/SupplierRegister"));
 const SupplierList = lazy(() => import("./pages/supplier/SupplierList"));
 const SupplierUpdate = lazy(() => import("./pages/supplier/SupplierUpdate"));
 const ProductRegister = lazy(() => import("./pages/products/ProductRegister"));
