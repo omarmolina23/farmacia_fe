@@ -9,7 +9,7 @@ import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import { getSalesId } from "../../services/SalesService";
 import Button from "../../components/Button";
-import { returnSale } from "../../services/SalesService";
+import { returnSale, updateSale } from "../../services/SalesService";
 import { sendCreditNote } from "../../modules/admin/sales/components/invoice/credit_note/sendCreditNote"
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -114,14 +114,21 @@ const SalesReturn = () => {
             }));
 
             if (tieneFacturaElectronica) {
+                
                 const response = await sendCreditNote({
                     bill_id: sale.bill_id,
                     reference_code: sale.id,
                     productos: productsToReturn,
                 });
-                await returnSale(sale.id, {
-                    number_credit_note: response.credit_note.number
+                console.log("Nota de crédito generada:", response.data.credit_note.cude);
+                await updateSale(sale.id, {
+                    number_credit_note: response.data.credit_note.number,
+                    cufe: response.data.credit_note.cude,
+                    qr_image: response.data.credit_note.qr_image,
                 });
+                
+                await returnSale(sale.id);
+
             } else {
                 await returnSale(sale.id); // Solo devuelve sin generar nota crédito
             }

@@ -295,15 +295,7 @@ const SalesList = () => {
                 id={sale.id}
                 reference_code={sale.reference_code}
                 number_e_invoice={sale.number_e_invoice}
-                fecha={new Date(sale.date).toLocaleString("es-CO", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                  timeZone: "America/Bogota",
-                })}
+                fecha={new Date(sale.date)}
                 cliente={sale.client}
                 vendedor={sale.employeeName}
                 total={sale.total}

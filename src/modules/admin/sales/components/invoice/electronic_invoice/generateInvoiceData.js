@@ -16,12 +16,9 @@ function generateRandomVentaId() {
  * @param {Array} params.productos
  * @returns {Object}
  */
-export function buildInvoiceData({ ventaId, cliente, productos }) {
+export function buildInvoiceData({ fecha, ventaId, cliente, productos }) {
     const idVenta = ventaId || generateRandomVentaId();
 
-    console.log("productosGenerate", productos);
-
-    const fecha = new Date();
     const nextDay = new Date(fecha);
     nextDay.setDate(fecha.getDate() + 1);
 
