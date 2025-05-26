@@ -1,32 +1,47 @@
 import { useState } from "react";
 import { SearchIcon } from "lucide-react";
 import { getSalesUser } from "../../../services/SalesService";
+import { searchClientById } from "../../../services/ClientService";
 import TextField from "../../../components/TextField";
 import ClientLayout from "../../../modules/clients/layouts/ClientLayout";
 import PurchaseTable from "../../../modules/clients/components/PurchaseTable";
+import VerifyModal from "../../../modules/clients/components/VerifyModal";
 
 export default function Purchases() {
   const [query, setQuery] = useState("");
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showVerify, setShowVerify] = useState(false);
+  const [clientEmail, setClientEmail] = useState('');
 
-  async function handleSearch() {
+
+  const handleSearch = async () => {
     if (!query) return;
-
     setLoading(true);
-    setError("");
-
+    setError('');
     try {
-      const sales = await getSalesUser(query);
-      setPurchases(sales); // Asegúrate que el backend responde con un array de ventas
-    } catch (err) {
-      console.error("Error al obtener las compras:", err);
-      setError("No se pudieron cargar las compras. Intenta de nuevo.");
+      const client = await searchClientById(query);
+      if (!client.phone) throw new Error();
+      setClientEmail(client.email);
+      setShowVerify(true);
+    } catch {
+      setError('Cliente no encontrado.');
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleVerified = async () => {
+    try {
+      const sales = await getSalesUser(query);
+      setPurchases(sales);
+    } catch {
+      setError('Error al cargar compras.');
+    } finally {
+      setShowVerify(false);
+    }
+  };
 
   return (
     <ClientLayout>
@@ -61,6 +76,13 @@ export default function Purchases() {
           )}
         </div>
       </section>
+      {showVerify && (
+        <VerifyModal
+          emailReal={clientEmail}
+          onVerified={handleVerified}
+          onClose={() => setShowVerify(false)}
+        />
+      )}
     </ClientLayout>
   );
 }

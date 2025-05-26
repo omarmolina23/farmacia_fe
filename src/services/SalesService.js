@@ -18,6 +18,20 @@ export const createSale = async (sale) => {
     }
 }
 
+export const updateSale = async (sale_id, data) => {
+    try {
+        const response = await axios.patch(`/sales/einvoice/${sale_id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error en updateSale:", error.response || error);
+        throw new Error(
+            error.response?.data?.message ||
+            "Ha ocurrido un error al actualizar la venta"
+        );
+    }
+};
+
+
 export const returnSale = async (sale_id, sale) => {
     try {
         const response = await axios.patch(`/sales/return/${sale_id}`, sale);
@@ -42,7 +56,7 @@ export const getSalesFiltered = async ({ startDate, endDate, repaid } = {}) => {
 
         if (startDate) params.append("startDate", startDate);
         if (endDate) params.append("endDate", endDate);
-        if(repaid) params.append("repaid", repaid);
+        if (repaid) params.append("repaid", repaid);
 
         const queryString = params.toString() ? `?${params.toString()}` : "";
 

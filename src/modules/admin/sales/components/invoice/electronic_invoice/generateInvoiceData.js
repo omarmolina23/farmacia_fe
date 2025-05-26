@@ -31,7 +31,7 @@ export function buildInvoiceData({ ventaId, cliente, productos }) {
     const items = productos.map(producto => ({
         code_reference: String(producto.id),
         name: producto.name,
-        quantity: producto.cantidad,
+        quantity: producto.amount,
         discount_rate: 0,
         price: Number(producto.price),
         tax_rate: "19.00",

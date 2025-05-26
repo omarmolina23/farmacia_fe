@@ -220,17 +220,16 @@ const SalesRegister = () => {
                 amount: p.cantidad,
             }));
 
-            const responseEInvoice = await sendElectronicInvoice({ cliente: clienteSeleccionado, productos: products });
-
             await createSale({
                 clientId: clienteSeleccionado.id,
                 employeeName: employee.name,
                 products: productsToSend,
-                bill_id: responseEInvoice.data.bill.id,
-                number_e_invoice: responseEInvoice.data.bill.reference_code,
-                cufe: responseEInvoice.data.bill.cufe,
-                qr_image: responseEInvoice.data.bill.qr_image,
+//                bill_id: 0,
+//               number_e_invoice: "null",
+//                cufe: "null",
+//                qr_image: "null",
             });
+
             setStatus("success");
             setTimeout(() => {
                 setStatus("idle");
@@ -239,7 +238,7 @@ const SalesRegister = () => {
         } catch (error) {
             toast.error(error.message || "Error al registrar la venta");
             setStatus("idle");
-        } 
+        }
     };
 
     return (

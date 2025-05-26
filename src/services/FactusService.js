@@ -20,7 +20,6 @@ export const getAccessToken = async () => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-        console.log("factus_access_token", response.data.access_token)
         localStorage.setItem("factus_access_token", response.data.access_token);
         localStorage.setItem("factus_refresh_token", response.data.refresh_token);
         return response.data;
