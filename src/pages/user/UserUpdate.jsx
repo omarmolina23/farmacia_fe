@@ -137,7 +137,6 @@ export default function UserUpdate() {
     if (!validateForm()) return;
 
     const userData = {
-      id: formData.id,
       name: formData.name,
       phone: formData.phone,
       email: formData.email,
