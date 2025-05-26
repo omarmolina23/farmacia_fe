@@ -32,9 +32,9 @@ export const updateSale = async (sale_id, data) => {
 };
 
 
-export const returnSale = async (sale_id, sale) => {
+export const returnSale = async (sale_id) => {
     try {
-        const response = await axios.patch(`/sales/return/${sale_id}`, sale);
+        const response = await axios.patch(`/sales/return/${sale_id}`);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");

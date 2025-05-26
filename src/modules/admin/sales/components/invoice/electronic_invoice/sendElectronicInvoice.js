@@ -9,8 +9,8 @@ import { buildInvoiceData } from "./generateInvoiceData";
  * @param {Array} params.productos
  * @returns {Promise<Object>}
  */
-export async function sendElectronicInvoice({ ventaId, cliente, productos }) {
-    const facturaData = buildInvoiceData({ ventaId, cliente, productos });
+export async function sendElectronicInvoice({ fecha, ventaId, cliente, productos }) {
+    const facturaData = buildInvoiceData({ fecha, ventaId, cliente, productos });
     try {
         const response = await createInvoice(facturaData);
         return response;

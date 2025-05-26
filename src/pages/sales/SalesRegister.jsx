@@ -43,14 +43,10 @@ const SalesRegister = () => {
   const [sugerenciasClientes, setSugerenciasClientes] = useState([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [formDataCliente, setFormDataCliente] = useState({
-    name: "",
-    id: "",
-    email: "",
-    phone: "",
-  });
+  const [formDataCliente, setFormDataCliente] = useState({ name: "", id: "", email: "", phone: "", });
   const [showQRModal, setShowQRModal] = useState(false);
   const [status, setStatus] = useState("idle");
+  const date = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
 
   // Employee
   const employee = JSON.parse(localStorage.getItem("user"));
@@ -256,17 +252,13 @@ const SalesRegister = () => {
                 productId: p.id,
                 amount: p.cantidad,
             }));
-
+            console.log(date);
             await createSale({
-                clientId: clienteSeleccionado.id,
-                employeeName: employee.name,
-                products: productsToSend,
-//                bill_id: 0,
-//               number_e_invoice: "null",
-//                cufe: "null",
-//                qr_image: "null",
+              date: date.toISOString(),
+              clientId: clienteSeleccionado.id,
+              employeeName: employee.name,
+              products: productsToSend,
             });
-
             setStatus("success");
             setTimeout(() => {
                 setStatus("idle");

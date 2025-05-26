@@ -24,7 +24,6 @@ const SalesTable = ({
 }) => {
     const navigate = useNavigate();
     const [status, setStatus] = useState("idle");
-    console.log(id)
     const handleSalesReturn = () => {
         navigate(`/admin/sales/return/${id}`);
     };
@@ -52,14 +51,14 @@ const SalesTable = ({
 
             // Declara aquí la variable response
             const response = await sendElectronicInvoice({
+                fecha: fecha,
                 cliente: cliente,
                 productos: productsToSend
             });
-            console.log(response);
 
             await updateSale(id, {
                 bill_id: response.data.bill.id,
-                number_e_invoice: response.data.bill.number,    // según tu respuesta
+                number_e_invoice: response.data.bill.number,   
                 cufe: response.data.bill.cufe,
                 qr_image: response.data.bill.qr_image,
             });
@@ -91,7 +90,17 @@ const SalesTable = ({
                     )}
                 </td>
                 <td className="text-left pl-6">{index + 1}</td>
-                <td className="px-4 py-2 align-middle">{fecha}</td>
+                <td className="px-4 py-2 align-middle">{fecha
+                        ? new Date(fecha).toLocaleString("es-CO", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                            timeZone: "America/Bogota",
+                        })
+                        : ""}</td>
                 <td className="px-4 py-2 align-middle">{cliente.name}</td>
                 <td className="px-4 py-2 align-middle" >{vendedor}</td>
                 <td className=" py- align-middle">${total?.toLocaleString()}</td>
