@@ -74,7 +74,7 @@ export default function SupplierUpdate() {
             await updateSupplier(formData.id, formData);
             toast.success("Proveedor actualizado exitosamente", { position: "top-right", autoClose: 3000 });
             navigate("/admin/supplier/list");
-            setFormData({ id: "", name: "", phone: "", email: "" });
+            setFormData({ name: "", phone: "", email: "" });
             localStorage.removeItem("supplierData"); // Limpiar localStorage después de actualizar
         } catch (error) {
             toast.error(error.message);
