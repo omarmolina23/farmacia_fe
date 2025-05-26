@@ -71,7 +71,12 @@ export default function SupplierUpdate() {
         }
 
         try {
-            await updateSupplier(formData.id, formData);
+            await updateSupplier(formData.id, {
+                name: formData.name,
+                phone: formData.phone,
+                email: formData.email
+            });
+            
             toast.success("Proveedor actualizado exitosamente", { position: "top-right", autoClose: 3000 });
             navigate("/admin/supplier/list");
             setFormData({ name: "", phone: "", email: "" });
