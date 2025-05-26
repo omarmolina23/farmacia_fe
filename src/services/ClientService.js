@@ -21,11 +21,25 @@ export const getClientAll = async () => {
 
 export const searchClientById = async (id) => {
     try {
-        const response = await axios.get(`/client/id`, {
-            params: { id }
-        });
+        const response = await axios.get(`/client/${id}`);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 }
+
+export const sendCodeVerification = async ({ email }) => {
+    try {
+        const response = await axios.post('/client/send-code', { email });
+        return response;
+        
+    } catch (error) {
+        console.error("Error al enviar código:", error.response);
+        throw new Error(
+            error.response?.data?.message ||
+            error.message ||
+            "Ha ocurrido un error al enviar el código de verificación"
+        );
+    }
+};
+

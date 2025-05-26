@@ -12,7 +12,6 @@ import Button from "../../components/Button";
 import { returnSale } from "../../services/SalesService";
 import { sendCreditNote } from "../../modules/admin/sales/components/invoice/credit_note/sendCreditNote"
 import { toast } from "react-toastify";
-import { getProductForSale } from "../../services/ProductService";
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -75,6 +74,13 @@ const SalesReturn = () => {
     const devolverCompra = async e => {
         e.preventDefault();
 
+        if (!sale) {
+            toast.error("No se encontró la información de la venta");
+            return;
+        }
+
+        const tieneFacturaElectronica = sale.number_e_invoice !== null && sale.number_e_invoice !== "null";
+
         const result = await Swal.fire({
             customClass: {
                 popup: "swal2-show",
@@ -85,7 +91,9 @@ const SalesReturn = () => {
                 text: "!font-medium !text-gray-500 !text-mb !mx-auto",
             },
             title: `¿Devolver venta con referencia: ${sale.id}?`,
-            text: "Está acción generará una Nota Crédito.",
+            text: tieneFacturaElectronica
+                ? "Esta acción generará una Nota Crédito."
+                : "Esta venta no tiene factura electrónica. Se devolverán los productos al inventario pero no se generará Nota Crédito.",
             icon: "warning",
             showCancelButton: true,
             iconColor: "#000000",
@@ -98,11 +106,6 @@ const SalesReturn = () => {
         try {
             setStatus("loading");
 
-            if (!sale) {
-                toast.error("No se encontró la información de la venta");
-                return;
-            }
-
             const productsToReturn = sale.products.map((product) => ({
                 id: product.id,
                 nombre: product.products.name,
@@ -110,15 +113,18 @@ const SalesReturn = () => {
                 precio: product.products.price,
             }));
 
-            const response = await sendCreditNote({
-                bill_id: sale.bill_id,
-                reference_code: sale.id,
-                productos: productsToReturn,
-            });
-
-            await returnSale(sale.id, {
-                number_credit_note: response.credit_note.number
-            });
+            if (tieneFacturaElectronica) {
+                const response = await sendCreditNote({
+                    bill_id: sale.bill_id,
+                    reference_code: sale.id,
+                    productos: productsToReturn,
+                });
+                await returnSale(sale.id, {
+                    number_credit_note: response.credit_note.number
+                });
+            } else {
+                await returnSale(sale.id); // Solo devuelve sin generar nota crédito
+            }
 
             setStatus("success");
             setTimeout(() => {
@@ -126,13 +132,10 @@ const SalesReturn = () => {
                 navigate(`/${Modulo}/sales/list`);
             }, 2000);
         } catch (error) {
-            toast.error("Error al generar la nota crédito");
+            toast.error("Error al devolver la venta");
             setStatus("idle");
         }
     };
-
-
-
 
     return (
         <Layout title="Registrar Venta">

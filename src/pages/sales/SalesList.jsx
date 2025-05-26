@@ -8,7 +8,7 @@ import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout";
 import SalesTable from "../../modules/admin/sales/components/SalesTable";
 import FilterModal from "../../modules/admin/sales/components/FilterModal";
-import { getSalesAll, getSalesFiltered } from "../../services/SalesService";
+import { getSalesFiltered } from "../../services/SalesService";
 import FilterRepaid from "../../components/FilterRepaid";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
@@ -18,7 +18,6 @@ const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
-  console.log(today)
   const [allSales, setAllSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,10 +33,7 @@ const SalesList = () => {
   const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
   const Modulo = user?.isAdmin ? "admin" : "employees";
   const [dateFilter, setDateFilter] = useState({ startDate: today, endDate: today, repaid: false, });
-  const applyStatusFilter = (repaidValue, salesList = allSales) => {
-    const filtered = salesList.filter(sale => sale.repaid === repaidValue);
-    setSales(filtered);
-  };
+  const applyStatusFilter = (repaidValue, salesList = allSales) => { const filtered = salesList.filter(sale => sale.repaid === repaidValue); setSales(filtered);};
 
 
   useEffect(() => {
@@ -53,7 +49,6 @@ const SalesList = () => {
         repaid: filters.repaid,
       });
 
-      console.log("Datos recibidos del endpoint:", data);
       if (Array.isArray(data)) {
         setAllSales(data);
         setSales(data);
@@ -65,7 +60,19 @@ const SalesList = () => {
     }
   };
 
-
+  const reloadSales = async () => {
+    try {
+      const data = await getSalesFiltered({
+        startDate: dateFilter.startDate,
+        endDate: dateFilter.endDate,
+        repaid: filterStatus,
+      });
+      setAllSales(data);
+      setSales(data);
+    } catch {
+      toast.error("Error al recargar ventas");
+    }
+  };
 
 
   useEffect(() => {
@@ -77,7 +84,9 @@ const SalesList = () => {
   }, [filterStatus, dateFilter]);
 
 
-
+  useEffect(() => {
+    reloadSales();
+  }, [filterStatus, dateFilter]);
 
   const handleSaleRegister = () => {
     navigate(`/${Modulo}/sales/register`);
@@ -207,13 +216,13 @@ const SalesList = () => {
         <table className="min-w-full text-sm">
           <thead className="p-5 bg-[#95A09D] text-left">
             <tr className="h-9">
-              <th className="pl-5"></th>
+              <th className=" pl-5"></th>
               <th className="pl-5">Nº</th>
               <th
                 onMouseEnter={() => setHoverColumn("fecha")}
                 onMouseLeave={() => setHoverColumn(null)}
                 onClick={() => handleSort("fecha")}
-                className="cursor-pointer pl-2"
+                className="px-4 py-2 text-left align-middle"
               >
                 <div className="flex items-center gap-2">
                   Fecha
@@ -229,7 +238,7 @@ const SalesList = () => {
                 onMouseEnter={() => setHoverColumn("cliente")}
                 onMouseLeave={() => setHoverColumn(null)}
                 onClick={() => handleSort("cliente")}
-                className="cursor-pointer pl-2"
+                className="px-4 py-2 text-left align-middle"
               >
                 <div className="flex items-center gap-2">
                   Cliente
@@ -246,7 +255,7 @@ const SalesList = () => {
                 onMouseEnter={() => setHoverColumn("vendedor")}
                 onMouseLeave={() => setHoverColumn(null)}
                 onClick={() => handleSort("vendedor")}
-                className="cursor-pointer pl-2"
+                className="px-4 py-2 text-left align-middle"
               >
                 <div className="flex items-center gap-2">
                   Vendedor
@@ -263,7 +272,7 @@ const SalesList = () => {
                 onMouseEnter={() => setHoverColumn("total")}
                 onMouseLeave={() => setHoverColumn(null)}
                 onClick={() => handleSort("total")}
-                className="cursor-pointer pl-2"
+                className="cpx-4 py-2 text-left align-middle"
               >
                 <div className="flex items-center gap-2">
                   Total
@@ -275,7 +284,7 @@ const SalesList = () => {
                     ))}
                 </div>
               </th>
-              <th className="pl-6">Acciones</th>
+              <th className="px-4 py-2 text-left align-middle">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -284,8 +293,8 @@ const SalesList = () => {
                 key={sale.id}
                 index={(currentPage - 1) * rowsPerPage + index}
                 id={sale.id}
-                bill_id={sale.bill_id}
                 reference_code={sale.reference_code}
+                number_e_invoice={sale.number_e_invoice}
                 fecha={new Date(sale.date).toLocaleString("es-CO", {
                   day: "2-digit",
                   month: "2-digit",
@@ -302,6 +311,7 @@ const SalesList = () => {
                 repaid={sale.repaid}
                 isExpanded={expandedSaleId === sale.id}
                 onToggleExpand={handleToggleExpand}
+                reloadSales={reloadSales}
               />
             ))}
           </tbody>

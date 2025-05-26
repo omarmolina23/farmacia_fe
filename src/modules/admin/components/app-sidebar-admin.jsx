@@ -50,7 +50,7 @@ export function AppSidebarAdmin({ ...props }) {
                             </Link>
                         </li>
                         <li className="mb-[10px] p-2 rounded-md hover:bg-[#8B83BA] transition-colors duration-300">
-                            <Link className="flex flex-row items-center" to="/admin/prediccion">
+                            <Link className="flex flex-row items-center" to="/admin/forecasting">
                                 <BsStars className="mr-4 text-xl" /> Predicción
                             </Link>
                         </li>

@@ -24,7 +24,7 @@ export const signOut = async () => {
     try {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-
+        
         localStorage.removeItem('factus_access_token');
         localStorage.removeItem('factus_refresh_token');
 

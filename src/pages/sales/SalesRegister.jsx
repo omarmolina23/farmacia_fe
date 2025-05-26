@@ -242,53 +242,41 @@ const SalesRegister = () => {
     fetchClientes();
   }, []);
 
-  const handleChangeCliente = (e) =>
-    setFormDataCliente((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  const validarFormulario = () => products.length > 0 && clienteSeleccionado;
-  const registrarCompra = async (e) => {
-    e.preventDefault();
-    if (!validarFormulario()) {
-      toast.error(
-        products.length === 0
-          ? "Debe agregar al menos un producto"
-          : "Debe seleccionar un cliente"
-      );
-      return;
-    }
-    try {
-      setStatus("loading");
-      const productsToSend = products.map((p) => ({
-        productId: p.id,
-        amount: p.cantidad,
-      }));
+    const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const validarFormulario = () => products.length > 0 && clienteSeleccionado;
+    const registrarCompra = async e => {
+        e.preventDefault();
+        if (!validarFormulario()) {
+            toast.error(products.length === 0 ? 'Debe agregar al menos un producto' : 'Debe seleccionar un cliente');
+            return;
+        }
+        try {
+            setStatus("loading");
+            const productsToSend = products.map(p => ({
+                productId: p.id,
+                amount: p.cantidad,
+            }));
 
-      const responseEInvoice = await sendElectronicInvoice({
-        cliente: clienteSeleccionado,
-        productos: products,
-      });
+            await createSale({
+                clientId: clienteSeleccionado.id,
+                employeeName: employee.name,
+                products: productsToSend,
+//                bill_id: 0,
+//               number_e_invoice: "null",
+//                cufe: "null",
+//                qr_image: "null",
+            });
 
-      await createSale({
-        clientId: clienteSeleccionado.id,
-        employeeName: employee.name,
-        products: productsToSend,
-        bill_id: responseEInvoice.data.bill.id,
-        number_e_invoice: responseEInvoice.data.bill.reference_code,
-        cufe: responseEInvoice.data.bill.cufe,
-        qr_image: responseEInvoice.data.bill.qr_image,
-      });
-      setStatus("success");
-      setTimeout(() => {
-        setStatus("idle");
-        navigate(`/${Modulo}/sales/list`);
-      }, 2000);
-    } catch (error) {
-      toast.error(error.message || "Error al registrar la venta");
-      setStatus("idle");
-    }
-  };
+            setStatus("success");
+            setTimeout(() => {
+                setStatus("idle");
+                navigate(`/${Modulo}/sales/list`);
+            }, 2000);
+        } catch (error) {
+            toast.error(error.message || "Error al registrar la venta");
+            setStatus("idle");
+        }
+    };
 
   return (
     <Layout title="Registrar Venta">

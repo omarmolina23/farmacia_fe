@@ -1,27 +1,80 @@
-import { IoIosArrowDropright, IoIosArrowDropdown } from 'react-icons/io';
+import { useState } from "react";
+import { IoIosArrowDropright, IoIosArrowDropdown, IoIosSend } from 'react-icons/io';
 import { BsArrowReturnRight } from "react-icons/bs";
+import LoadingOverlay from "../../../../components/LoadingOverlay"
+import { FaCheckCircle, FaFileInvoice } from "react-icons/fa";
 import { BsCheckCircle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { sendElectronicInvoice } from "./invoice/electronic_invoice/sendElectronicInvoice";
+import { updateSale, generatePdf } from "../../../../services/SalesService";
 
 const SalesTable = ({
     index,
     id,
+    number_e_invoice,
     fecha,
     cliente,
     vendedor,
     total,
-    productos = [],
+    productos,
     isExpanded,
     repaid,
     onToggleExpand,
+    reloadSales
 }) => {
     const navigate = useNavigate();
-
-    // llamar dos funciones sendCreditNote y cambiarStatus venta
-
+    const [status, setStatus] = useState("idle");
+    console.log(id)
     const handleSalesReturn = () => {
         navigate(`/admin/sales/return/${id}`);
     };
+    const handleGenerateInvoice = async () => {
+        try {
+            const blob = await generatePdf(id);
+
+            const pdfBlob = new Blob([blob], { type: "application/pdf" });
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            window.open(pdfUrl, "_blank");
+        } catch (error) {
+            toast.error(error.message || "Error al generar el PDF");
+        }
+    }
+    const handleElectronicInvoice = async () => {
+        try {
+            setStatus("loading");
+
+            const productsToSend = productos.map(p => ({
+                id: p.products.id,
+                name: p.products.name,
+                price: p.products.price,
+                amount: p.amount
+            }));
+
+            // Declara aquí la variable response
+            const response = await sendElectronicInvoice({
+                cliente: cliente,
+                productos: productsToSend
+            });
+            console.log(response);
+
+            await updateSale(id, {
+                bill_id: response.data.bill.id,
+                number_e_invoice: response.data.bill.number,    // según tu respuesta
+                cufe: response.data.bill.cufe,
+                qr_image: response.data.bill.qr_image,
+            });
+
+            setStatus("success");
+            setTimeout(() => {
+                setStatus("idle");
+            }, 2000);
+            await reloadSales();
+        } catch (error) {
+            console.error('Error al facturar electrónicamente:', error);
+            setStatus("idle");
+        }
+    };
+
 
     return (
         <>
@@ -38,30 +91,51 @@ const SalesTable = ({
                     )}
                 </td>
                 <td className="text-left pl-6">{index + 1}</td>
-                <td>{fecha}</td>
-                <td>{cliente.name}</td>
-                <td>{vendedor}</td>
-                <td>${total?.toLocaleString()}</td>
-                <td className="pl-4 align-middle">
-                    {repaid ? (
-                        <div className="flex items-center gap-1 px-[6px] py-[2px] rounded-sm select-none cursor-default">
-                            <BsCheckCircle size={16} className="text-green-600" />
-                            <span className="text-[#181818]">Devuelto</span>
-                        </div>
-                    ) : (
+                <td className="px-4 py-2 align-middle">{fecha}</td>
+                <td className="px-4 py-2 align-middle">{cliente.name}</td>
+                <td className="px-4 py-2 align-middle" >{vendedor}</td>
+                <td className=" py- align-middle">${total?.toLocaleString()}</td>
+                <td className="px-4 py-2 align-middle">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {repaid ? (
+                            <div className="flex items-center gap-1 px-[6px] py-[2px] rounded-sm select-none cursor-default">
+                                <BsCheckCircle size={22} className="text-green-600" />
+                                <span className="text-[#181818]">Devuelto</span>
+                            </div>
+                        ) : (
+                            <>
+                                <div
+                                    className="flex items-center gap-1 cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
+                                    onClick={handleSalesReturn}
+                                >
+                                    <BsArrowReturnRight size={23} className="text-[#181818]" />
+                                </div>
+
+                                {number_e_invoice === null || number_e_invoice === "null" ? (
+                                    <div
+                                        className="flex items-center gap-1 cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
+                                        onClick={handleElectronicInvoice}
+                                    >
+                                        <IoIosSend size={22} className="text-[#6B7280]" />
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-1 px-[6px] py-[2px] rounded-sm select-none cursor-default">
+                                        <FaCheckCircle size={22} className="text-green-600" />
+                                    </div>
+                                )}
+                            </>
+                        )}
+
                         <div
-                            className="flex items-center gap-1 cursor-pointer hover:bg-[#be90d4f2] w-fit px-[6px] py-[2px] rounded-sm"
-                            onClick={handleSalesReturn}
+                            className="flex items-center gap-1 cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
+                            onClick={handleGenerateInvoice}
                         >
-                            <BsArrowReturnRight size={16} className="text-[#181818]" />
-                            <span className="hidden md:inline">Devolver</span>
+                            <FaFileInvoice size={22} color="#6B7280" />
                         </div>
-                    )}
+                    </div>
                 </td>
 
-
-            </tr>
-
+            </tr >
             {isExpanded && (
                 <tr className="border-b bg-gray-100">
                     <td colSpan="7" className="pb-2 px-4">
@@ -105,6 +179,10 @@ const SalesTable = ({
                         </div>
                     </td>
                 </tr>
+            )
+            }
+            {(status === "loading" || status === "success") && (
+                <LoadingOverlay status={status} />
             )}
         </>
     );
