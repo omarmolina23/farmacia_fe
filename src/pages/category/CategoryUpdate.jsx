@@ -52,7 +52,10 @@ export default function CategoryUpdate() {
     }
 
     try {
-      await updateCategory(formData.id, formData);
+      await updateCategory(formData.id, {
+        name: formData.name,
+        status: formData.status,
+      });
       toast.success("Categoría actualizada exitosamente", {
         position: "top-right",
         autoClose: 3000,
