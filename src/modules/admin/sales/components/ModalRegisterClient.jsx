@@ -1,8 +1,7 @@
-import React from "react";
 import { createClient } from "../../../../services/ClientService";
 import TextField from "../../../../components/TextField";
 import Button from "../../../../components/Button";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 const ModalRegisterClient = ({
   formData = { name: "", id: "", email: "", phone: "" },
@@ -10,9 +9,7 @@ const ModalRegisterClient = ({
   onClose,
   refreshClients,
 }) => {
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     // Validaciones personalizadas
     if (!formData.name || !formData.id || !formData.email || !formData.phone) {
       toast.error("Todos los campos son obligatorios.");
@@ -58,9 +55,9 @@ const ModalRegisterClient = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
       <div className="relative bg-white border p-6 rounded-lg shadow-lg w-96">
-        {/* Botón de cerrar en la esquina superior derecha */}
+        {/* Botón cerrar */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
@@ -77,8 +74,9 @@ const ModalRegisterClient = ({
           </svg>
         </button>
 
-        <h2 className="text-lg font-semibold mb-4">Datos del cliente</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold mb-4 text-center">Registrar Cliente</h2>
+
+        <div className="flex flex-col gap-3">
           <div className="flex flex-col items-start">
             <label htmlFor="name" className="text-md">Nombre</label>
             <TextField
@@ -88,9 +86,9 @@ const ModalRegisterClient = ({
               value={formData.name}
               onChange={handleChange}
               placeholder="Nombre completo"
-              required
             />
           </div>
+
           <div className="flex flex-col items-start">
             <label htmlFor="id" className="text-md">Cédula</label>
             <TextField
@@ -100,9 +98,9 @@ const ModalRegisterClient = ({
               value={formData.id}
               onChange={handleChange}
               placeholder="Número de cédula"
-              required
             />
           </div>
+
           <div className="flex flex-col items-start">
             <label htmlFor="email" className="text-md">Correo</label>
             <TextField
@@ -112,9 +110,9 @@ const ModalRegisterClient = ({
               value={formData.email}
               onChange={handleChange}
               placeholder="Correo electrónico"
-              required
             />
           </div>
+
           <div className="flex flex-col items-start">
             <label htmlFor="phone" className="text-md">Teléfono</label>
             <TextField
@@ -124,18 +122,17 @@ const ModalRegisterClient = ({
               value={formData.phone}
               onChange={handleChange}
               placeholder="Número de teléfono"
-              required
             />
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
             <Button
-              type="submit"
               title="Registrar"
               color="bg-[#8B83BB] text-white"
+              onClick={handleSubmit}
             />
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

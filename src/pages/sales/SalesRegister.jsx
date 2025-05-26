@@ -10,7 +10,6 @@ import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import ModalRegisterClient from "../../modules/admin/sales/components/ModalRegisterClient";
 import ProductDeleteModal from "../../modules/admin/sales/components/ModalDeleteProduct";
 import ModalQR from "../../modules/admin/sales/components/ModalQR";
-import { sendElectronicInvoice } from "../../modules/admin/sales/components/invoice/electronic_invoice/sendElectronicInvoice";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
@@ -79,8 +78,8 @@ const SalesRegister = () => {
     const filtrados =
       buscarCliente.trim().length > 0
         ? clientes.filter((c) =>
-            c.id.toLowerCase().includes(buscarCliente.toLowerCase())
-          )
+          c.id.toLowerCase().includes(buscarCliente.toLowerCase())
+        )
         : [];
     setSugerenciasClientes(filtrados);
   }, [buscarCliente, clientes]);
@@ -107,8 +106,8 @@ const SalesRegister = () => {
     const filtrados =
       buscar.trim().length > 0
         ? allProducts.filter((p) =>
-            p.name.toLowerCase().includes(buscar.toLowerCase())
-          )
+          p.name.toLowerCase().includes(buscar.toLowerCase())
+        )
         : [];
     setSugerencias(filtrados);
   }, [buscar, allProducts]);
@@ -133,10 +132,10 @@ const SalesRegister = () => {
         return prevProducts.map((p) =>
           p.id === producto.id
             ? {
-                ...p,
-                cantidad: nuevaCantidad,
-                totalPrice: nuevaCantidad * p.price,
-              }
+              ...p,
+              cantidad: nuevaCantidad,
+              totalPrice: nuevaCantidad * p.price,
+            }
             : p
         );
       } else {
@@ -213,10 +212,10 @@ const SalesRegister = () => {
         p.id === selectedProductId
           ? p.cantidad > qty
             ? {
-                ...p,
-                cantidad: p.cantidad - qty,
-                totalPrice: (p.cantidad - qty) * p.price,
-              }
+              ...p,
+              cantidad: p.cantidad - qty,
+              totalPrice: (p.cantidad - qty) * p.price,
+            }
             : null
           : p
       )
@@ -238,37 +237,36 @@ const SalesRegister = () => {
     fetchClientes();
   }, []);
 
-    const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    const validarFormulario = () => products.length > 0 && clienteSeleccionado;
-    const registrarCompra = async e => {
-        e.preventDefault();
-        if (!validarFormulario()) {
-            toast.error(products.length === 0 ? 'Debe agregar al menos un producto' : 'Debe seleccionar un cliente');
-            return;
-        }
-        try {
-            setStatus("loading");
-            const productsToSend = products.map(p => ({
-                productId: p.id,
-                amount: p.cantidad,
-            }));
-            console.log(date);
-            await createSale({
-              date: date.toISOString(),
-              clientId: clienteSeleccionado.id,
-              employeeName: employee.name,
-              products: productsToSend,
-            });
-            setStatus("success");
-            setTimeout(() => {
-                setStatus("idle");
-                navigate(`/${Modulo}/sales/list`);
-            }, 2000);
-        } catch (error) {
-            toast.error(error.message || "Error al registrar la venta");
-            setStatus("idle");
-        }
-    };
+  const handleChangeCliente = e => setFormDataCliente(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const validarFormulario = () => products.length > 0 && clienteSeleccionado;
+  const registrarCompra = async e => {
+    e.preventDefault();
+    if (!validarFormulario()) {
+      toast.error(products.length === 0 ? 'Debe agregar al menos un producto' : 'Debe seleccionar un cliente');
+      return;
+    }
+    try {
+      setStatus("loading");
+      const productsToSend = products.map(p => ({
+        productId: p.id,
+        amount: p.cantidad,
+      }));
+      await createSale({
+        date: date.toISOString(),
+        clientId: clienteSeleccionado.id,
+        employeeName: employee.name,
+        products: productsToSend,
+      });
+      setStatus("success");
+      setTimeout(() => {
+        setStatus("idle");
+        navigate(`/${Modulo}/sales/list`);
+      }, 2000);
+    } catch (error) {
+      toast.error(error.message || "Error al registrar la venta");
+      setStatus("idle");
+    }
+  };
 
   return (
     <Layout title="Registrar Venta">
@@ -403,14 +401,6 @@ const SalesRegister = () => {
                 </div>
               )}
             </div>
-            {showModal && (
-              <ModalRegisterClient
-                formData={formDataCliente}
-                handleChange={handleChangeCliente}
-                onClose={() => setShowModal(false)}
-                refreshClients={fetchClientes}
-              />
-            )}
           </div>
 
           <div className="flex justify-between mt-4 px-6">
@@ -498,6 +488,14 @@ const SalesRegister = () => {
       </div>
       {(status === "loading" || status === "success") && (
         <LoadingOverlay status={status} />
+      )}
+      {showModal && (
+        <ModalRegisterClient
+          formData={formDataCliente}
+          handleChange={handleChangeCliente}
+          onClose={() => setShowModal(false)}
+          refreshClients={fetchClientes}
+        />
       )}
     </Layout>
   );
