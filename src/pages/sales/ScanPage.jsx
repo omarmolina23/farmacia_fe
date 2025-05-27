@@ -59,7 +59,6 @@ export default function ScanPage() {
 
     const startScanner = async () => {
         if (!sock) return;
-        console.log(products);
         if (!scannerRef.current) scannerRef.current = new Html5Qrcode('reader');
         try {
             await scannerRef.current.start(
@@ -68,13 +67,11 @@ export default function ScanPage() {
                 decoded => {
                     // 1) Limpiamos el resultado (quitamos comillas, espacios, etc.)
                     const code = decoded.trim().replace(/"/g, '');
-                    console.log("code:", code)
                     // 2) Si parece un EAN-13 válido, extraemos los dígitos 8–12
                     let barcodeId = code;
                     if (/^\d{13}$/.test(code)) {
                         // slice(7, 12) → empieza en índice 7 (8° dígito) y obtiene 5 caracteres
                         barcodeId = code.slice(7, 12);
-                        console.log("barcodeId obtenido:", barcodeId)
                     }
 
                     // 3) Buscamos en tu lista de productos por ese ID
@@ -82,8 +79,6 @@ export default function ScanPage() {
 
                     if (found) {
                         setProductFound(found);
-                        console.log("nombre:", found.name)
-                        
                         sock.emit('scan', {
                             sessionId: session,
                             productBarcode: found.id,

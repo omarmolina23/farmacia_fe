@@ -120,7 +120,6 @@ const SalesReturn = () => {
                     reference_code: sale.id,
                     productos: productsToReturn,
                 });
-                console.log("Nota de crédito generada:", response.data.credit_note.cude);
                 await updateSale(sale.id, {
                     number_credit_note: response.data.credit_note.number,
                     cufe: response.data.credit_note.cude,
