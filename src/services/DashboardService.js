@@ -10,7 +10,6 @@ export const getDailyStatus = async () => {
     try {   
         verifyUrl();
         const response = await axios.get("/dashboard/daily-status");
-        console.log("response", response);
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
