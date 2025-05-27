@@ -251,13 +251,14 @@ const SalesRegister = () => {
         productId: p.id,
         amount: p.cantidad,
       }));
-      await createSale({
+      const venta = {
         date: date.toISOString(),
         clientId: clienteSeleccionado.id,
         employeeName: employee.name,
         products: productsToSend,
-      });
-      
+      };
+      console.log("Venta enviada al servidor:", JSON.stringify(venta, null, 2));
+      await createSale(venta);
       setStatus("success");
       setTimeout(() => {
         setStatus("idle");
