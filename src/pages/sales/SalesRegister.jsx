@@ -257,6 +257,7 @@ const SalesRegister = () => {
         employeeName: employee.name,
         products: productsToSend,
       });
+      
       setStatus("success");
       setTimeout(() => {
         setStatus("idle");
