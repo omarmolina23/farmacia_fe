@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { FaCheckCircle } from "react-icons/fa"; // ✅ Icono de React
 
 const LoadingOverlay = ({ status }) => {
     const overlayRef = useRef(null);
     const spinnerRef = useRef(null);
     const textRef = useRef(null);
-    const checkRef = useRef(null);
     const [showSuccess, setShowSuccess] = useState(false);
 
-    // Entrada y spinner
     useEffect(() => {
         if (status === "loading") {
             setShowSuccess(false);
@@ -33,31 +32,6 @@ const LoadingOverlay = ({ status }) => {
         }
     }, [status]);
 
-    // Animación del check
-    useEffect(() => {
-        if (!showSuccess) return;
-        const svg = checkRef.current;
-        const path = svg.querySelector("path");
-        const len = path.getTotalLength();
-
-        // preparamos trazo
-        gsap.set(path, {
-            strokeDasharray: len,
-            strokeDashoffset: len
-        });
-        gsap.set(svg, { transformOrigin: "50% 50%" });
-
-        // timeline: dibuja y pulsa
-        const tl = gsap.timeline({ delay: 0.1 });
-        tl.to(path, { strokeDashoffset: 0, duration: 0.6, ease: "power1.out" })
-            .fromTo(
-                svg,
-                { scale: 1 },
-                { scale: 1.2, duration: 0.3, yoyo: true, repeat: 1, ease: "power1.inOut" },
-                "-=0.4"
-            );
-    }, [showSuccess]);
-
     const text = "Procesando..";
 
     return (
@@ -67,22 +41,7 @@ const LoadingOverlay = ({ status }) => {
         >
             <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl px-10 py-8 flex flex-col items-center w-[90%] max-w-sm border border-gray-200">
                 {showSuccess ? (
-                    <div className="mb-4">
-                        <svg
-                            ref={checkRef}
-                            width="64"
-                            height="64"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#16A34A"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            {/* Heroicons check: recto y estándar */}
-                            <path d="M6 12l4 4 8-8" />
-                        </svg>
-                    </div>
+                    <FaCheckCircle className="text-green-600 text-6xl mb-4" /> // ✅ Ícono estático aquí
                 ) : (
                     <div
                         ref={spinnerRef}
