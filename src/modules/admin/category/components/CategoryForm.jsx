@@ -24,11 +24,12 @@ const CategoryForm = ({
         />
       </div>
       <div className="flex space-x-4 mt-4">
-        <Button type="submit" title="Guardar" color="bg-[#8B83BA]" />
+        <Button type="submit" title="Guardar" textColor="text-[#000000]" color="bg-[#D0F25E]" />
         <Button
           type="button"
+          textColor="text-[#000000]"
           title="Cancelar"
-          color="bg-[#8B83BA]"
+          color="bg-[#D0F25E]"
           onClick={handleCancel}
         />
       </div>

@@ -209,6 +209,7 @@ const ProductForm = ({
               name="name"
               value={formData.name}
               onChange={handleChange}
+              placeholder="Ingrese el nombre del producto"
               className="bg-gray-200"
             />
           </div>
@@ -224,6 +225,7 @@ const ProductForm = ({
               name="description"
               value={formData.description}
               onChange={handleChange}
+              placeholder="Ingrese descripción del producto"
               className="p-3 rounded-md bg-gray-100 w-full focus:outline-none focus:ring-2 focus:ring-green-500"
             ></textarea>
           </div>
@@ -241,6 +243,7 @@ const ProductForm = ({
               value={formData.price || ""}
               onChange={handleChange}
               className="bg-gray-200"
+              placeholder="Ingrese el precio"
             />
           </div>
           <div>
@@ -293,6 +296,7 @@ const ProductForm = ({
               name="barcode"
               value={formData.barcode}
               onChange={handleChange}
+              placeholder="Ej. 00001"
               className="border rounded p-2 flex-1"
             />
             <button
@@ -318,6 +322,7 @@ const ProductForm = ({
               value={formData.concentration}
               onChange={handleChange}
               className="bg-gray-200"
+              placeholder="Ej. 500mg"
             />
           </div>
           <div>
@@ -334,6 +339,7 @@ const ProductForm = ({
               value={formData.activeIngredient}
               onChange={handleChange}
               className="bg-gray-200"
+              placeholder="Ej. Paracetamol"
             />
           </div>
           <div>
@@ -347,6 +353,7 @@ const ProductForm = ({
               value={formData.weight}
               onChange={handleChange}
               className="bg-gray-200"
+              placeholder="Ej. 100g"
             />
           </div>
           <div>
@@ -360,6 +367,7 @@ const ProductForm = ({
               value={formData.volume}
               onChange={handleChange}
               className="bg-gray-200"
+              placeholder="Ej. 250ml"
             />
           </div>
         </div>
@@ -394,11 +402,12 @@ const ProductForm = ({
         </div>
 
         <div className="flex space-x-4 mt-4 ml-4">
-          <Button type="submit" title="Agregar" color="bg-[#8B83BA]" />
+          <Button type="submit" textColor="text-[#000000]" title="Agregar" color="bg-[#D0F25E]" />
           <Button
             type="button"
             title="Cancelar"
-            color="bg-[#8B83BA]"
+            color="bg-[#D0F25E]"
+            textColor="text-[#000000]"
             onClick={handleCancel}
           />
         </div>

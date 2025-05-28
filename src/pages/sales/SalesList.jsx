@@ -14,6 +14,11 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+const toColombianDateTimeRange = (dateString, isEnd = false) => {
+  const date = new Date(dateString + (isEnd ? "T23:59:59" : "T00:00:00"));
+  return new Date(date.toLocaleString("en-US", { timeZone: "America/Bogota" }));
+};
+
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sales, setSales] = useState([]);
@@ -33,7 +38,7 @@ const SalesList = () => {
   const Layout = user?.isAdmin ? AdminLayout : EmployeesLayout;
   const Modulo = user?.isAdmin ? "admin" : "employees";
   const [dateFilter, setDateFilter] = useState({ startDate: today, endDate: today, repaid: false, });
-  const applyStatusFilter = (repaidValue, salesList = allSales) => { const filtered = salesList.filter(sale => sale.repaid === repaidValue); setSales(filtered);};
+  const applyStatusFilter = (repaidValue, salesList = allSales) => { const filtered = salesList.filter(sale => sale.repaid === repaidValue); setSales(filtered); };
 
 
   useEffect(() => {
@@ -44,8 +49,8 @@ const SalesList = () => {
   const fetchSales = async (filters = {}) => {
     try {
       const data = await getSalesFiltered({
-        startDate: filters.startDate,
-        endDate: filters.endDate,
+        startDate: toColombianDateTimeRange(filters.startDate).toISOString(),
+        endDate: toColombianDateTimeRange(filters.endDate, true).toISOString(),
         repaid: filters.repaid,
       });
 
@@ -63,8 +68,8 @@ const SalesList = () => {
   const reloadSales = async () => {
     try {
       const data = await getSalesFiltered({
-        startDate: dateFilter.startDate,
-        endDate: dateFilter.endDate,
+        startDate: toColombianDateTimeRange(dateFilter.startDate).toISOString(),
+        endDate: toColombianDateTimeRange(dateFilter.endDate, true).toISOString(),
         repaid: filterStatus,
       });
       setAllSales(data);
@@ -121,13 +126,20 @@ const SalesList = () => {
 
 
   const handleApplyFilter = (filter) => {
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
+
     if (!filter) {
-      setDateFilter({ startDate: null, endDate: null, repaid: false });
+      setDateFilter({ startDate: today, endDate: today, repaid: false });
       return;
     }
 
     const { startDate, endDate, repaid } = filter;
-    setDateFilter({ startDate, endDate, repaid });
+
+    setDateFilter({
+      startDate: startDate || today,
+      endDate: endDate || today,
+      repaid: typeof repaid === "boolean" ? repaid : false,
+    });
   };
 
   const handleSort = (key) => {
