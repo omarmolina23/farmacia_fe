@@ -58,7 +58,7 @@ const SalesTable = ({
 
             await updateSale(id, {
                 bill_id: response.data.bill.id,
-                number_e_invoice: response.data.bill.number,   
+                number_e_invoice: response.data.bill.number,
                 cufe: response.data.bill.cufe,
                 qr_image: response.data.bill.qr_image,
             });
@@ -91,21 +91,21 @@ const SalesTable = ({
                 </td>
                 <td className="text-left pl-6">{index + 1}</td>
                 <td className="px-4 py-2 align-middle">{fecha
-                        ? new Date(fecha).toLocaleString("es-CO", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                            timeZone: "America/Bogota",
-                        })
-                        : ""}</td>
+                    ? new Date(fecha).toLocaleString("es-CO", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                        timeZone: "America/Bogota",
+                    })
+                    : ""}</td>
                 <td className="px-4 py-2 align-middle">{cliente.name}</td>
                 <td className="px-4 py-2 align-middle" >{vendedor}</td>
                 <td className=" py- align-middle">${total?.toLocaleString()}</td>
                 <td className="px-4 py-2 align-middle">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-3 flex-wrap">
                         {repaid ? (
                             <div className="flex items-center gap-1 px-[6px] py-[2px] rounded-sm select-none cursor-default">
                                 <BsCheckCircle size={22} className="text-green-600" />
@@ -113,37 +113,49 @@ const SalesTable = ({
                             </div>
                         ) : (
                             <>
+                                {/* Devolver venta */}
                                 <div
-                                    className="flex items-center gap-1 cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
                                     onClick={handleSalesReturn}
+                                    title="Devolver venta"
+                                    className="flex flex-col items-center cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
                                 >
                                     <BsArrowReturnRight size={23} className="text-[#181818]" />
+                                    <span className="text-[10px] mt-1 md:hidden">Devolver</span>
                                 </div>
 
+                                {/* Facturar electrónicamente */}
                                 {number_e_invoice === null || number_e_invoice === "null" ? (
                                     <div
-                                        className="flex items-center gap-1 cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
                                         onClick={handleElectronicInvoice}
+                                        title="Facturar electrónicamente"
+                                        className="flex flex-col items-center cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
                                     >
                                         <IoIosSend size={22} className="text-[#6B7280]" />
+                                        <span className="text-[10px] mt-1 md:hidden">Facturar</span>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-1 px-[6px] py-[2px] rounded-sm select-none cursor-default">
+                                    <div
+                                        title="Factura generada"
+                                        className="flex flex-col items-center px-[6px] py-[2px] rounded-sm select-none cursor-default"
+                                    >
                                         <FaCheckCircle size={22} className="text-green-600" />
+                                        <span className="text-[10px] mt-1 md:hidden">Facturado</span>
                                     </div>
                                 )}
                             </>
                         )}
 
+                        {/* Generar PDF */}
                         <div
-                            className="flex items-center gap-1 cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
                             onClick={handleGenerateInvoice}
+                            title="Generar factura PDF"
+                            className="flex flex-col items-center cursor-pointer hover:bg-[#d5ffc3f2] w-fit px-[6px] py-[2px] rounded-sm"
                         >
                             <FaFileInvoice size={22} color="#6B7280" />
+                            <span className="text-[10px] mt-1 md:hidden">PDF</span>
                         </div>
                     </div>
                 </td>
-
             </tr >
             {isExpanded && (
                 <tr className="border-b bg-gray-100">

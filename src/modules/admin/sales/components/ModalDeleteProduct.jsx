@@ -12,7 +12,7 @@ const ProductDeleteModal = ({ productToDelete, deleteProduct, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50" onClick={onClose}>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40" onClick={onClose}>
             <div
                 className="bg-white border p-6 rounded-lg shadow-lg w-96"
                 onClick={(e) => e.stopPropagation()}

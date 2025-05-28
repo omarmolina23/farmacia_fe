@@ -27,7 +27,7 @@ const FilterModal = ({ onClose, onApply }) => {
 
     return (
         <div
-            className="fixed inset-0 flex items-center justify-center z-50"
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/40"
             onClick={onClose}
         >
             <div
@@ -58,7 +58,8 @@ const FilterModal = ({ onClose, onApply }) => {
                     />
                 </div>
                 <div className="flex justify-end gap-2">
-                    <Button title="Aceptar" onClick={handleSubmit} color="bg-[#8B83BB]" />
+                    <Button title="Aceptar" onClick={handleSubmit} color="bg-[#D0F25E]"
+                        textColor="text-[#000000]" />
                 </div>
             </div>
         </div>

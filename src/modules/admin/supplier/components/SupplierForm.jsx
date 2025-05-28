@@ -39,8 +39,8 @@ const SupplierForm = ({ formData, handleChange, handleSubmit, handleCancel }) =>
         />
       </div>
       <div className="flex space-x-4 mt-4">
-        <Button type="submit" title="Registrar" color="bg-[#8B83BA]" />
-        <Button type="button" title="Cancelar" color="bg-[#8B83BA]" onClick={handleCancel} />
+        <Button type="submit" title="Registrar" color="bg-[#D0F25E]" textColor="text-[#000000]" />
+        <Button type="button" title="Cancelar" color="bg-[#D0F25E]" textColor="text-[#000000]" onClick={handleCancel} />
       </div>
     </form>
   );

@@ -75,12 +75,15 @@ const SalesRegister = () => {
 
   // Sugerencias clientes
   useEffect(() => {
-    const filtrados =
-      buscarCliente.trim().length > 0
-        ? clientes.filter((c) =>
-          c.id.toLowerCase().includes(buscarCliente.toLowerCase())
-        )
-        : [];
+    const query = buscarCliente.toLowerCase().trim();
+
+    const filtrados = query.length > 0
+      ? clientes.filter((c) =>
+        c.id.toLowerCase().includes(query) ||
+        c.name.toLowerCase().includes(query)
+      )
+      : [];
+
     setSugerenciasClientes(filtrados);
   }, [buscarCliente, clientes]);
 
@@ -302,21 +305,44 @@ const SalesRegister = () => {
                   ))}
                 </div>
               )}
-              <div className="flex items-center">
-                <label htmlFor="name" className="text-md font-medium">
-                  Cantidad
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={cantidad}
-                  onChange={(e) => setCantidad(Number(e.target.value))}
-                  className="ml-2 w-16 h-8 border rounded-md text-center"
-                />
-                <button onClick={agregarProducto} className="pl-2">
-                  <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
-                </button>
-              </div>
+              <div className="flex items-center gap-2">
+                {/*   <label htmlFor="name" className="text-md font-medium">
+                      Cantidad
+                    </label> */}
+ <div className="flex items-center border rounded-md bg-white">
+  <button
+    type="button"
+    className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
+    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
+    tabIndex={-1}
+    aria-label="Disminuir cantidad"
+  >
+    -
+  </button>
+  <input
+    min="1"
+    value={cantidad}
+    onChange={(e) => {
+      const val = Number(e.target.value);
+      setCantidad(val >= 1 ? val : 1);
+    }}
+    className="w-12 h-8 text-center border-none focus:ring-0 focus:outline-none"
+    aria-label="Cantidad"
+  />
+  <button
+    type="button"
+    className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
+    onClick={() => setCantidad((c) => c + 1)}
+    tabIndex={-1}
+    aria-label="Incrementar cantidad"
+  >
+    +
+  </button>
+</div>
+<button onClick={agregarProducto} className="pl-2" aria-label="Agregar producto">
+  <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
+</button>
+</div>
               <button onClick={cancelarProducto}>
                 <MdOutlineDelete size={30} className="text-[#cd3535]" />
               </button>
@@ -464,7 +490,8 @@ const SalesRegister = () => {
                 />
                 <Button
                   title="Aceptar"
-                  color="bg-[#8B83BA]"
+                  color="bg-[#D0F25E]"
+                  textColor="text-[#000000]"
                   onClick={registrarCompra}
                   className="px-6 py-2"
                 />

@@ -11,19 +11,19 @@ const data = [
 ];
 // Tooltip personalizado
 const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    const real = payload.find(p => p.dataKey === 'real')?.value;
-    const forecast = payload.find(p => p.dataKey === 'forecast')?.value;
+    if (active && payload && payload.length) {
+        const real = payload.find(p => p.dataKey === 'real')?.value;
+        const forecast = payload.find(p => p.dataKey === 'forecast')?.value;
 
-    return (
-      <div className="bg-white border rounded p-2 shadow text-xs text-black">
-        <p className="font-semibold">{label}</p>
-        {real !== undefined && <p>📊 Real: {real.toLocaleString()}</p>}
-        {forecast !== undefined && <p>🔮 Previsto: {forecast.toLocaleString()}</p>}
-      </div>
-    );
-  }
-  return null;
+        return (
+            <div className="bg-white border rounded p-2 shadow text-xs text-black">
+                <p className="font-semibold">{label}</p>
+                {real !== undefined && <p>📊 Real: {real.toLocaleString()}</p>}
+                {forecast !== undefined && <p>🔮 Previsto: {forecast.toLocaleString()}</p>}
+            </div>
+        );
+    }
+    return null;
 };
 
 export default function ForecastLineChart() {

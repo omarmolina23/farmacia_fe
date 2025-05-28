@@ -53,6 +53,7 @@ const UserForm = ({
             type="text"
             name="id"
             value={formData.id}
+            placeholder="Ingrese su número de documento"
             onChange={handleChange}
             className="bg-gray-200"
             disabled={isFieldDisabled(isEditMode)}
@@ -80,6 +81,7 @@ const UserForm = ({
             name="birthdate"
             value={formData.birthdate}
             onChange={handleChange}
+            placeholder="Seleccione su fecha de nacimiento"
             className="bg-gray-200"
           />
         </div>
@@ -90,6 +92,7 @@ const UserForm = ({
             type="email"
             name="email"
             value={formData.email}
+            placeholder="Ingrese su correo electrónico"
             onChange={handleChange}
             className="bg-gray-200"
             disabled={isFieldDisabled(isEditMode)}
@@ -102,6 +105,7 @@ const UserForm = ({
           <TextField
             id="confirmEmail"
             type="email"
+            placeholder="Confirme su correo electrónico"
             name="confirmEmail"
             value={formData.confirmEmail}
             onChange={handleChange}
@@ -115,6 +119,7 @@ const UserForm = ({
             id="phone"
             type="text"
             name="phone"
+            placeholder="Ingrese su número de teléfono"
             value={formData.phone}
             onChange={handleChange}
             className="bg-gray-200"
@@ -122,15 +127,17 @@ const UserForm = ({
         </div>
       </div>
 
-      <div className="flex justify-end space-x-4 p-4">
-        <Button type="submit" title="Agregar" color="bg-[#8B83BA]" />
+      <div className="flex space-x-4 mt-4">
+        <Button type="submit" title="Registrar" textColor="text-[#000000]" color="bg-[#D0F25E]" />
         <Button
           type="button"
+          textColor="text-[#000000]"
           title="Cancelar"
-          color="bg-[#8B83BA]"
+          color="bg-[#D0F25E]"
           onClick={handleCancel}
         />
       </div>
+
     </form>
   );
 };
