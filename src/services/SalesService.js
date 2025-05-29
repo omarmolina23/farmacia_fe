@@ -1,4 +1,5 @@
 import axios from "../config/axios";
+import axiosForecast from '../config/axiosForecast';
 
 export const getSalesAll = async () => {
     try {
@@ -87,5 +88,18 @@ export const generatePdf = async (sale_id) => {
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Error al obtener el estado diario");
+    }
+}
+
+export async function getForecast(category, weeks = 4) {
+    try {
+        const { data } = await axiosForecast.post("/forecast", { category, weeks });
+        return data;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener el forecast";
+        throw new Error(msg);
     }
 }
