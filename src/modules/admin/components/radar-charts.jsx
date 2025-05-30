@@ -12,7 +12,7 @@ import { getMinimumStock } from "../../../services/DashboardService";
 const chartConfig = {
     Stock: {
         label: "Stock",
-        color: "hsl(var(--chart-6))",
+        color: "hsl(var(--chart-11))",
     },
 };
 
@@ -57,12 +57,11 @@ export function RadarChartStock() {
         ? `Aumento de ${percentChange.toFixed(1)}% este mes`
         : `Descenso de ${Math.abs(percentChange).toFixed(1)}% este mes`;
     const iconColor = isPositive ? "text-red-400" : "text-green-400";
-    const borderColor = isPositive ? "border-red-200/90" : "border-green-200/90";
 
     return (
         <>
             {(loading || isEmpty) ? (
-                <Card className="bg-black text-white w-full p-4">
+                <Card className="bg-[#f0f0f0e7] text-gray-800 w-full p-4">
                     <CardHeader className="space-y-2">
                         <Skeleton className="h-4 w-40 bg-neutral-800" />
                         <Skeleton className="h-4 w-60 bg-neutral-800" />
@@ -75,7 +74,7 @@ export function RadarChartStock() {
                     </CardFooter>
                 </Card>
             ) : (
-                <Card className={`bg-black text-white border-3 ${borderColor}`}>
+                <Card className="bg-[#f0f0f0e7] text-gray-800 border-3" >
                     <CardHeader className="flex flex-col items-start mb-1">
                         <CardTitle className="text-xl font-bold">Stock mínimo</CardTitle>
                         <CardDescription className="text-sm text-gray-400 mb-2">
@@ -94,7 +93,7 @@ export function RadarChartStock() {
                                     className="text-black"
                                 />
                                 <PolarGrid
-                                    className="fill-[--color-Stock] opacity-20"
+                                    className="fill-black-100"
                                     gridType="circle"
                                 />
                                 <PolarAngleAxis dataKey="month" />

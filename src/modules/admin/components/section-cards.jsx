@@ -12,7 +12,7 @@ import { getDailyStatus } from "../../../services/DashboardService";
 const icons = {
   Clientes: <FaRegHeart className="text-red-400" />,
   Inventario: <IoIosArchive className="text-blue-400" />,
-  Ventas: <FaOpencart className="text-yellow-400" />,
+  Ventas: <FaOpencart className="text-neutral" />,
   Ingresos: <IoMdCash className="text-green-500" />,
 };
 
@@ -54,7 +54,7 @@ export function SectionCards() {
           Array.from({ length: 4 }).map((_, index) => (
             <Card
               key={index}
-              className="@container/card bg-black text-white border border-neutral-800"
+              className="@container/card bg-[#f0f0f0e7] text-gray-800  border border-neutral-800"
             >
               <CardHeader className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -71,13 +71,12 @@ export function SectionCards() {
             const isPositive = metric.change >= 0;
             const FooterIcon = isPositive ? IoMdTrendingUp : IoMdTrendingDown;
             const iconColor = isPositive ? "text-green-400" : "text-red-400";
-            const borderColor = isPositive ? "border-green-200/90" : "border-red-200/90";
             const isCurrency = metric.title === "Ingresos";
             const displayValue = isCurrency
               ? formatCurrency(metric.value)
               : metric.value;
             return (
-              <Card key={index} className={`@container/card bg-black text-white border-3 ${borderColor}`}>
+              <Card key={index} className="@container/card bg-[#f0f0f0e7] text-gray-800  border-3">
                 <CardHeader className="relative">
                   <div className="flex justify-between items-start">
                     <CardDescription className="text-xl font-bold flex items-center gap-2 text-black-200">

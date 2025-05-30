@@ -5,7 +5,7 @@ import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
 import "./App.css";
-/* const Forecasting = lazy(() => import("./pages/forecasting/Forecasting")); */
+const Forecasting = lazy(() => import("./pages/forecasting/Forecasting")); 
 const Catalog = lazy(() => import("./pages/clients/catalog/Catalog"));
 const Product = lazy(() => import("./pages/clients/catalog/Product"));
 const ClientsAboutUs = lazy(() => import("./pages/clients/ClientsAboutUs"));
@@ -53,7 +53,7 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin">
                 <Route path="dashboard" element={<Dashboard />} />
-                {/* <Route path="forecasting" element={<Forecasting />} /> */}
+                <Route path="forecast" element={<Forecasting />} /> 
                 <Route path="sales">
                   <Route path="register" element={<SalesRegister />} />
                   <Route path="list" element={<SalesList />} />

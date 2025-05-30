@@ -83,15 +83,18 @@ html, body, #root {
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: 359 2% 90%;
-    --chart-1: 220 80% 100%;   
-    --chart-2: 180 90% 80%;
-    --chart-3: 196 70% 80%;     
-    --chart-4: 180 90% 30%;   
-    --chart-5: 170 100% 36%;     
-    --chart-6: 170 100% 36%; 
-    --chart-7: 180 90% 70%;  
-    --chart-8: 196 70% 100%;  
-    --chart-9: 220 80% 80%;  
+  --chart-1: 82 66% 85%;   /* casi blanco, apenas verdoso */
+  --chart-2: 82 66% 75%;   /* verde muy claro pastel */
+  --chart-3: 82 66% 65%;   /* verde pastel claro */
+  --chart-4: 82 66% 55%;   /* verde pastel medio */
+  --chart-5: 82 66% 40%;   /* verde suave más saturado */
+--chart-6: 100 50% 65%;  /* lima pastel (más oscura) */
+--chart-7: 200 50% 65%;  /* azul cielo pastel (más oscuro) */
+--chart-8: 320 50% 65%;  /* lila suave pastel (más oscuro) */
+--chart-9: 25 60% 70%;   /* melocotón pastel (más oscuro) */
+--chart-10: 150 40% 65%; /* menta pastel (más oscura) */
+--chart-11: 200 40% 65%; /* menta azulada pastel (más oscura) */
+
     --sidebar: #D9D9D9;
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.205 0 0);
