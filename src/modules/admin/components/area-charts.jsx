@@ -17,6 +17,7 @@ const defaultColors = [
   "hsl(var(--chart-7))",
   "hsl(var(--chart-8))",
   "hsl(var(--chart-9))",
+  "hsl(var(--chart-10))",
 ];
 
 const periodKeyMap = {
@@ -157,7 +158,7 @@ export function AreaChartSales() {
   return (
     <>
       {loading || isEmpty ? (
-        <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative">
+        <Card className="bg-gray-100 text-gray-900 w-full px-1 py-2 overflow-visible relative">
           {/* Skeleton */}
           <CardHeader className="flex flex-col sm:flex-row sm:items-center gap-4 pb-4">
             <div className="flex-1 space-y-3">
@@ -179,7 +180,8 @@ export function AreaChartSales() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-black text-white w-full px-1 py-2 overflow-visible relative h-full">
+        <Card className="bg-[#f0f0f0e7] text-gray-800 border-3 w-full px-1 py-2 overflow-visible relative h-full">
+
           <CardHeader className="pb-2 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mt-2">
             <div>
               <CardTitle className="text-xl font-bold">Ventas por categoría</CardTitle>
@@ -242,7 +244,18 @@ export function AreaChartSales() {
                       new Date(`${val}T00:00:00`).toLocaleDateString("es-ES", { month: "short", day: "numeric" })
                     }
                   />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={10} domain={yDomain} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    domain={yDomain}
+                    tickFormatter={(val) => {
+                      if (val >= 1000) return `${val.toLocaleString("es-ES")}`;
+                      if (val >= 1) return val.toFixed(0);
+                      if (val >= 0.1) return val.toFixed(1);
+                      return val.toFixed(2); 
+                    }}
+                  />
                   <ChartTooltip
                     cursor={false}
                     content={<ChartTooltipContent

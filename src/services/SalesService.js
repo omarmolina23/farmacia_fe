@@ -1,5 +1,8 @@
 import axios from "../config/axios";
 import axiosForecast from '../config/axiosForecast';
+import axiosMagicLoop from '../config/axiosMagicLoop';
+
+const employee = JSON.parse(localStorage.getItem("user"));
 
 export const getSalesAll = async () => {
     try {
@@ -91,9 +94,9 @@ export const generatePdf = async (sale_id) => {
     }
 }
 
-export async function getForecast(category, weeks = 4) {
+export async function getForecastCategory(category) {
     try {
-        const { data } = await axiosForecast.post("/forecast", { category, weeks });
+        const { data } = await axiosForecast.post("/forecast/category", { category });
         return data;
     } catch (err) {
         const msg =
@@ -103,3 +106,64 @@ export async function getForecast(category, weeks = 4) {
         throw new Error(msg);
     }
 }
+
+export async function getForecastProduct(product_id) {
+    try {
+        const { data } = await axiosForecast.post("/forecast/product", { product_id });
+        return data;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener el forecast";
+        throw new Error(msg);
+    }
+}
+
+export async function getPrescriptiveProduct(context, productName) {
+    const payload = {
+        question: `Soy el empleado ${employee.name}, realiza un análisis prescriptivo sobre el producto ${productName}, rápido, sintetizado y entendible. ` +
+            `Limita tu respuesta a máximo 280 caracteres.`,
+        context,
+    };
+
+    try {
+        const { data } = await axiosMagicLoop.post(
+            "/run",
+            payload
+        );
+        console.log("Prescriptive Analysis Data:", data.answer);
+        return data.answer;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener el análisis prescriptivo";
+        throw new Error(msg);
+    }
+}
+
+export async function getPrescriptiveCategory(context, categoryName) {
+    const payload = {
+        question: `Soy el empleado ${employee.name}, realiza un análisis prescriptivo sobre la categoría ${categoryName}, rápido, sintetizado y entendible. ` +
+            `Limita tu respuesta a máximo 280 caracteres.`,
+        context,
+    };
+
+    try {
+        const { data } = await axiosMagicLoop.post(
+            "/run",
+            payload
+        );
+        console.log("Prescriptive Analysis Data:", data.answer);
+        return data.answer;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener el análisis prescriptivo";
+        throw new Error(msg);
+    }
+}
+
+

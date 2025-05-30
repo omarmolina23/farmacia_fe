@@ -82,7 +82,7 @@ export function RecentSalesCard() {
     return (
         <>
             {(loading || isEmpty) ? (
-                <div className="w-full bg-black text-white p-4 rounded-md shadow-md">
+                <div className="w-full bg-[#f0f0f0e7] text-gray-800 p-4 rounded-md shadow-md">
                     <div className="flex items-center justify-between mb-2">
                         <Skeleton className="h-6 w-1/2 bg-neutral-800" />
                         <Skeleton className="h-8 w-8 rounded-full bg-neutral-800" />
@@ -116,16 +116,16 @@ export function RecentSalesCard() {
                     )}
                 </div>
             ) : (
-                <div className="w-full bg-black text-white p-4 rounded-md shadow-md">
+                <div className="w-full bg-[#f0f0f0e7] text-gray-800 border-3 p-4 rounded-md shadow-md">
                     <div className="flex items-center justify-between mb-1">
                         <h2 className="text-xl font-bold">Ventas recientes</h2>
-                        <DropdownMenu>
+      {/*                   <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="bg-black p-2 hover:bg-gray-800">
+                                <Button variant="ghost" className="bg-gray-800 p-2 hover:bg-gray-700">
                                     <SlOptions className="text-white" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-black border-black text-white">
+                            <DropdownMenuContent className="bbg-[#f0f0f0e7] border-black text-gray-800">
                                 <DropdownMenuCheckboxItem
                                     checked={showAvatar}
                                     onCheckedChange={handleToggleAvatar}
@@ -139,7 +139,7 @@ export function RecentSalesCard() {
                                     <div className="flex items-center">Hora</div>
                                 </DropdownMenuCheckboxItem>
                             </DropdownMenuContent>
-                        </DropdownMenu>
+                        </DropdownMenu> */}
                     </div>
 
                     <p className="text-sm text-gray-400 mb-2">
@@ -162,7 +162,7 @@ export function RecentSalesCard() {
                                 return (
                                     <li
                                         key={`${fecha}-${correo}-${index}`}
-                                        className="flex items-center justify-between bg-gray-950 px-2 py-2 rounded"
+                                        className="flex items-center justify-between bg-[#f0f0f0e7] px-2 py-2 rounded"
                                     >
                                         {showAvatar && (
                                             <NiceAvatar

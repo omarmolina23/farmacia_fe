@@ -53,7 +53,7 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin">
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="forecasting" element={<Forecasting />} /> 
+                <Route path="forecast" element={<Forecasting />} /> 
                 <Route path="sales">
                   <Route path="register" element={<SalesRegister />} />
                   <Route path="list" element={<SalesList />} />

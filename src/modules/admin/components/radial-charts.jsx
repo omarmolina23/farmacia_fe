@@ -68,7 +68,6 @@ export function RadialChart() {
         : `Descenso de ${Math.abs(percentChange).toFixed(1)}% este mes`;
     const FooterIcon = isPositive ? TrendingUp : TrendingDown;
     const iconColor = isPositive ? "text-green-400" : "text-red-400";
-    const borderColor = isPositive ? "border-green-200/90" : "border-red-200/90";
 
     const dynamicChartConfig = data.reduce((acc, item) => {
         acc[item.product] = {
@@ -81,7 +80,7 @@ export function RadialChart() {
     return (
         <>
             {(loading || isEmpty) ? (
-                <Card className="bg-black text-white w-full p-4">
+                <Card className="bg-[#f0f0f0e7] text-gray-800 w-full p-4">
                     <CardHeader className="space-y-2">
                         <Skeleton className="h-4 w-40 bg-neutral-800" />
                         <Skeleton className="h-4 w-60 bg-neutral-800" />
@@ -94,7 +93,7 @@ export function RadialChart() {
                     </CardFooter>
                 </Card>
             ) : (
-                <Card className={`bg-black text-white border-3 ${borderColor}`}>
+                <Card className="bg-[#f0f0f0e7] text-gray-800 border-3">
                     <CardHeader className="flex flex-col items-start mb-1">
                         <CardTitle className="text-xl font-bold">Productos vendidos</CardTitle>
                         <CardDescription className="text-gray-400">

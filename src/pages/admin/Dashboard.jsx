@@ -22,16 +22,17 @@ export default function Dashboard() {
                                 <RadialChart />
                             </div>
                             <div className="@xl/main:col-span-3 w-full">
-                                <RadarChartStock />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4 px-4 sm:px-6 lg:px-6 @xl/main:grid-cols-10 items-stretch">
-                            <div className="@xl/main:col-span-7 w-full">
-                                <AreaChartSales />
-                            </div>
-                            <div className="@xl/main:col-span-3 w-full">
                                 <RecentSalesCard />
                             </div>
+                            {/*          <div className="@xl/main:col-span-3 w-full">
+                                <RadarChartStock />
+                            </div> */}
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 px-4 sm:px-6 lg:px-6 @xl/main:grid-cols-10 items-stretch">
+                            <div className="@xl/main:col-span-10 w-full">
+                                <AreaChartSales />
+                            </div>
+
                         </div>
                     </div>
                 </div>
