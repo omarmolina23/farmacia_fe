@@ -1,7 +1,7 @@
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import { ForecastByCategory } from "../../modules/admin/forecasting/components/category-forecast";
 import { ForecastByProduct } from "../../modules/admin/forecasting/components/product-forecast";
-import AiAssistant from "../../modules/admin/forecasting/components/AiAssistant";
+import AiAssistant from "../../modules/admin/forecasting/components/ai-assistant";
 
 export default function Forecasting() {
 
