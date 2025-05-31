@@ -20,6 +20,11 @@ export default function Forecasting() {
                             <ForecastByProduct />
                         </div>
                     </div>
+          {/*           para el futuro, decir el procentaje de aceptacion de la predeccion <div> 
+                        <p className="text-sm text-gray-500">
+                            Esta sección te permite predecir las ventas por categoría o producto, ayudándote a tomar decisiones informadas basadas en datos históricos.
+                        </p>
+                    </div> */}
                 </div>
             </div>
         </AdminLayout>
