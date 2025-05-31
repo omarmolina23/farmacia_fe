@@ -120,6 +120,33 @@ export async function getForecastProduct(product_id) {
     }
 }
 
+export async function getForecastProductAll() {
+    try {
+        const { data } = await axiosForecast.get("/cached/forecast/product");
+        return data;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener el forecast";
+        throw new Error(msg);
+    }
+}
+
+export async function getForecastCategoryAll() {
+    try {
+        const { data } = await axiosForecast.get("/cached/forecast/category");
+        return data;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener el forecast";
+        throw new Error(msg);
+    }
+}
+
+
 export async function getPrescriptiveProduct(context, productName) {
     const payload = {
         question: `Soy el empleado ${employee.name}, realiza un análisis prescriptivo sobre el producto ${productName}, rápido, sintetizado y entendible. ` +
@@ -132,7 +159,6 @@ export async function getPrescriptiveProduct(context, productName) {
             "/run",
             payload
         );
-        console.log("Prescriptive Analysis Data:", data.answer);
         return data.answer;
     } catch (err) {
         const msg =
@@ -155,7 +181,6 @@ export async function getPrescriptiveCategory(context, categoryName) {
             "/run",
             payload
         );
-        console.log("Prescriptive Analysis Data:", data.answer);
         return data.answer;
     } catch (err) {
         const msg =
@@ -166,4 +191,16 @@ export async function getPrescriptiveCategory(context, categoryName) {
     }
 }
 
+export async function getAiAssistant(payload) {
+    try {
+        const { data } = await axiosMagicLoop.post("/run", payload);
+        return data.answer;
+    } catch (err) {
+        const msg =
+            err.response?.data?.detail ||
+            err.response?.data?.message ||
+            "Error al obtener asistencia de IA";
+        throw new Error(msg);
+    }
+}
 
