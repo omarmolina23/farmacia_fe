@@ -22,6 +22,15 @@ export const getProductAll = async () => {
     }
 }
 
+export const getStockSumary = async () => {
+    try {
+        const response = await axios.get("/product/stock-summary");
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
+    }
+}
+
 export const searchProductByNameOrId = async (query) => {
     try {
         const response = await axios.get(`/product/search`, {

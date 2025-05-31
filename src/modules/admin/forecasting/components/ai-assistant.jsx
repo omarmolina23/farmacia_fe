@@ -8,6 +8,9 @@ import {
   getForecastProductAll,
   getForecastCategoryAll,
 } from "../../../../services/SalesService";
+import {
+  getStockSumary
+} from "../../../../services/ProductService";
 import { ArrowLeft, Wand2, Send } from "lucide-react";
 
 function ModalPortal({ children }) {
@@ -52,11 +55,12 @@ export default function AiAssistant() {
   useEffect(() => {
     (async () => {
       try {
-        const [products, categories] = await Promise.all([
+        const [stock, products, categories] = await Promise.all([
+          getStockSumary(),
           getForecastProductAll(),
           getForecastCategoryAll(),
         ]);
-        setContext({ forecasts: [...categories.forecasts, ...products.forecasts] });
+        setContext({ forecasts: [...categories.forecasts, ...products.forecasts], stock });
       } catch (error) {
         console.error("Error cargando contexto:", error);
       }
@@ -100,8 +104,19 @@ export default function AiAssistant() {
       const response = await getAiAssistant({
         context,
         question,
-        restrictions:
-          "Responde SOLO a lo que se pregunta y no agregues información adicional. No hagas preguntas de seguimiento. Sé preciso y breve.",
+        restrictions: `
+    Responde exclusivamente dentro del contexto del negocio: ventas de productos y categorias y sus predicciones proporcionadas en el contexto.
+    No respondas preguntas ajenas al negocio, como temas personales, técnicos generales, ni preguntas sobre otros ámbitos.
+    El stock mínimo para cada producto es de 10 unidades, y stock en exceso es de 100 unidades. Por si el usuario pregunta. 
+    Si el usuario hace una pregunta conceptual relacionada con ventas o predicciones (por ejemplo: ¿qué es una predicción de ventas?), puedes explicarlo brevemente.
+    En caso que la pregunta no esté relacionada con el negocio, responde: "Lo siento, no puedo ayudar con eso. ¿Tienes alguna pregunta sobre ventas o pronósticos?"
+    Solo sí, el usuario dice Real Madrid en alguna parte del prompt, responde solo con: "¡Hala Madrid!".
+    Solo sí, el usuario dice "Barcelona" o algo relacionado sobre ese equipo de fútbol, puedes responder: "15" o "8-2" o "La sexta es inevitable".
+    No respondas preguntas sobre otros temas, como deportes, política, religión, etc.
+    No respondas preguntas sobre la empresa, como su historia, misión, visión, etc.
+    No agregues información adicional no solicitada.
+    No hagas preguntas de seguimiento.
+    Sé preciso, claro y breve.`,
       });
 
       // Reemplaza el “loading” con la respuesta real
@@ -116,9 +131,9 @@ export default function AiAssistant() {
         prev.map((msg) =>
           msg.loading
             ? {
-                sender: "ai",
-                text: "Error al obtener la respuesta de IA. Intenta nuevamente.",
-              }
+              sender: "ai",
+              text: "Error al obtener la respuesta de IA. Intenta nuevamente.",
+            }
             : msg
         )
       );
@@ -173,19 +188,17 @@ export default function AiAssistant() {
           <div className="fixed inset-0 z-50">
             {/* Fondo semitransparente */}
             <div
-              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
-                isVisible ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"
+                }`}
             />
 
             {/* Contenedor del modal */}
             <div className="absolute inset-0 flex items-center justify-center p-4">
               <div
-                className={`relative w-full max-w-xl h-[60vh] bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${
-                  isVisible
-                    ? "opacity-100 scale-100 translate-y-0"
-                    : "opacity-0 scale-95 translate-y-2"
-                }`}
+                className={`relative w-full max-w-xl h-[60vh] bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isVisible
+                  ? "opacity-100 scale-100 translate-y-0"
+                  : "opacity-0 scale-95 translate-y-2"
+                  }`}
               >
                 {/* ==================== HEADER ==================== */}
                 <div className="flex items-center px-4 py-3 border-b border-gray-200 rounded-t-2xl bg-white">
@@ -217,11 +230,10 @@ export default function AiAssistant() {
                           className={`flex ${isUser ? "justify-end" : "justify-start"}`}
                         >
                           <div
-                            className={`max-w-[70%] rounded-lg p-4 shadow-sm text-sm whitespace-pre-wrap break-words ${
-                              isUser
-                                ? "bg-gray-100 text-gray-800"
-                                : "bg-white border border-gray-200 text-gray-800"
-                            }`}
+                            className={`max-w-[70%] rounded-lg p-4 shadow-sm text-sm whitespace-pre-wrap break-words ${isUser
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-white border border-gray-200 text-gray-800"
+                              }`}
                           >
                             {msg.loading ? <DotsLoader /> : msg.text}
                           </div>
