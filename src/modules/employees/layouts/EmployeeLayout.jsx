@@ -22,7 +22,7 @@ const EmployeesLayout = ({ children, title }) => {
                 <div className="flex flex-col w-full">
                     <PageHeader title={title} />
                     <motion.div
-                        className="flex-1 overflow-auto mt-13"
+                        className="flex-1 overflow-auto"
                         initial="initial"
                         animate="animate"
                         exit="exit"
