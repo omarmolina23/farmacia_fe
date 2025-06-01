@@ -176,7 +176,7 @@ export default function AiAssistant() {
       {!isOpen && (
         <button
           onClick={openAssistant}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg hover:scale-105 transition-transform"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white border-1 border-green-600 shadow-lg hover:scale-105 transition-transform"
           title="Abrir asistente IA"
         >
           <Wand2 className="h-8 w-8 text-green-600" />

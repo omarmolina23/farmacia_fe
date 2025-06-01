@@ -45,6 +45,7 @@ export function ForecastByProduct() {
     const [projectionData, setProjectionData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isAnimating, setIsAnimating] = useState(true);
 
     // Datos por defecto para "Ninguno"
     const defaultForecastData = {
@@ -94,6 +95,27 @@ export function ForecastByProduct() {
             .catch(() => setError("No se pudieron cargar los productos"))
             .finally(() => setLoading(false));
     }, []);
+
+    useEffect(() => {
+        const svg = document.querySelector(".recharts-wrapper");
+        if (!svg) return;
+
+        const areaPaths = svg.querySelectorAll(".recharts-area-area path");
+
+        areaPaths.forEach((path) => {
+            if (isAnimating) {
+                path.classList.add("animate-pulse-line");
+            } else {
+                path.classList.remove("animate-pulse-line");
+            }
+        });
+    }, [isAnimating]);
+
+    useEffect(() => {
+        // Inicia la animación cada vez que cambia la categoría
+        if (!selectedProductId) return;
+        setIsAnimating(true);
+    }, [selectedProductId]);
 
     // Si la selección es "default" (Ninguno), usamos los datos por defecto
     useEffect(() => {
@@ -290,29 +312,7 @@ export function ForecastByProduct() {
                                                     iconType="rect"
                                                     iconSize={14}
                                                 />
-
-                                                {/* Área de Proyección */}
-                                                <Area
-                                                    key="projection"
-                                                    type="monotone"
-                                                    dataKey="value"
-                                                    data={projectionData}
-                                                    stroke={
-                                                        selectedProductId === "default" ? "#a3a3a3" : "#6AD466"
-                                                    }
-                                                    fill={
-                                                        selectedProductId === "default" ? "#d4d4d4" : "#6AD466"
-                                                    }
-                                                    fillOpacity={0.08}
-                                                    name="Proyección"
-                                                    strokeWidth={2}
-                                                    dot={false}
-                                                    isAnimationActive={false}
-                                                    className={
-                                                        selectedProductId === "default" ? "animate-pulse-slow" : ""
-                                                    }
-                                                />
-
+                                    
                                                 {/* Área Histórica */}
                                                 <Area
                                                     key="history"
@@ -330,11 +330,34 @@ export function ForecastByProduct() {
                                                     strokeWidth={2}
                                                     dot={{ r: 3 }}
                                                     activeDot={{ r: 5 }}
-                                                    isAnimationActive={false}
-                                                    className={
-                                                        selectedProductId === "default" ? "animate-pulse-slow" : ""
-                                                    }
+                                                    isAnimationActive={true}
+                                                    animationDuration={1000}
+                                                    animationEasing="ease-in-out"
+                                                    className={isAnimating ? "animate-pulse-line" : ""}
                                                 />
+
+                                                 {/* Área de Proyección */}
+                                                <Area
+                                                    key="projection"
+                                                    type="monotone"
+                                                    dataKey="value"
+                                                    data={projectionData}
+                                                    stroke={
+                                                        selectedProductId === "default" ? "#a3a3a3" : "#6AD466"
+                                                    }
+                                                    fill={
+                                                        selectedProductId === "default" ? "#d4d4d4" : "#6AD466"
+                                                    }
+                                                    fillOpacity={0.08}
+                                                    name="Proyección"
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                    isAnimationActive={true}
+                                                    animationDuration={1000}
+                                                    animationEasing="ease-in-out"
+                                                    className={isAnimating ? "animate-pulse-line" : ""}
+                                                />
+
                                             </AreaChart>
                                         </ResponsiveContainer>
                                     </ChartContainer>

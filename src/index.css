@@ -217,3 +217,18 @@ html, body, #root {
 .animate-bounce-dot {
   animation: bounce-dot 0.8s ease-in-out infinite;
 }
+
+@keyframes pulse-line {
+  0%, 100% {
+    stroke-width: 2;
+    opacity: 0.6;
+  }
+  50% {
+    stroke-width: 4;
+    opacity: 1;
+  }
+}
+
+.animate-pulse-line {
+  animation: pulse-line 1.5s ease-in-out infinite;
+}

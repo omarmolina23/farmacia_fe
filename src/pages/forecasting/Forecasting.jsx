@@ -22,11 +22,27 @@ export default function Forecasting() {
                             <ForecastByProduct />
                         </div>
                     </div>
-                    {/*           para el futuro, decir el procentaje de aceptacion de la predeccion <div> 
-                        <p className="text-sm text-gray-500">
-                            Esta sección te permite predecir las ventas por categoría o producto, ayudándote a tomar decisiones informadas basadas en datos históricos.
-                        </p>
-                    </div> */}
+
+                    {/* Porcentaje estándar de aceptación de la predicción */}
+                    <div className="@xl/main:col-span-10 w-ful">
+                        <div className="flex items-center gap-2 bg-[#f0f0f0e7] text-gray-800  border-l-4 border-green-500 p-4 rounded-md shadow-sm ">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-500"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+                            </svg>
+                            <p className="text-sm font-semibold text-gray-800">
+                                Porcentaje estándar de aceptación de la predicción:
+                                <span className="ml-1 text-green-600">85%</span>
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <AiAssistant />
