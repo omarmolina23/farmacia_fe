@@ -2,8 +2,6 @@ import axios from "../config/axios";
 import axiosForecast from '../config/axiosForecast';
 import axiosMagicLoop from '../config/axiosMagicLoop';
 
-const employee = JSON.parse(localStorage.getItem("user"));
-
 export const getSalesAll = async () => {
     try {
         const response = await axios.get("/sales");
@@ -149,7 +147,7 @@ export async function getForecastCategoryAll() {
 
 export async function getPrescriptiveProduct(context, productName) {
     const payload = {
-        question: `Soy el empleado ${employee.name}, realiza un análisis prescriptivo sobre el producto ${productName}, rápido, sintetizado y entendible. ` +
+        question: `realiza un análisis prescriptivo sobre el producto ${productName}, rápido, sintetizado y entendible. ` +
             `Limita tu respuesta a máximo 280 caracteres.`,
         context,
     };
@@ -171,7 +169,7 @@ export async function getPrescriptiveProduct(context, productName) {
 
 export async function getPrescriptiveCategory(context, categoryName) {
     const payload = {
-        question: `Soy el empleado ${employee.name}, realiza un análisis prescriptivo sobre la categoría ${categoryName}, rápido, sintetizado y entendible. ` +
+        question: `realiza un análisis prescriptivo sobre la categoría ${categoryName}, rápido, sintetizado y entendible. ` +
             `Limita tu respuesta a máximo 280 caracteres.`,
         context,
     };
