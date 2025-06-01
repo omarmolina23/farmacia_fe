@@ -21,23 +21,23 @@ const defaultColors = [
 ];
 
 const periodKeyMap = {
-  "7d": "ultimos_7_dias",
+  "15d": "ultimos_15_dias",   // CAMBIO AQUI
   "30d": "ultimos_30_dias",
   "90d": "ultimos_3_meses",
 };
 
 export function AreaChartSales() {
-  const [timeRange, setTimeRange] = useState("7d");
+  const [timeRange, setTimeRange] = useState("15d"); // CAMBIO POR DEFECTO A 15d
   const [data, setData] = useState([]);
   const [gananciasPorCategoria, setGananciasPorCategoria] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const didFetch = useRef(false);
 
-  // Calcular dominio dinamico del eje Y
+  // Calcular dominio dinámico del eje Y
   const filteredData = useMemo(() => {
     const now = Date.now();
-    const days = timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90;
+    const days = timeRange === "15d" ? 15 : timeRange === "30d" ? 30 : 90;
     return data.filter((entry) => {
       const diffDays = (now - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24);
       return diffDays <= days;
@@ -69,7 +69,7 @@ export function AreaChartSales() {
         // Ordenar por fecha
         chartData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // 1) Normalizar datos para que todas las categorías aparezcan en cada fecha
+        // Normalizar datos para que todas las categorías aparezcan en cada fecha
         const allCats = Array.from(
           new Set(
             chartData.flatMap((e) => Object.keys(e).filter((k) => k !== "date"))
@@ -88,12 +88,12 @@ export function AreaChartSales() {
 
         // Seleccionar categorías por defecto
         const defaultCats = Object.keys(
-          gananciasData?.ganancias_por_categoria?.[periodKeyMap["7d"]] || {}
+          gananciasData?.ganancias_por_categoria?.[periodKeyMap["15d"]] || {}
         );
         setSelectedCategories(defaultCats);
 
         // Validar existencia de datos recientes
-        const days = 7;
+        const days = 15;
         const now = Date.now();
         const hasAny = normalized.some((entry) => {
           const diff = (now - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24);
@@ -114,7 +114,6 @@ export function AreaChartSales() {
 
   const chartConfig = useMemo(() => {
     if (!data.length) return {};
-    // 2) Todas las categorías disponibles
     const keys = Object.keys(data[0]).filter((k) => k !== "date");
     return keys.reduce((acc, key, idx) => {
       acc[key] = {
@@ -211,7 +210,7 @@ export function AreaChartSales() {
                     <SelectValue placeholder="Seleccionar rango" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7d">Últimos 7 días</SelectItem>
+                    <SelectItem value="15d">Últimos 15 días</SelectItem> {/* Cambiado */}
                     <SelectItem value="30d">Últimos 30 días</SelectItem>
                     <SelectItem value="90d">Últimos 3 meses</SelectItem>
                   </SelectContent>

@@ -523,8 +523,6 @@ const SalesRegister = () => {
           refreshClients={fetchClientes}
         />
       </div>
-
-
     </Layout>
   );
 };
