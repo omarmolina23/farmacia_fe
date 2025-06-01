@@ -144,7 +144,7 @@ export function RecentSalesCard() {
 
                     <p className="text-sm text-gray-400 mb-2">
                         {totalSales === 1 ? "Última" : "Últimas"} {totalSales}{" "}
-                        {totalSales === 1 ? "venta" : "ventas"} del día
+                        {totalSales === 1 ? "venta" : "ventas"} realizadas
                     </p>
                     <ul className="space-y-2">
                         {currentSales.length === 0 ? (

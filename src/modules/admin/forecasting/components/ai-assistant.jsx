@@ -3,11 +3,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   getAiAssistant,
   getForecastProductAll,
   getForecastCategoryAll,
 } from "../../../../services/SalesService";
+import {
+  getStockSumary
+} from "../../../../services/ProductService";
 import { ArrowLeft, Wand2, Send } from "lucide-react";
 
 function ModalPortal({ children }) {
@@ -34,6 +38,20 @@ const INITIAL_MESSAGE = {
   text: "¡Hola! Soy tu asistente. ¿En qué puedo ayudarte?",
 };
 
+  // Variants para el backdrop (fondo negro semitransparente)
+  const backdropVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
+
+  // Variants para el modal (contenido)
+  const modalVariants = {
+    initial: { opacity: 0, scale: 0.95, y: 20 },
+    animate: { opacity: 1, scale: 1, y: 0 },
+    exit: { opacity: 0, scale: 0.95, y: 20 },
+  };
+
 export default function AiAssistant() {
   const [context, setContext] = useState({ forecasts: [] });
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
@@ -48,15 +66,19 @@ export default function AiAssistant() {
   const inputRef = useRef(null);
   const MAX_HEIGHT = 72; // 72px = 4.5rem
 
+
+
+
   // 1) Traer contexto de pronósticos (productos + categorías)
   useEffect(() => {
     (async () => {
       try {
-        const [products, categories] = await Promise.all([
+        const [stock, products, categories] = await Promise.all([
+          getStockSumary(),
           getForecastProductAll(),
           getForecastCategoryAll(),
         ]);
-        setContext({ forecasts: [...categories.forecasts, ...products.forecasts] });
+        setContext({ forecasts: [...categories.forecasts, ...products.forecasts], stock });
       } catch (error) {
         console.error("Error cargando contexto:", error);
       }
@@ -100,8 +122,19 @@ export default function AiAssistant() {
       const response = await getAiAssistant({
         context,
         question,
-        restrictions:
-          "Responde SOLO a lo que se pregunta y no agregues información adicional. No hagas preguntas de seguimiento. Sé preciso y breve.",
+        restrictions: `
+    Responde exclusivamente dentro del contexto del negocio: ventas de productos y categorias y sus predicciones proporcionadas en el contexto.
+    No respondas preguntas ajenas al negocio, como temas personales, técnicos generales, ni preguntas sobre otros ámbitos.
+    El stock mínimo para cada producto es de 20 unidades ESTO para cuando te lo pregunten, y stock en exceso es de 100 unidades. Por si el usuario pregunta. 
+    Si el usuario hace una pregunta conceptual relacionada con ventas o predicciones (por ejemplo: ¿qué es una predicción de ventas?), puedes explicarlo brevemente.
+    En caso que la pregunta no esté relacionada con el negocio, responde: "Lo siento, no puedo ayudar con eso. ¿Tienes alguna pregunta sobre ventas o pronósticos?"
+    Solo sí, el usuario dice Real Madrid en alguna parte del prompt, responde solo con: "¡Hala Madrid!".
+    Solo sí, el usuario dice "Barcelona" o algo relacionado sobre ese equipo de fútbol, puedes responder: "15" o "8-2" o "La sexta es inevitable".
+    No respondas preguntas sobre otros temas, como deportes, política, religión, etc.
+    No respondas preguntas sobre la empresa, como su historia, misión, visión, etc.
+    No agregues información adicional no solicitada.
+    No hagas preguntas de seguimiento.
+    Sé preciso, claro y breve.`,
       });
 
       // Reemplaza el “loading” con la respuesta real
@@ -116,9 +149,9 @@ export default function AiAssistant() {
         prev.map((msg) =>
           msg.loading
             ? {
-                sender: "ai",
-                text: "Error al obtener la respuesta de IA. Intenta nuevamente.",
-              }
+              sender: "ai",
+              text: "Error al obtener la respuesta de IA. Intenta nuevamente.",
+            }
             : msg
         )
       );
@@ -161,31 +194,44 @@ export default function AiAssistant() {
       {!isOpen && (
         <button
           onClick={openAssistant}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg hover:scale-105 transition-transform"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white border-1 border-green-600 shadow-lg hover:scale-105 transition-transform"
           title="Abrir asistente IA"
         >
           <Wand2 className="h-8 w-8 text-green-600" />
         </button>
       )}
 
-      {isOpen && (
-        <ModalPortal>
-          <div className="fixed inset-0 z-50">
-            {/* Fondo semitransparente */}
-            <div
-              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
-                isVisible ? "opacity-100" : "opacity-0"
-              }`}
-            />
+      <AnimatePresence>
+        {isOpen && (
+          <ModalPortal>
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center"
+              variants={backdropVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.25 }}
+            >
+              {/* Fondo semitransparente */}
+              <motion.div
+                className="absolute inset-0 bg-black/40"
+                variants={backdropVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.25 }}
+                onClick={handleClose}
+              />
 
-            {/* Contenedor del modal */}
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-              <div
-                className={`relative w-full max-w-xl h-[60vh] bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${
-                  isVisible
-                    ? "opacity-100 scale-100 translate-y-0"
-                    : "opacity-0 scale-95 translate-y-2"
-                }`}
+              {/* Contenedor del modal */}
+              <motion.div
+                className="relative w-full max-w-xl h-[60vh] bg-white rounded-2xl shadow-2xl flex flex-col"
+                variants={modalVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                onClick={(e) => e.stopPropagation()}
               >
                 {/* ==================== HEADER ==================== */}
                 <div className="flex items-center px-4 py-3 border-b border-gray-200 rounded-t-2xl bg-white">
@@ -203,9 +249,14 @@ export default function AiAssistant() {
                 </div>
 
                 {/* ==================== CHAT ==================== */}
-                <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-3">
+                <div
+                  ref={scrollContainerRef}
+                  className="flex-1 overflow-y-auto px-4 py-3"
+                >
                   {/* Hora en la parte superior, centrada */}
-                  <div className="flex justify-center mb-2 text-xs text-gray-400">{time}</div>
+                  <div className="flex justify-center mb-2 text-xs text-gray-400">
+                    {time}
+                  </div>
 
                   {/* Lista de mensajes */}
                   <div className="space-y-4">
@@ -235,7 +286,10 @@ export default function AiAssistant() {
                 </div>
 
                 {/* ==================== INPUT ==================== */}
-                <form onSubmit={handleFormSubmit} className="border-t border-gray-200 px-4 py-2 rounded-b-2xl">
+                <form
+                  onSubmit={handleFormSubmit}
+                  className="border-t border-gray-200 px-4 py-2 rounded-b-2xl"
+                >
                   <div className="relative">
                     <textarea
                       ref={inputRef}
@@ -261,10 +315,9 @@ export default function AiAssistant() {
                         focus:border-green-300 focus:outline-none focus:ring-1 focus:ring-green-300 
                         whitespace-pre-wrap break-words 
                         resize-none 
-                        overflow-hidden                ← aquí
+                        overflow-hidden
                       "
                       style={{
-                        // Para que nunca aparezca scroll vertical
                         overflowY: "hidden",
                       }}
                     />
@@ -276,13 +329,15 @@ export default function AiAssistant() {
                       <Send className="h-5 w-5 text-gray-400" />
                     </button>
                   </div>
-                  <div className="mt-1 text-right text-xs text-gray-400">{input.length} / 80</div>
+                  <div className="mt-1 text-right text-xs text-gray-400">
+                    {input.length} / 80
+                  </div>
                 </form>
-              </div>
-            </div>
-          </div>
-        </ModalPortal>
-      )}
+              </motion.div>
+            </motion.div>
+          </ModalPortal>
+        )}
+      </AnimatePresence>
     </>
   );
 }

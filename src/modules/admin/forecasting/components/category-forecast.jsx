@@ -48,6 +48,8 @@ export function ForecastByCategory() {
     const [projectionData, setProjectionData] = useState([]); // Histórico + forecast
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isAnimating, setIsAnimating] = useState(true);
+
 
     // Datos por defecto para "Ninguno"
     const defaultForecastData = {
@@ -86,6 +88,27 @@ export function ForecastByCategory() {
             .catch(() => setError("No se pudieron cargar las categorías"))
             .finally(() => setLoading(false));
     }, []);
+
+    useEffect(() => {
+        const svg = document.querySelector(".recharts-wrapper");
+        if (!svg) return;
+
+        const areaPaths = svg.querySelectorAll(".recharts-area-area path");
+
+        areaPaths.forEach((path) => {
+            if (isAnimating) {
+                path.classList.add("animate-pulse-line");
+            } else {
+                path.classList.remove("animate-pulse-line");
+            }
+        });
+    }, [isAnimating]);
+
+    useEffect(() => {
+        // Inicia la animación cada vez que cambia la categoría
+        if (!selectedCategory) return;
+        setIsAnimating(true);
+    }, [selectedCategory]);
 
     // Si la categoría seleccionada es "Ninguno-default", cargamos datos por defecto
     useEffect(() => {
@@ -289,59 +312,47 @@ export function ForecastByCategory() {
 
                                                 {/* Área de proyección */}
                                                 <Area
-                                                    key="projection"
-                                                    type="monotone"
-                                                    dataKey="value"
-                                                    data={projectionData}
-                                                    stroke={
-                                                        selectedCategory === "Ninguno-default"
-                                                            ? "#a3a3a3"
-                                                            : "#6AD466"
-                                                    }
-                                                    fill={
-                                                        selectedCategory === "Ninguno-default"
-                                                            ? "#d4d4d4"
-                                                            : "#6AD466"
-                                                    }
-                                                    fillOpacity={0.08}
-                                                    name="Proyección"
-                                                    strokeWidth={2}
-                                                    dot={false}
-                                                    isAnimationActive={false}
-                                                    className={
-                                                        selectedCategory === "Ninguno-default"
-                                                            ? "animate-pulse-slow"
-                                                            : ""
-                                                    }
-                                                />
-
-                                                {/* Área histórica */}
-                                                <Area
                                                     key="history"
                                                     type="monotone"
                                                     dataKey="value"
                                                     data={historyData}
                                                     stroke={
-                                                        selectedCategory === "Ninguno-default"
-                                                            ? "#737373"
-                                                            : "#96D42C"
+                                                        selectedCategory === "Ninguno-default" ? "#737373" : "#96D42C"
                                                     }
                                                     fill={
-                                                        selectedCategory === "Ninguno-default"
-                                                            ? "#d4d4d4"
-                                                            : "#96D42C"
+                                                        selectedCategory === "Ninguno-default" ? "#d4d4d4" : "#96D42C"
                                                     }
                                                     fillOpacity={0.1}
                                                     name="Histórico"
                                                     strokeWidth={2}
                                                     dot={{ r: 3 }}
                                                     activeDot={{ r: 5 }}
-                                                    isAnimationActive={false}
-                                                    className={
-                                                        selectedCategory === "Ninguno-default"
-                                                            ? "animate-pulse-slow"
-                                                            : ""
+                                                    isAnimationActive={true}
+                                                    animationDuration={1000}
+                                                    animationEasing="ease-in-out"
+                                                    className={isAnimating ? "animate-pulse-line" : ""}
+                                                />
+
+                                                {/* Área de proyección */}
+                                                <Area
+                                                    key="projection"
+                                                    type="monotone"
+                                                    dataKey="value"
+                                                    data={projectionData}
+                                                    stroke={
+                                                        selectedCategory === "Ninguno-default" ? "#a3a3a3" : "#6AD466"
                                                     }
+                                                    fill={
+                                                        selectedCategory === "Ninguno-default" ? "#d4d4d4" : "#6AD466"
+                                                    }
+                                                    fillOpacity={0.08}
+                                                    name="Proyección"
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                    isAnimationActive={true}
+                                                    animationDuration={1000}
+                                                    animationEasing="ease-in-out"
+                                                    className={isAnimating ? "animate-pulse-line" : ""}
                                                 />
                                             </AreaChart>
                                         </ResponsiveContainer>

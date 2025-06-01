@@ -212,13 +212,11 @@ const SalesList = () => {
         />
       </div>
 
-
-      {isFilterOpen && (
-        <FilterModal
-          onClose={() => setIsFilterOpen(false)}
-          onApply={handleApplyFilter}
-        />
-      )}
+<FilterModal
+  show={isFilterOpen}
+  onClose={() => setIsFilterOpen(false)}
+  onApply={handleApplyFilter}
+/>
       <FilterRepaid
         mode="sales"
         filterStatus={filterStatus}

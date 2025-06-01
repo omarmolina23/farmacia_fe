@@ -4,8 +4,9 @@ import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./modules/routing/ProtectedRoute";
 import { AdminRoute } from "./modules/routing/AdminRoute";
 import Loading from "./components/Loading";
+import { AnimatePresence } from "framer-motion";
 import "./App.css";
-const Forecasting = lazy(() => import("./pages/forecasting/Forecasting")); 
+const Forecasting = lazy(() => import("./pages/forecasting/Forecasting"));
 const Catalog = lazy(() => import("./pages/clients/catalog/Catalog"));
 const Product = lazy(() => import("./pages/clients/catalog/Product"));
 const ClientsAboutUs = lazy(() => import("./pages/clients/ClientsAboutUs"));
@@ -39,64 +40,66 @@ function App() {
   return (
     <AuthProvider>
       <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route path="/" element={<ClientHome />} />
-          <Route path="/about" element={<ClientsAboutUs />} />
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/catalog/:id" element={<Product />} />
-          <Route path="/purchases" element={<Purchases />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/scan-page/:session" element={<ScanPage />} />
-          <Route path="/register-barcode/:session" element={<RegisterBarcode />} />
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AdminRoute />}>
-              <Route path="/admin">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<ClientHome />} />
+            <Route path="/about" element={<ClientsAboutUs />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/catalog/:id" element={<Product />} />
+            <Route path="/purchases" element={<Purchases />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/scan-page/:session" element={<ScanPage />} />
+            <Route path="/register-barcode/:session" element={<RegisterBarcode />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AdminRoute />}>
+                <Route path="/admin">
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="forecast" element={<Forecasting />} />
+                  <Route path="sales">
+                    <Route path="register" element={<SalesRegister />} />
+                    <Route path="list" element={<SalesList />} />
+                    <Route path="return/:sales_reference_id" element={<SalesReturn />} />
+                  </Route>
+                  <Route path="category">
+                    <Route path="register" element={<CategoryRegister />} />
+                    <Route path="list" element={<CategoryList />} />
+                    <Route path="update" element={<CategoryUpdate />} />
+                  </Route>
+                  <Route path="supplier">
+                    <Route path="register" element={<SupplierRegister />} />
+                    <Route path="list" element={<SupplierList />} />
+                    <Route path="update" element={<SupplierUpdate />} />
+                  </Route>
+                  <Route path="user">
+                    <Route path="register" element={<UserRegister />} />
+                    <Route path="list" element={<UserList />} />
+                    <Route path="update/:id" element={<UserUpdate />} />
+                  </Route>
+                  <Route path="product">
+                    <Route path="register" element={<ProductRegister />} />
+                    <Route path="list" element={<ProductList />} />
+                    <Route path="update/:id" element={<ProductUpdate />} />
+                    <Route path="detail/:id" element={<ProductDetail />} />
+                    <Route path="batch/:id" element={<BatchList />} />
+                    <Route
+                      path="batch/register/:id"
+                      element={<BatchRegister />}
+                    />
+                  </Route>
+                </Route>
+              </Route>
+              <Route path="/employees">
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="forecast" element={<Forecasting />} /> 
                 <Route path="sales">
                   <Route path="register" element={<SalesRegister />} />
                   <Route path="list" element={<SalesList />} />
-                  <Route path="return/:sales_reference_id" element={<SalesReturn />} />
-                </Route>
-                <Route path="category">
-                  <Route path="register" element={<CategoryRegister />} />
-                  <Route path="list" element={<CategoryList />} />
-                  <Route path="update" element={<CategoryUpdate />} />
-                </Route>
-                <Route path="supplier">
-                  <Route path="register" element={<SupplierRegister />} />
-                  <Route path="list" element={<SupplierList />} />
-                  <Route path="update" element={<SupplierUpdate />} />
-                </Route>
-                <Route path="user">
-                  <Route path="register" element={<UserRegister />} />
-                  <Route path="list" element={<UserList />} />
-                  <Route path="update/:id" element={<UserUpdate />} />
-                </Route>
-                <Route path="product">
-                  <Route path="register" element={<ProductRegister />} />
-                  <Route path="list" element={<ProductList />} />
-                  <Route path="update/:id" element={<ProductUpdate />} />
-                  <Route path="detail/:id" element={<ProductDetail />} />
-                  <Route path="batch/:id" element={<BatchList />} />
-                  <Route
-                    path="batch/register/:id"
-                    element={<BatchRegister />}
-                  />
+                  <Route path="return" element={<SalesReturn />} />
                 </Route>
               </Route>
             </Route>
-            <Route path="/employees">
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="sales">
-                <Route path="register" element={<SalesRegister />} />
-                <Route path="list" element={<SalesList />} />
-                <Route path="return" element={<SalesReturn />} />
-              </Route>
-            </Route>
-          </Route>
-        </Routes>
+          </Routes>
+        </AnimatePresence>
       </Suspense>
     </AuthProvider>
   );

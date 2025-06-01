@@ -53,27 +53,7 @@ export default function TypingText({ text = "" }) {
                 <span className="text-[#6AD466] animate-blink">|</span>
             </pre>
 
-            {/* Icono con animación solo mientras escribe */}
-            <motion.div
-                animate={
-                    isTyping
-                        ? {
-                            scale: [1, 1.3, 1],
-                            rotate: [0, 10, -10, 0],
-                            color: ["#16a34a", "#4ade80", "#22c55e", "#16a34a"],
-                        }
-                        : { scale: 1, rotate: 0, color: "#000" }
-                }
-                transition={{
-                    duration: isTyping ? 1.5 : 0.3,
-                    repeat: isTyping ? Infinity : 0,
-                    ease: "easeInOut",
-                }}
-                whileHover={{ scale: 1.3, rotate: 15 }}
-                className="absolute bottom-3 right-2 cursor-pointer"
-            >
-                <BsStars size={25} className="opacity-80" />
-            </motion.div>
+
         </motion.div>
     );
 }

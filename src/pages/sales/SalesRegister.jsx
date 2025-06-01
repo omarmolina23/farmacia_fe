@@ -309,40 +309,40 @@ const SalesRegister = () => {
                 {/*   <label htmlFor="name" className="text-md font-medium">
                       Cantidad
                     </label> */}
- <div className="flex items-center border rounded-md bg-white">
-  <button
-    type="button"
-    className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
-    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
-    tabIndex={-1}
-    aria-label="Disminuir cantidad"
-  >
-    -
-  </button>
-  <input
-    min="1"
-    value={cantidad}
-    onChange={(e) => {
-      const val = Number(e.target.value);
-      setCantidad(val >= 1 ? val : 1);
-    }}
-    className="w-12 h-8 text-center border-none focus:ring-0 focus:outline-none"
-    aria-label="Cantidad"
-  />
-  <button
-    type="button"
-    className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
-    onClick={() => setCantidad((c) => c + 1)}
-    tabIndex={-1}
-    aria-label="Incrementar cantidad"
-  >
-    +
-  </button>
-</div>
-<button onClick={agregarProducto} className="pl-2" aria-label="Agregar producto">
-  <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
-</button>
-</div>
+                <div className="flex items-center border rounded-md bg-white">
+                  <button
+                    type="button"
+                    className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
+                    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
+                    tabIndex={-1}
+                    aria-label="Disminuir cantidad"
+                  >
+                    -
+                  </button>
+                  <input
+                    min="1"
+                    value={cantidad}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setCantidad(val >= 1 ? val : 1);
+                    }}
+                    className="w-12 h-8 text-center border-none focus:ring-0 focus:outline-none"
+                    aria-label="Cantidad"
+                  />
+                  <button
+                    type="button"
+                    className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
+                    onClick={() => setCantidad((c) => c + 1)}
+                    tabIndex={-1}
+                    aria-label="Incrementar cantidad"
+                  >
+                    +
+                  </button>
+                </div>
+                <button onClick={agregarProducto} className="pl-2" aria-label="Agregar producto">
+                  <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
+                </button>
+              </div>
               <button onClick={cancelarProducto}>
                 <MdOutlineDelete size={30} className="text-[#cd3535]" />
               </button>
@@ -507,25 +507,22 @@ const SalesRegister = () => {
             onClose={() => setProductToDelete(null)}
           />
         )}
-        {showQRModal && (
-          <ModalQR
-            open={showQRModal}
-            sessionIdRef={sessionIdRef}
-            onClose={() => setShowQRModal(false)}
-          />
+        <ModalQR
+          open={showQRModal}
+          sessionIdRef={sessionIdRef}
+          onClose={() => setShowQRModal(false)}
+        />
+        {(status === "loading" || status === "success") && (
+          <LoadingOverlay status={status} />
         )}
-      </div>
-      {(status === "loading" || status === "success") && (
-        <LoadingOverlay status={status} />
-      )}
-      {showModal && (
         <ModalRegisterClient
+          open={showModal}
           formData={formDataCliente}
           handleChange={handleChangeCliente}
           onClose={() => setShowModal(false)}
           refreshClients={fetchClientes}
         />
-      )}
+      </div>
     </Layout>
   );
 };
