@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {
   deleteProduct,
   updateProduct,
+  enableProduct,
 } from "../../../../services/ProductService";
 import { toast } from "react-toastify";
 
@@ -85,7 +86,7 @@ const ProductTable = ({
         try {
           const action = isActive
             ? deleteProduct(id)
-            : updateProduct(id, { status: "ACTIVE" });
+            : enableProduct(id);
           await action; // Ejecutar la acción aquí, solo si el usuario confirma
           toast.success(
             `Producto ${isActive ? "deshabilitado" : "habilitado"}`
