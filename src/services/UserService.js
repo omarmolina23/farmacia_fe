@@ -22,15 +22,7 @@ export const signUp = async (userData) => {
 
 export const signOut = async () => {
     try {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        
-        localStorage.removeItem('factus_access_token');
-        localStorage.removeItem('factus_refresh_token');
-
-        localStorage.removeItem("sessionId");
-        localStorage.removeItem("barcode");
-
+        localStorage.clear();
         await axios.post('auth/sign-out');
     }
     catch (error) {
@@ -76,6 +68,18 @@ export const refreshToken = async () => {
     }
 }
 
+export const getMe = async () =>{
+    try{
+        const token = localStorage.getItem('token');
+        const response = await axios.post('/auth/me', {token})
+
+        return response.data;
+    }
+    catch (error) {
+        throw new Error(error.response.data.message || "Ha ocurrido un error");
+    }
+}
+
 export const getUserAll = async () => {
     try {
         const token = localStorage.getItem('token');
@@ -109,12 +113,9 @@ export const searchUser = async (query) => {
 export const updateUser = async (id, updateData) => {
     try {
         const token = localStorage.getItem('token');
-        console.log(updateData);
         const response = await axios.patch(`/users/${id}`, updateData);
-        console.log("Hola", response);
         return response.data;
     } catch (error) {
-        console.log(error);
         throw new Error(error.response?.data?.message || 'Error al desactivar el usuario');
     }
 };
