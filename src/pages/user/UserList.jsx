@@ -111,7 +111,7 @@ const UserList = () => {
         <table className="text-sm w-full min-w-[700px] border-collapse">
           <thead className="bg-[#95A09D] text-left">
             <tr className="h-9">
-              <th className="pl-4">Tipo Doc.</th>
+              <th className="pl-4 hidden lg:table-cell">Tipo Doc.</th> 
               <th className="pl-4">Num Doc.</th>
               <th
                 onMouseEnter={() => setHoverColumn("name")}
