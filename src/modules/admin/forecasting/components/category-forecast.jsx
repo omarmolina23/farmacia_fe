@@ -83,6 +83,7 @@ export function ForecastByCategory() {
         setLoading(true);
         getCategoryAll()
             .then((cats) =>
+                console.log(cats),
                 setCategories([{ id: "default", name: "Ninguno" }, ...cats])
             )
             .catch(() => setError("No se pudieron cargar las categorías"))

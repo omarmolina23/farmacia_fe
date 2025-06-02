@@ -14,10 +14,6 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-const toColombianDateTimeRange = (dateString, isEnd = false) => {
-  const date = new Date(dateString + (isEnd ? "T23:59:59" : "T00:00:00"));
-  return new Date(date.toLocaleString("en-US", { timeZone: "America/Bogota" }));
-};
 
 const SalesList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -49,11 +45,11 @@ const SalesList = () => {
   const fetchSales = async (filters = {}) => {
     try {
       const data = await getSalesFiltered({
-        startDate: toColombianDateTimeRange(filters.startDate).toISOString(),
-        endDate: toColombianDateTimeRange(filters.endDate, true).toISOString(),
+        startDate: filters.startDate,
+        endDate: filters.endDate,
         repaid: filters.repaid,
       });
-
+      console.log("Datos de ventas obtenidos:", data);
       if (Array.isArray(data)) {
         setAllSales(data);
         setSales(data);
@@ -68,11 +64,11 @@ const SalesList = () => {
   const reloadSales = async () => {
     try {
       const data = await getSalesFiltered({
-        startDate: toColombianDateTimeRange(dateFilter.startDate).toISOString(),
-        endDate: toColombianDateTimeRange(dateFilter.endDate, true).toISOString(),
+        startDate: dateFilter.startDate,
+        endDate: dateFilter.endDate,
         repaid: filterStatus,
       });
-      setAllSales(data);
+      setAllSales(data);  
       setSales(data);
     } catch {
       toast.error("Error al recargar ventas");
