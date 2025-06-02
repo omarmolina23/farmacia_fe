@@ -277,8 +277,9 @@ const SalesRegister = () => {
     <Layout title="Registrar Venta">
       <div className="flex flex-col h-screen">
         {/* Barra superior de búsqueda de productos */}
-        <div className="flex items-center text-sm h-16 px-6">
-          <div className="w-full bg-white p-3 flex flex-col md:flex-row justify-between items-center gap-3 border-none">
+        <div className="flex items-center text-sm h-12 md:h-16 px-4 md:px-6">
+          <div className="w-full bg-white px-2 py-3 md:px-4 md:py-3 flex flex-row justify-between items-center gap-3">
+            {/* Bloque izquierdo: Search + Cantidad + Botones */}
             <div className="flex w-full md:w-auto gap-3 relative">
               <SearchBar
                 value={buscar}
@@ -305,11 +306,9 @@ const SalesRegister = () => {
                   ))}
                 </div>
               )}
+
               <div className="flex items-center gap-2">
-                {/*   <label htmlFor="name" className="text-md font-medium">
-                      Cantidad
-                    </label> */}
-                <div className="flex items-center border rounded-md bg-white">
+                <div className="flex items-center border rounded-md bg-white w-24 md:w-auto">
                   <button
                     type="button"
                     className="px-2 py-1 text-lg text-gray-600 hover:bg-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D0F25E]"
@@ -317,7 +316,7 @@ const SalesRegister = () => {
                     tabIndex={-1}
                     aria-label="Disminuir cantidad"
                   >
-                    -
+                    –
                   </button>
                   <input
                     min="1"
@@ -339,15 +338,22 @@ const SalesRegister = () => {
                     +
                   </button>
                 </div>
-                <button onClick={agregarProducto} className="pl-2" aria-label="Agregar producto">
+                <button
+                  onClick={agregarProducto}
+                  className="pl-2"
+                  aria-label="Agregar producto"
+                >
                   <IoIosAddCircleOutline size={30} className="text-[#8B83BA]" />
                 </button>
               </div>
-              <button onClick={cancelarProducto}>
+
+              <button onClick={cancelarProducto} className="ml-2">
                 <MdOutlineDelete size={30} className="text-[#cd3535]" />
               </button>
             </div>
-            <div className="px-6 py-4">
+
+            {/* Bloque derecho: Icono QR alineado al extremo */}
+            <div className="ml-auto px-4 py-3 md:px-6 md:py-4">
               <button
                 onClick={() => setShowQRModal(true)}
                 className="text-2xl text-gray-700 hover:text-blue-600 transition-colors"
@@ -357,16 +363,15 @@ const SalesRegister = () => {
             </div>
           </div>
         </div>
-
         {/* Tabla de productos agregados */}
-        <div className="flex-1 overflow-auto max-h-[330px]">
+        <div className="flex-1 overflow-x-auto overflow-y-auto max-h-[330px]">
           <table className="min-w-full text-sm table-fixed">
             <thead className="sticky top-0 bg-[#95A09D] z-9 text-left">
               <tr className="h-9">
                 <th></th>
                 <th className="text-center">N°</th>
                 <th className="text-center">Nombre</th>
-                <th className="text-center">Categoria</th>
+                <th className="text-center">Categoría</th>
                 <th className="text-center">Proveedor</th>
                 <th className="text-center">Cantidad</th>
                 <th className="text-center">Precio Unitario</th>
@@ -396,8 +401,8 @@ const SalesRegister = () => {
         <div className="border-t border-gray-300 mt-2"></div>
 
         {/* Sección cliente y botones finales */}
-        <div className="h-44">
-          <div className="flex items-center text-sm h-16 px-6">
+        <div className="h-auto md:h-44">
+          <div className="flex items-center text-sm h-12 md:h-16 px-4 md:px-6">
             <div className="flex w-full gap-2 relative items-center">
               <button
                 onClick={() => setShowModal(true)}
@@ -411,7 +416,7 @@ const SalesRegister = () => {
                 placeholder="Buscar cliente"
               />
               {sugerenciasClientes.length > 0 && (
-                <div className="absolute top-full mt-1 left-0 w-[400px] bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
+                <div className="absolute top-full mt-1 left-0 w-full md:w-[400px] bg-white border shadow z-10 max-h-48 overflow-y-auto rounded">
                   {sugerenciasClientes.map((sug, i) => (
                     <div
                       key={i}
@@ -431,8 +436,8 @@ const SalesRegister = () => {
             </div>
           </div>
 
-          <div className="flex justify-between mt-4 px-6">
-            <div className="w-1/2">
+          <div className="flex flex-col md:flex-row justify-between mt-4 px-6">
+            <div className="w-full md:w-1/2 mb-4 md:mb-0">
               {clienteSeleccionado && (
                 <div className="bg-white border border-gray-200 rounded-lg shadow p-4">
                   <div className="text-sm font-semibold text-gray-700 mb-2">
@@ -468,10 +473,8 @@ const SalesRegister = () => {
               )}
             </div>
 
-            <div className="w-1/2 flex flex-col justify-between">
-              <div className="w-[220px] bg-[#D9D9D9] px-6 py-3 text-4xl text-right mt-2 ml-auto rounded-lg shadow-lg flex items-center justify-between mb-6">
-                {" "}
-                {/* Añadido mb-6 para separar los botones */}
+            <div className="w-full md:w-1/2 flex flex-col justify-between">
+              <div className="w-full sm:w-[220px] bg-[#D9D9D9] px-4 sm:px-6 py-2 sm:py-3 text-4xl text-right mt-2 ml-auto rounded-lg shadow-lg flex items-center justify-between mb-6">
                 <span className="text-2xl text-gray-700 font-semibold">$</span>
                 <NumberFlow
                   value={precioTotal}
@@ -481,7 +484,7 @@ const SalesRegister = () => {
                   className="text-4xl text-gray-900 font-bold"
                 />
               </div>
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
                 <Button
                   title="Cancelar"
                   color="bg-[#818180]"
@@ -524,6 +527,7 @@ const SalesRegister = () => {
         />
       </div>
     </Layout>
+
   );
 };
 
