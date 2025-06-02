@@ -82,10 +82,10 @@ export function ForecastByCategory() {
     useEffect(() => {
         setLoading(true);
         getCategoryAll()
-            .then((cats) =>
-                console.log(cats),
-                setCategories([{ id: "default", name: "Ninguno" }, ...cats])
-            )
+            .then((cats) => {
+                const activeCategories = cats.filter(cat => cat.status === "ACTIVE");
+                setCategories([{ id: "default", name: "Ninguno" }, ...activeCategories])
+            })
             .catch(() => setError("No se pudieron cargar las categorías"))
             .finally(() => setLoading(false));
     }, []);

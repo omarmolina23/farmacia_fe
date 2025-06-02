@@ -49,7 +49,6 @@ const SalesList = () => {
         endDate: filters.endDate,
         repaid: filters.repaid,
       });
-      console.log("Datos de ventas obtenidos:", data);
       if (Array.isArray(data)) {
         setAllSales(data);
         setSales(data);

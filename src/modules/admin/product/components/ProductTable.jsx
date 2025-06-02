@@ -86,7 +86,6 @@ const ProductTable = ({
           const action = isActive
             ? deleteProduct(id)
             : updateProduct(id, { status: "ACTIVE" });
-
           await action; // Ejecutar la acción aquí, solo si el usuario confirma
           toast.success(
             `Producto ${isActive ? "deshabilitado" : "habilitado"}`
