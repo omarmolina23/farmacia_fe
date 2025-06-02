@@ -75,6 +75,15 @@ export const deleteProduct = async (id) => {
     }
 }
 
+export const enableProduct = async (id) => {
+    try {
+        const response = await axios.patch(`/product/enable/${id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
+    }
+}
+
 
 export const filterProduct = async (params) => {
     try {
