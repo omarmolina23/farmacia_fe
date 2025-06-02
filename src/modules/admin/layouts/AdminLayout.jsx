@@ -18,7 +18,7 @@ const AdminLayout = ({ children, title }) => {
                 const stockData = await getStockSumary();
                 const lowStockItems = stockData.filter(product => product.stock < 20);
                 setLowStockProducts(lowStockItems);
-                setLowStock(lowStockItems.length > 0);  
+                setLowStock(lowStockItems.length > 0);
 
             } catch (error) {
                 console.error("Error al obtener resumen de stock:", error.message);
@@ -76,6 +76,7 @@ const AdminLayout = ({ children, title }) => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                             className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center backdrop-blur-sm"
+                            onClick={() => setShowModal(false)} // Cierre al hacer clic fuera
                         >
                             <motion.div
                                 initial={{ y: 30, opacity: 0 }}
@@ -83,6 +84,7 @@ const AdminLayout = ({ children, title }) => {
                                 exit={{ y: 30, opacity: 0 }}
                                 transition={{ duration: 0.25, ease: 'easeOut' }}
                                 className="bg-white text-black w-full max-w-2xl rounded-2xl shadow-xl p-6"
+                                onClick={(e) => e.stopPropagation()} // Evita cerrar al hacer clic dentro
                             >
                                 {/* Header */}
                                 <div className="flex justify-between items-center border-b pb-3 mb-4">

@@ -50,11 +50,16 @@ const SuppliersList = () => {
 
         try {
             const results = await searchSupplier(query);
-            setSuppliers(results);
+            setSuppliers(Array.isArray(results) ? results : []);
         } catch (error) {
-            toast.error("Error en la búsqueda de proveedores");
+            if (error.response?.status === 404) {
+                setSuppliers([]);
+            } else {
+                console.error("Error en la búsqueda de proveedores");
+            }
         }
     };
+
 
     const handleSupplierRegister = () => {
         navigate('/admin/supplier/register');

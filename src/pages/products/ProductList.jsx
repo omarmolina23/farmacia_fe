@@ -57,7 +57,7 @@ const ProductList = () => {
       const results = await searchProductByName(query);
       setProducts(results);
     } catch (error) {
-      toast.error("Error en la búsqueda de proveedores");
+      toast.error("Error en la búsqueda de productos");
     }
   };
 
