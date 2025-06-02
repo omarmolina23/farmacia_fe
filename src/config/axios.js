@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -70,6 +71,7 @@ instance.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
         window.location.href = "/";
+        toast.warn("Se sesión se ha cerrado por inactividad. Debe iniciar sesión de nuevo")
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
