@@ -248,3 +248,35 @@ html, body, #root {
   animation: fade-in 0.3s ease-out;
 }
 
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+@keyframes explode {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; }
+}
+
+@keyframes fall {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); opacity: 0.2; }
+}
+
+@keyframes glitchFade {
+  0%, 20%, 40%, 60%, 80% { opacity: 1; }
+  10%, 30%, 50%, 70%, 90% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+@keyframes emojiFall {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); opacity: 0.2; }
+}
+
