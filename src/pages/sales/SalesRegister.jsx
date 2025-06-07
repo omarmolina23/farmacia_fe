@@ -260,7 +260,6 @@ const SalesRegister = () => {
         employeeName: employee.name,
         products: productsToSend,
       };
-      console.log("Venta enviada al servidor:", JSON.stringify(venta, null, 2));
       await createSale(venta);
       setStatus("success");
       setTimeout(() => {
