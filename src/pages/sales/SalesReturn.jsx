@@ -90,7 +90,7 @@ const SalesReturn = () => {
                 title: "!font-semibold !mt-2 !text-gray-900 !text-mb !mx-auto",
                 text: "!font-medium !text-gray-500 !text-mb !mx-auto",
             },
-            title: `¿Devolver venta con referencia: ${sale.id}?`,
+            title: `¿Devolver venta con referencia: ${sale.number_e_invoice || sale.id}?`,
             text: tieneFacturaElectronica
                 ? "Esta acción generará una Nota Crédito."
                 : "Esta venta no tiene factura electrónica. Se devolverán los productos al inventario pero no se generará Nota Crédito.",
@@ -114,7 +114,7 @@ const SalesReturn = () => {
             }));
 
             if (tieneFacturaElectronica) {
-                
+
                 const response = await sendCreditNote({
                     bill_id: sale.bill_id,
                     reference_code: sale.id,
@@ -125,7 +125,7 @@ const SalesReturn = () => {
                     cufe: response.data.credit_note.cude,
                     qr_image: response.data.credit_note.qr_image,
                 });
-                
+
                 await returnSale(sale.id);
 
             } else {
