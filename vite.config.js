@@ -18,6 +18,9 @@ export default defineConfig({
       usePolling: true,
     }
   },
+  preview: {
+    allowedHosts: ['app112.proyectos.fireploy.online'],
+  },
   test: {
     globals: true,
     environment: 'jsdom',
