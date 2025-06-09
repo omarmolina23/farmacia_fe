@@ -242,6 +242,7 @@ const ProductForm = ({
               name="price"
               value={formData.price || ""}
               onChange={handleChange}
+              onWheel={(e) => e.target.blur()} // Prevents zooming on mobile devices
               className="bg-gray-200"
               placeholder="Ingrese el precio"
             />
