@@ -35,11 +35,13 @@ export function AuthProvider({ children }) {
 
       try {
         const response = await getMe(token);
-        setUser({
-          name: response.name,
-          isAdmin: response.isAdmin,
-          status: response.status
-        }); // mejor usar el user actualizado del backend
+        const updatedUser = {
+            name: response.name,
+            isAdmin: response.isAdmin,
+            status: response.status,
+          };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
       } catch (error) {
         signOut();
         await signOutService();
@@ -54,6 +56,7 @@ export function AuthProvider({ children }) {
 
   const login = async (user) => {
     setUser(user);
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
   const signOut = () => {
