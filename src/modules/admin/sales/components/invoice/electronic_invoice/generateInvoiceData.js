@@ -40,7 +40,7 @@ export function buildInvoiceData({ fecha, ventaId, cliente, productos }) {
     }));
 
     return {
-        numbering_range_id: 8,
+        numbering_range_id: 21,
         reference_code: `fact${idVenta}`,
         observation: "",
         payment_form: "1",
