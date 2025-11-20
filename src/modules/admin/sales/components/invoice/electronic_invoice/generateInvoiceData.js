@@ -41,7 +41,7 @@ export function buildInvoiceData({ fecha, ventaId, cliente, productos }) {
 
     return {
         numbering_range_id: 8,
-        reference_code: `SETP${idVenta}`,
+        reference_code: `fact${idVenta}`,
         observation: "",
         payment_form: "1",
         payment_method_code: "10",
