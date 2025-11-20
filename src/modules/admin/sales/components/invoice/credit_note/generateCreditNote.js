@@ -25,7 +25,7 @@ export function buildCreditNote({ bill_id, reference_code, productos }) {
     }));
 
     return {
-        numbering_range_id: 5,
+        numbering_range_id: 9,
         //* 
         // 1. Devolución parcial de los bienes y/o no aceptación parcial del servicio. 
         // 2. Anulación de factura electrónica.
