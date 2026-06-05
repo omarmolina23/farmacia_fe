@@ -102,10 +102,17 @@ export const createCreditNote = async (creditNoteData) => {
             throw new Error("Errores de validación. Revisa los campos y vuelve a intentar.");
         }
 
-        if (status === 409 && Array.isArray(errorData?.errors)) {
-            const conflictMsg = errorData.errors.map(e => e.message).join(" | ");
+        if (status === 409) {
+            let conflictMsg;
+            if (Array.isArray(errorData?.errors)) {
+                conflictMsg = errorData.errors.map(e => e.message).join(" | ");
+            } else if (errorData?.message) {
+                conflictMsg = errorData.message;
+            } else {
+                conflictMsg = "Conflicto al procesar la nota crédito.";
+            }
             console.error(`⚠️ Conflicto al crear nota crédito: ${conflictMsg}`);
-            throw new Error(`Conflicto: ${conflictMsg}`);
+            throw new Error(conflictMsg);
         }
 
         // Otros errores

@@ -54,6 +54,7 @@ export default function Purchases() {
             <TextField
               placeholder="Introduzca su identificación"
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               value={query}
             />
             <button

@@ -59,6 +59,10 @@ export default function VerifyModal({ onClose, emailReal, onVerified }) {
         }
     };
 
+    useEffect(() => {
+        if (code.length === 6) handleVerifyCode();
+    }, [code]);
+
     return (
         <AnimatePresence>
             <motion.div
@@ -92,6 +96,7 @@ export default function VerifyModal({ onClose, emailReal, onVerified }) {
                                 className="w-full border rounded px-3 py-2 text-sm mb-4 focus:outline-none"
                                 value={inputEmail}
                                 onChange={(e) => setInputEmail(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && !sending && handleSendCode()}
                             />
                             <button
                                 className="bg-blue-500 text-white font-semibold w-full py-2 rounded-full hover:bg-blue-600 transition disabled:opacity-50"
@@ -131,6 +136,9 @@ export default function VerifyModal({ onClose, emailReal, onVerified }) {
                                             const newCode = code.split('');
                                             newCode[i] = val;
                                             setCode(newCode.join(''));
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && i === 5) handleVerifyCode();
                                         }}
                                         id={`otp-${i}`}
                                     />
