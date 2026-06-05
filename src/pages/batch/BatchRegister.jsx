@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import Loading from "../../components/Loading";
 import { createBatch } from "../../services/BatchService";
 import { searchProductByNameOrId } from "../../services/ProductService";

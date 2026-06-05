@@ -11,7 +11,7 @@ import { Skeleton } from "../../../../components/ui/skeleton";
 import { getForecastProduct, getPrescriptiveProduct } from "../../../../services/SalesService";
 import TypingText from "./typing-text";
 import { getProductAll } from "../../../../services/ProductService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import {
     ResponsiveContainer,
     AreaChart,

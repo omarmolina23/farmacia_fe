@@ -2,7 +2,7 @@ import { PiEyeSlash } from "react-icons/pi";
 import { FaEdit } from "react-icons/fa";
 import { Eye, EyeOff } from "lucide-react";
 import Swal from "sweetalert2";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { updateUser } from "../../../../services/UserService";

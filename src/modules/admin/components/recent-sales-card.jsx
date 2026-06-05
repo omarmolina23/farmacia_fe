@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import NiceAvatar, { genConfig } from "react-nice-avatar";
 import { SlOptions } from "react-icons/sl";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "../../../components/ui/dropdown-menu";
 import { Button } from "../../../components/ui/button";
 import { Skeleton } from "../../../components/ui/skeleton";

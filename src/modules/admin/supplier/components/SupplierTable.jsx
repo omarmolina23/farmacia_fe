@@ -3,7 +3,7 @@ import { FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { deleteSupplier, updateSupplier } from "../../../../services/SupplierService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 const SupplierTable = ({ index, id, name, phone, email, status, refreshList }) => {
     const navigate = useNavigate();

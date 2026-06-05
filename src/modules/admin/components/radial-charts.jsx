@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 import { PolarGrid, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";

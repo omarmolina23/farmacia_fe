@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { forgotPassword as forgotPasswordService } from "../../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import ModalSendReset from "../../components/ModalSendReset";
 import ModalResetPasswordField from "../../components/ModalResetPasswordField";
 

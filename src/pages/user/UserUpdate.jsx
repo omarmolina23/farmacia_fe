@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import UserForm from "../../modules/admin/user/components/UserForm";
 import Loading from "../../components/Loading";

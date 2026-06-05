@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import AuthSidebar from "../../components/AuthSidebar";
 import { setPassword as setPasswordService } from "../../services/UserService";
 import { signOut as signOutService } from "../../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 const ResetPassword = () => {
   const [user, setUser] = useState({

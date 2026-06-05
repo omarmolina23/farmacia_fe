@@ -12,7 +12,7 @@ import ProductDeleteModal from "../../modules/admin/sales/components/ModalDelete
 import ModalQR from "../../modules/admin/sales/components/ModalQR";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { getProductForSale } from "../../services/ProductService";
 import { getClientAll } from "../../services/ClientService";
 import { createSale } from "../../services/SalesService";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { signUp } from "../../services/UserService";
 import AdminLayout from "../../modules/admin/layouts/AdminLayout";
 import UserForm from "../../modules/admin/user/components/UserForm";

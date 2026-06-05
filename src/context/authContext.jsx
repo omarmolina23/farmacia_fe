@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getMe, signOut as signOutService } from "../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 export const authContext = createContext();
 
 export const useAuth = () => {

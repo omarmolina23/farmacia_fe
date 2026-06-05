@@ -9,7 +9,7 @@ import { getCategoryAll as getCategoriesService } from "../../../../services/Cat
 import { getSupplierAll as getSuppliersService } from "../../../../services/SupplierService";
 import { getTagAll as getTagsService } from "../../../../services/TagService";
 import { RiQrScan2Line } from "react-icons/ri";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 const isFieldDisable = (isEditMode) => isEditMode;
 const SOCKET_SERVER_URL = import.meta.env.VITE_BARCODE_URL;
