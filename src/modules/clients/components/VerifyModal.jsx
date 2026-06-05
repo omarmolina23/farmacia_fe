@@ -1,7 +1,7 @@
 import { sendCodeVerification } from "../../../services/ClientService";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from "@/lib/toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Variantes de animación

@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import UserTable from "../../modules/admin/user/components/UserTable.jsx";
 import Pagination from "../../components/Pagination";
 import { getUserAll, searchUser } from "../../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import FilterStatus from "../../components/FilterStatus";

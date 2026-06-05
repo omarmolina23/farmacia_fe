@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,

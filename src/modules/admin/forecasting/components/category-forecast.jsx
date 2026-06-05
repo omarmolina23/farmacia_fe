@@ -7,7 +7,7 @@ import {
     CardContent,
     CardTitle,
 } from "../../../../components/ui/card";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Skeleton } from "../../../../components/ui/skeleton";
 import {
     getForecastCategory,

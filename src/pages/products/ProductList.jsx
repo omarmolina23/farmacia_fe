@@ -8,7 +8,7 @@ import {
   getProductAll,
   searchProductByName,
 } from "../../services/ProductService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import FilterStatus from "../../components/FilterStatus";

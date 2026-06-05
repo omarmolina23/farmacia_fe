@@ -3,7 +3,7 @@ import { useAuth } from "../../context/authContext";
 import { getAccessToken } from "../../services/FactusService"
 import { useNavigate } from "react-router-dom";
 import { login as loginService } from "../../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import TextField from "../../components/TextField";
 import PasswordField from "../../components/PasswordField";
 import Button from "../../components/Button";

@@ -12,7 +12,7 @@ import { getSalesFiltered } from "../../services/SalesService";
 import FilterRepaid from "../../components/FilterRepaid";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 
 const SalesList = () => {

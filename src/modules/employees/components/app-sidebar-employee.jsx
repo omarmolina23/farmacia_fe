@@ -6,7 +6,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";
 import { signOut as signOutService } from "../../../services/UserService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Sidebar } from "../../../components/ui/sidebar";
 
 export function AppSidebarEmployee({ ...props }) {

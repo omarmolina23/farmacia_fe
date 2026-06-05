@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import CategoryCard from "./CategoryCard";
 import { getCategoryAll } from "../../../services/CategoryService";
 import { filterProduct } from "../../../services/ProductService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 

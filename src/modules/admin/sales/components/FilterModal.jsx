@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "../../../../components/Button";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 
 const modalBackgroundVariants = {
     hidden: { opacity: 0 },

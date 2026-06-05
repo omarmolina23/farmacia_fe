@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
 import SupplierTable from "../../modules/admin/supplier/components/SupplierTable.jsx";
 import { getSupplierAll, searchSupplier } from "../../services/SupplierService";
-import { toast } from 'react-toastify';
+import { toast } from "@/lib/toast";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import FilterStatus from "../../components/FilterStatus";

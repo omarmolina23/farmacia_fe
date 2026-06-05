@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SearchBar from "../../components/SearchBar.jsx";
 import Button from "../../components/Button.jsx";
 import Pagination from "../../components/Pagination.jsx";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import {

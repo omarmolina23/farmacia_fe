@@ -8,7 +8,7 @@ import {
   updateProduct,
   enableProduct,
 } from "../../../../services/ProductService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 const ProductTable = ({
   index,

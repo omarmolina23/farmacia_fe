@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { generatePdf } from "../../../services/SalesService";
 import { getSalesUser } from "../../../services/SalesService";
 import Pagination from "../../../components/Pagination";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export default function PurchaseTable({ purchases }) {
   const [calculatedPurchases, setCalculatedPurchases] = useState([]);

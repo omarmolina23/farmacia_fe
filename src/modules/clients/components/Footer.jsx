@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getCategoryAll } from "../../../services/CategoryService";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Link } from "react-router-dom";
 
 const Footer = () => {

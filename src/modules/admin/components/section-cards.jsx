@@ -1,7 +1,7 @@
 "use client";
 import { IoMdTrendingUp, IoMdTrendingDown, IoMdCash, IoIosArchive } from "react-icons/io";
 import { FaRegHeart, FaOpencart } from "react-icons/fa";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 import { useEffect, useState, useRef } from "react";
 import { cn } from "../../../lib/utils";
 import { Skeleton } from "../../../components/ui/skeleton";

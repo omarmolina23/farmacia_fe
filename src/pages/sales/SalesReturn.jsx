@@ -11,7 +11,7 @@ import { getSalesId } from "../../services/SalesService";
 import Button from "../../components/Button";
 import { returnSale, updateSale } from "../../services/SalesService";
 import { sendCreditNote } from "../../modules/admin/sales/components/invoice/credit_note/sendCreditNote"
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import 'react-toastify/dist/ReactToastify.css';
 
 

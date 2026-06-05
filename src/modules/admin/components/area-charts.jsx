@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { toast } from "sonner";
+import { toast } from "@/lib/sonner-toast";
 import { Badge } from "../../../components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../components/ui/chart";
 import { MultiSelect } from "../../../components/multi-select";

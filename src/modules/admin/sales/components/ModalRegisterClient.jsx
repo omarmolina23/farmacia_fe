@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { createClient } from "../../../../services/ClientService"; 
 import TextField from "../../../../components/TextField";
 import Button from "../../../../components/Button";
