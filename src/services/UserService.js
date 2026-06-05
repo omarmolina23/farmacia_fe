@@ -11,7 +11,11 @@ export const login = async (email, password) => {
 
         return response.data;
     } catch (error) {
-        throw new Error(error.response.data.message || "Ha ocurrido un error");
+        const status = error.response?.status;
+        if (status === 401 || status === 404) {
+            throw new Error("Correo o contraseña incorrectos. Por favor, verifica tus datos.");
+        }
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
     }
 };
 
