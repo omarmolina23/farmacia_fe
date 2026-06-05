@@ -138,7 +138,7 @@ const SalesReturn = () => {
                 navigate(`/${Modulo}/sales/list`);
             }, 2000);
         } catch (error) {
-            toast.error("Error al devolver la venta");
+            toast.error(error.message || "Error al devolver la venta");
             setStatus("idle");
         }
     };

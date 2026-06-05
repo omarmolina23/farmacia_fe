@@ -28,10 +28,9 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       const savedUser = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
 
       if (savedUser && token) {
-        const token = localStorage.getItem("token");
-
         try {
           const response = await getMe(token);
           const updatedUser = {
@@ -48,10 +47,12 @@ export function AuthProvider({ children }) {
             "Error al obtener el usuario. Por favor, inicia sesión nuevamente."
           );
         }
+      } else if (savedUser && !token) {
+        signOut();
       }
     };
 
-    fetchUser(); // llama la función async dentro del efecto
+    fetchUser();
   }, []);
 
   const login = async (user) => {
