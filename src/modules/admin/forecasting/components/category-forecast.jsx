@@ -220,7 +220,7 @@ export function ForecastByCategory() {
                         </CardTitle>
                         <div className="w-64">
                             <Select onValueChange={(name) => setSelectedCategory(name)}>
-                                <SelectTrigger className="border border-gray-300 rounded-md px-3 py-2 transition-colors duration-200 hover:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400">
+                                <SelectTrigger className="w-full justify-between border border-gray-300 bg-background transition-colors duration-200 hover:border-green-500 focus:ring-2 focus:ring-green-400 h-10 rounded-md px-3 py-2 text-sm font-medium">
                                     {/* defaultValue coincide con el value del SelectItem para "Ninguno" */}
                                     <SelectValue
                                         placeholder="Selecciona una categoría"
