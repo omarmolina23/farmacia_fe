@@ -83,7 +83,16 @@ export function ForecastByCategory() {
         setLoading(true);
         getCategoryNames()
             .then((cats) => {
-                const activeCategories = cats.filter(cat => cat.status === "ACTIVE");
+                // El pronóstico se agrupa por NOMBRE de categoría, así que
+                // evitamos mostrar nombres duplicados (categorías distintas con
+                // el mismo nombre en la BD, p. ej. provenientes del seed).
+                const seen = new Set();
+                const activeCategories = cats.filter((cat) => {
+                    if (cat.status !== "ACTIVE") return false;
+                    if (seen.has(cat.name)) return false;
+                    seen.add(cat.name);
+                    return true;
+                });
                 setCategories([{ id: "default", name: "Ninguno" }, ...activeCategories])
             })
             .catch(() => setError("No se pudieron cargar las categorías"))
