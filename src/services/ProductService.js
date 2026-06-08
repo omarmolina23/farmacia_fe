@@ -22,6 +22,17 @@ export const getProductAll = async () => {
     }
 }
 
+// Versión liviana (solo id + name) para poblar desplegables sin descargar
+// las relaciones pesadas (categoría, proveedor, tags, imágenes).
+export const getProductNames = async () => {
+    try {
+        const response = await axios.get("/product/names");
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Ha ocurrido un error");
+    }
+}
+
 export const getStockSumary = async () => {
     try {
         const response = await axios.get("/product/stock-summary");

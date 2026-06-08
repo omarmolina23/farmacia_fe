@@ -14,7 +14,7 @@ import {
     getPrescriptiveCategory,
 } from "../../../../services/SalesService";
 import TypingText from "./typing-text";
-import { getCategoryAll } from "../../../../services/CategoryService";
+import { getCategoryNames } from "../../../../services/CategoryService";
 import {
     ResponsiveContainer,
     AreaChart,
@@ -81,9 +81,18 @@ export function ForecastByCategory() {
     // Carga inicial de categorías (incluye "Ninguno")
     useEffect(() => {
         setLoading(true);
-        getCategoryAll()
+        getCategoryNames()
             .then((cats) => {
-                const activeCategories = cats.filter(cat => cat.status === "ACTIVE");
+                // El pronóstico se agrupa por NOMBRE de categoría, así que
+                // evitamos mostrar nombres duplicados (categorías distintas con
+                // el mismo nombre en la BD, p. ej. provenientes del seed).
+                const seen = new Set();
+                const activeCategories = cats.filter((cat) => {
+                    if (cat.status !== "ACTIVE") return false;
+                    if (seen.has(cat.name)) return false;
+                    seen.add(cat.name);
+                    return true;
+                });
                 setCategories([{ id: "default", name: "Ninguno" }, ...activeCategories])
             })
             .catch(() => setError("No se pudieron cargar las categorías"))
@@ -211,7 +220,7 @@ export function ForecastByCategory() {
                         </CardTitle>
                         <div className="w-64">
                             <Select onValueChange={(name) => setSelectedCategory(name)}>
-                                <SelectTrigger className="border border-gray-300 rounded-md px-3 py-2 transition-colors duration-200 hover:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400">
+                                <SelectTrigger className="w-full justify-between border border-gray-300 bg-background transition-colors duration-200 hover:border-green-500 focus:ring-2 focus:ring-green-400 h-10 rounded-md px-3 py-2 text-sm font-medium">
                                     {/* defaultValue coincide con el value del SelectItem para "Ninguno" */}
                                     <SelectValue
                                         placeholder="Selecciona una categoría"

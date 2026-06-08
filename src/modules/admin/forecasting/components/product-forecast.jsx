@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     Card,
     CardHeader,
@@ -10,7 +10,7 @@ import {
 import { Skeleton } from "../../../../components/ui/skeleton";
 import { getForecastProduct, getPrescriptiveProduct } from "../../../../services/SalesService";
 import TypingText from "./typing-text";
-import { getProductAll } from "../../../../services/ProductService";
+import { getProductNames } from "../../../../services/ProductService";
 import { toast } from "@/lib/toast";
 import {
     ResponsiveContainer,
@@ -27,14 +27,26 @@ import {
     ChartTooltipContent,
 } from "../../../../components/ui/chart";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "../../../../components/ui/select";
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "../../../../components/ui/popover";
+import {
+    Command,
+    CommandEmpty,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "../../../../components/ui/command";
+import { Button } from "../../../../components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
+
+// Máximo de opciones renderizadas a la vez en el combobox de productos.
+// Con catálogos grandes (miles de productos) evita montar todos los nodos del
+// DOM al abrir el desplegable; el usuario filtra escribiendo.
+const MAX_OPTIONS = 50;
 
 export function ForecastByProduct() {
     const [products, setProducts] = useState([]);
@@ -46,6 +58,8 @@ export function ForecastByProduct() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [isAnimating, setIsAnimating] = useState(true);
+    const [comboOpen, setComboOpen] = useState(false);
+    const [productQuery, setProductQuery] = useState("");
 
     // Datos por defecto para "Ninguno"
     const defaultForecastData = {
@@ -88,7 +102,7 @@ export function ForecastByProduct() {
     // Carga inicial de productos (incluye "Ninguno")
     useEffect(() => {
         setLoading(true);
-        getProductAll()
+        getProductNames()
             .then((prods) => {
                 setProducts([{ id: "default", name: "Ninguno" }, ...prods]);
             })
@@ -204,6 +218,17 @@ export function ForecastByProduct() {
         }
     }, [error]);
 
+    // Filtra en cliente por nombre y limita el número de opciones renderizadas.
+    const productMatches = useMemo(() => {
+        const q = productQuery.trim().toLowerCase();
+        return q
+            ? products.filter((p) => p.name.toLowerCase().includes(q))
+            : products;
+    }, [products, productQuery]);
+    const visibleProducts = productMatches.slice(0, MAX_OPTIONS);
+    const selectedProductName =
+        products.find((p) => p.id === selectedProductId)?.name || "";
+
     const chartHeight = 300;
 
     return (
@@ -216,21 +241,57 @@ export function ForecastByProduct() {
                             Predicción de ventas por producto
                         </CardTitle>
                         <div className="w-64">
-                            <Select onValueChange={(id) => setSelectedProductId(id)}>
-                                <SelectTrigger className="border border-gray-300 rounded-md px-3 py-2 transition-colors duration-200 hover:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400">
-                                    <SelectValue
-                                        placeholder="Selecciona un producto"
-                                        defaultValue="default"
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {products.map((prod) => (
-                                        <SelectItem key={prod.id} value={prod.id}>
-                                            {prod.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Popover open={comboOpen} onOpenChange={setComboOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={comboOpen}
+                                        className="w-full justify-between border border-gray-300 transition-colors duration-200 hover:border-green-500 focus:ring-2 focus:ring-green-400"
+                                    >
+                                        <span className="truncate">
+                                            {selectedProductName || "Selecciona un producto"}
+                                        </span>
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-64 p-0" align="start">
+                                    <Command shouldFilter={false}>
+                                        <CommandInput
+                                            placeholder="Buscar producto..."
+                                            value={productQuery}
+                                            onValueChange={setProductQuery}
+                                        />
+                                        <CommandList>
+                                            <CommandEmpty>Sin resultados.</CommandEmpty>
+                                            {visibleProducts.map((prod) => (
+                                                <CommandItem
+                                                    key={prod.id}
+                                                    value={prod.id}
+                                                    onSelect={() => {
+                                                        setSelectedProductId(prod.id);
+                                                        setComboOpen(false);
+                                                        setProductQuery("");
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={`mr-2 h-4 w-4 ${selectedProductId === prod.id
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                            }`}
+                                                    />
+                                                    <span className="truncate">{prod.name}</span>
+                                                </CommandItem>
+                                            ))}
+                                            {productMatches.length > MAX_OPTIONS && (
+                                                <div className="px-2 py-1.5 text-xs text-gray-400">
+                                                    Mostrando {MAX_OPTIONS} de {productMatches.length}. Escribe para afinar la búsqueda…
+                                                </div>
+                                            )}
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </div>
                     </div>
                 </div>
