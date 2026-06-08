@@ -17,6 +17,17 @@ export const getCategoryAll = async () => {
   }
 };
 
+// Versión liviana (solo id + name) para poblar desplegables sin traer todos
+// los campos de la categoría.
+export const getCategoryNames = async () => {
+  try {
+    const response = await axios.get(`/category/names`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Ha ocurrido un error");
+  }
+};
+
 export const searchCategory = async (query) => {
   try {
     const response = await axios.get(`/category/search`, {

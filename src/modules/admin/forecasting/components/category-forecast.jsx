@@ -14,7 +14,7 @@ import {
     getPrescriptiveCategory,
 } from "../../../../services/SalesService";
 import TypingText from "./typing-text";
-import { getCategoryAll } from "../../../../services/CategoryService";
+import { getCategoryNames } from "../../../../services/CategoryService";
 import {
     ResponsiveContainer,
     AreaChart,
@@ -81,7 +81,7 @@ export function ForecastByCategory() {
     // Carga inicial de categorías (incluye "Ninguno")
     useEffect(() => {
         setLoading(true);
-        getCategoryAll()
+        getCategoryNames()
             .then((cats) => {
                 const activeCategories = cats.filter(cat => cat.status === "ACTIVE");
                 setCategories([{ id: "default", name: "Ninguno" }, ...activeCategories])
