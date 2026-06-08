@@ -64,13 +64,15 @@ export default function AiAssistant() {
   const scrollContainerRef = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const contextLoadedRef = useRef(false);
   const MAX_HEIGHT = 72; // 72px = 4.5rem
 
-
-
-
-  // 1) Traer contexto de pronósticos (productos + categorías)
+  // 1) Traer contexto de pronósticos (productos + categorías) SOLO al abrir el
+  // chat por primera vez. Antes se cargaba al montar la página de Predicción, lo
+  // que descargaba todos los pronósticos en cada entrada aunque no se usara el chat.
   useEffect(() => {
+    if (!isOpen || contextLoadedRef.current) return;
+    contextLoadedRef.current = true;
     (async () => {
       try {
         const [stock, products, categories] = await Promise.all([
@@ -81,9 +83,10 @@ export default function AiAssistant() {
         setContext({ forecasts: [...categories.forecasts, ...products.forecasts], stock });
       } catch (error) {
         console.error("Error cargando contexto:", error);
+        contextLoadedRef.current = false; // permite reintentar al reabrir si falló
       }
     })();
-  }, []);
+  }, [isOpen]);
 
   // 2) Cuando se abre el chat, guardamos la hora y enfocamos el <textarea>
   useEffect(() => {
@@ -132,9 +135,10 @@ export default function AiAssistant() {
     Solo sí, el usuario dice "Barcelona" o algo relacionado sobre ese equipo de fútbol, puedes responder: "15" o "8-2" o "La sexta es inevitable".
     No respondas preguntas sobre otros temas, como deportes, política, religión, etc.
     No respondas preguntas sobre la empresa, como su historia, misión, visión, etc.
-    No agregues información adicional no solicitada.
-    No hagas preguntas de seguimiento.
-    Sé preciso, claro y breve.`,
+    Explica tus respuestas de forma detallada y didáctica: no te limites a dar el dato, desarrolla el razonamiento paso a paso apoyándote en las cifras, tendencias y predicciones del contexto, y cita los números concretos relevantes que respaldan tu conclusión.
+    Cuando aplique, añade las implicaciones para el negocio y una recomendación práctica y accionable.
+    Estructura la respuesta para que sea fácil de leer, usando varios párrafos o una lista con viñetas cuando ayude a la claridad.
+    No hagas preguntas de seguimiento.`,
       });
 
       // Reemplaza el “loading” con la respuesta real

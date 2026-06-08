@@ -1,6 +1,5 @@
 import axios from "../config/axios";
 import axiosForecast from '../config/axiosForecast';
-import axiosMagicLoop from '../config/axiosMagicLoop';
 
 export const getSalesAll = async () => {
     try {
@@ -153,10 +152,7 @@ export async function getPrescriptiveProduct(context, productName) {
     };
 
     try {
-        const { data } = await axiosMagicLoop.post(
-            "/run",
-            payload
-        );
+        const { data } = await axios.post("/ai/run", payload);
         return data.answer;
     } catch (err) {
         const msg =
@@ -175,10 +171,7 @@ export async function getPrescriptiveCategory(context, categoryName) {
     };
 
     try {
-        const { data } = await axiosMagicLoop.post(
-            "/run",
-            payload
-        );
+        const { data } = await axios.post("/ai/run", payload);
         return data.answer;
     } catch (err) {
         const msg =
@@ -189,11 +182,66 @@ export async function getPrescriptiveCategory(context, categoryName) {
     }
 }
 
+// Presupuesto máximo (en bytes) para el cuerpo enviado al backend de IA.
+// Reduce el costo y evita límites de tamaño/tokens compactando el historial
+// de cada forecast hasta quedar por debajo del presupuesto.
+const MAX_CONTEXT_BYTES = 80_000;
+
+function jsonBytes(value) {
+    return new TextEncoder().encode(JSON.stringify(value)).length;
+}
+
+function trimSeries(arr, max) {
+    if (!Array.isArray(arr)) return arr;
+    if (max <= 0) return [];
+    return arr.length > max ? arr.slice(-max) : arr;
+}
+
+function compactForecasts(forecasts, maxHistory, maxForecast) {
+    if (!Array.isArray(forecasts)) return forecasts;
+    return forecasts.map((f) => {
+        if (!f || typeof f !== "object") return f;
+        const compact = { ...f };
+        if (Array.isArray(f.history)) compact.history = trimSeries(f.history, maxHistory);
+        if (Array.isArray(f.forecasting)) compact.forecasting = f.forecasting.slice(0, maxForecast);
+        return compact;
+    });
+}
+
+// Recorta el contexto de forma adaptativa: solo reduce lo necesario para
+// mantener el cuerpo bajo MAX_CONTEXT_BYTES. Catálogos pequeños no se tocan.
+function compactContext(context, budget = MAX_CONTEXT_BYTES) {
+    if (!context || !Array.isArray(context.forecasts)) return context;
+    if (jsonBytes(context) <= budget) return context;
+
+    // 1) Reducir progresivamente la ventana de historial por forecast.
+    for (const maxHistory of [12, 8, 6, 4, 0]) {
+        const candidate = { ...context, forecasts: compactForecasts(context.forecasts, maxHistory, 8) };
+        if (jsonBytes(candidate) <= budget) return candidate;
+    }
+
+    // 2) Último recurso: limitar la cantidad de forecasts incluidos.
+    const base = { ...context, forecasts: compactForecasts(context.forecasts, 0, 8) };
+    const forecasts = [...base.forecasts];
+    while (forecasts.length > 1 && jsonBytes({ ...base, forecasts }) > budget) {
+        forecasts.pop();
+    }
+    return { ...base, forecasts };
+}
+
 export async function getAiAssistant(payload) {
+    const compactPayload = payload?.context
+        ? { ...payload, context: compactContext(payload.context) }
+        : payload;
     try {
-        const { data } = await axiosMagicLoop.post("/run", payload);
+        const { data } = await axios.post("/ai/run", compactPayload);
         return data.answer;
     } catch (err) {
+        if (err.response?.status === 413) {
+            throw new Error(
+                "El contexto es demasiado grande para la IA. Intenta una pregunta más específica."
+            );
+        }
         const msg =
             err.response?.data?.detail ||
             err.response?.data?.message ||
