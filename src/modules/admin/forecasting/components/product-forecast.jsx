@@ -10,7 +10,7 @@ import {
 import { Skeleton } from "../../../../components/ui/skeleton";
 import { getForecastProduct, getPrescriptiveProduct } from "../../../../services/SalesService";
 import TypingText from "./typing-text";
-import { getProductAll } from "../../../../services/ProductService";
+import { getProductNames } from "../../../../services/ProductService";
 import { toast } from "@/lib/toast";
 import {
     ResponsiveContainer,
@@ -88,7 +88,7 @@ export function ForecastByProduct() {
     // Carga inicial de productos (incluye "Ninguno")
     useEffect(() => {
         setLoading(true);
-        getProductAll()
+        getProductNames()
             .then((prods) => {
                 setProducts([{ id: "default", name: "Ninguno" }, ...prods]);
             })
