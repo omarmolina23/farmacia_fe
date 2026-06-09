@@ -65,17 +65,16 @@ export default function ScanPage() {
                 { facingMode: 'environment' },
                 { fps: 10, qrbox: 250 },
                 decoded => {
-                    // 1) Limpiamos el resultado (quitamos comillas, espacios, etc.)
+                    // Limpiamos el resultado (quitamos comillas, espacios, etc.)
                     const code = decoded.trim().replace(/"/g, '');
-                    // 2) Si parece un EAN-13 válido, extraemos los dígitos 8–12
-                    let barcodeId = code;
-                    if (/^\d{13}$/.test(code)) {
-                        // slice(7, 12) → empieza en índice 7 (8° dígito) y obtiene 5 caracteres
-                        barcodeId = code.slice(7, 12);
-                    }
 
-                    // 3) Buscamos en tu lista de productos por ese ID
-                    const found = products.find(p => String(p.barcode) === barcodeId);
+                    // Buscamos primero por el código de barras completo. Si no
+                    // aparece y el código es un EAN-13, probamos con el código
+                    // interno de 5 dígitos (posiciones 8-12) como respaldo.
+                    let found = products.find(p => String(p.barcode) === code);
+                    if (!found && /^\d{13}$/.test(code)) {
+                        found = products.find(p => String(p.barcode) === code.slice(7, 12));
+                    }
 
                     if (found) {
                         setProductFound(found);

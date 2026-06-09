@@ -57,22 +57,13 @@ export default function RegisterBarcode() {
                 { facingMode: 'environment' },
                 { fps: 10, qrbox: 250 },
                 decoded => {
-                    // 1) Limpiamos el resultado (quitamos comillas, espacios, etc.)
+                    // Registramos el código de barras completo tal como viene
+                    // impreso en el producto (sin recortarlo).
                     const code = decoded.trim().replace(/"/g, '');
-                    console.log("code:", code)
-                    // 2) Si parece un EAN-13 válido, extraemos los dígitos 8–12
-                    let barcodeId = code;
-                    if (/^\d{13}$/.test(code)) {
-                        // slice(7, 12) → empieza en índice 7 (8° dígito) y obtiene 5 caracteres
-                        barcodeId = code.slice(7, 12);
-                        console.log("barcodeId obtenido:", barcodeId)
-                    }
-
-                    // 3) Buscamos en tu lista de productos por ese ID
 
                     sock.emit('scan', {
                         sessionId: session,
-                        productBarcode: barcodeId,
+                        productBarcode: code,
                     });
 
                     playBeep();

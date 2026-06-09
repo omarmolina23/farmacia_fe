@@ -33,6 +33,22 @@ export const updateSale = async (sale_id, data) => {
 };
 
 
+// Registra los datos de la nota de crédito (devolución) y dispara el envío del
+// correo con el PDF de la nota de crédito, no la factura de venta.
+export const generateCreditNote = async (sale_id, data) => {
+    try {
+        const response = await axios.patch(`/sales/credit-note/${sale_id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error en generateCreditNote:", error.response || error);
+        throw new Error(
+            error.response?.data?.message ||
+            "Ha ocurrido un error al generar la nota de crédito"
+        );
+    }
+};
+
+
 export const returnSale = async (sale_id) => {
     try {
         const response = await axios.patch(`/sales/return/${sale_id}`);
