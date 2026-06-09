@@ -9,7 +9,7 @@ import EmployeesLayout from "../../modules/employees/layouts/EmployeeLayout"
 import SalesProduct from "../../modules/admin/sales/components/SalesProduct";
 import { getSalesId } from "../../services/SalesService";
 import Button from "../../components/Button";
-import { returnSale, updateSale } from "../../services/SalesService";
+import { returnSale, generateCreditNote } from "../../services/SalesService";
 import { sendCreditNote } from "../../modules/admin/sales/components/invoice/credit_note/sendCreditNote"
 import { toast } from "@/lib/toast";
 import 'react-toastify/dist/ReactToastify.css';
@@ -120,7 +120,7 @@ const SalesReturn = () => {
                     reference_code: sale.id,
                     productos: productsToReturn,
                 });
-                await updateSale(sale.id, {
+                await generateCreditNote(sale.id, {
                     number_credit_note: response.data.credit_note.number,
                     cufe: response.data.credit_note.cude,
                     qr_image: response.data.credit_note.qr_image,
