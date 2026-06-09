@@ -137,7 +137,8 @@ export default function AiAssistant() {
     No respondas preguntas sobre la empresa, como su historia, misión, visión, etc.
     Explica tus respuestas de forma detallada y didáctica: no te limites a dar el dato, desarrolla el razonamiento paso a paso apoyándote en las cifras, tendencias y predicciones del contexto, y cita los números concretos relevantes que respaldan tu conclusión.
     Cuando aplique, añade las implicaciones para el negocio y una recomendación práctica y accionable.
-    Estructura la respuesta para que sea fácil de leer, usando varios párrafos o una lista con viñetas cuando ayude a la claridad.
+    Estructura la respuesta para que sea fácil de leer, usando varios párrafos cuando ayude a la claridad.
+    No uses asteriscos ni símbolos de markdown para dar formato (nada de **negritas**, *cursivas* ni viñetas con *). Escribe en prosa corrida y parafrasea las ideas de forma natural dentro de las oraciones.
     No hagas preguntas de seguimiento.`,
       });
 
